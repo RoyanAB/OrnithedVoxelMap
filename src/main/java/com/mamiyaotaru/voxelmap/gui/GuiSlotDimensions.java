@@ -88,7 +88,7 @@ class GuiSlotDimensions extends GuiSlotMinimap {
 		Dimension dim = this.dimensionManager.getDimensions().get(slotIndex);
 		String name = dim.name;
 		if (name.equals("notLoaded") || name.equals("failedToLoad")) {
-			name = "dimension " + dim.ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")";
+			name = "dimension " + dim.ID + "(" + Minecraft.getMinecraft().theWorld.provider.getClass().getSimpleName() + ")";
 		}
 
 		this.parentGui.drawCenteredString(this.parentGui.getFontRenderer(), dim.name, this.parentGui.getWidth() / 2 + this.slotWidth / 2, slotYPos + 3, 16777215);

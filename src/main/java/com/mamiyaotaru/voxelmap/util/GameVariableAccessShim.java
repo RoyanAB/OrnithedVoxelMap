@@ -13,7 +13,7 @@ public class GameVariableAccessShim {
 	}
 
 	public static World getWorld() {
-		return minecraft.world;
+		return minecraft.theWorld;
 	}
 
 	public static File getDataDir() {

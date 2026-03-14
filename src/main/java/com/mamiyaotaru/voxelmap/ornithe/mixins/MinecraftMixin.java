@@ -20,7 +20,7 @@ public class MinecraftMixin {
 	}
 
 	@Inject(
-		method = "init",
+		method = "startGame",
 		at = @At(
 			value = "TAIL"
 		)

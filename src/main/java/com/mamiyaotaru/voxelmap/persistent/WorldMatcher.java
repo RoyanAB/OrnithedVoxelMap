@@ -49,7 +49,7 @@ public class WorldMatcher {
 				ArrayList<String> knownSubworldNames = new ArrayList<>(WorldMatcher.this.master.getWaypointManager().getKnownSubworldNames());
 				String[] subworldNamesArray = new String[knownSubworldNames.size()];
 				knownSubworldNames.toArray(subworldNamesArray);
-				EntityPlayerSP player = Minecraft.getMinecraft().player;
+				EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 				MessageUtils.printDebug(
 					"player coords "
 						+ player.posX
@@ -149,7 +149,7 @@ public class WorldMatcher {
 				}
 
 				this.region = new ComparisonCachedRegion(
-					WorldMatcher.this.map, this.x + "," + this.z, Minecraft.getMinecraft().world, this.worldName, "", this.x, this.z
+					WorldMatcher.this.map, this.x + "," + this.z, Minecraft.getMinecraft().theWorld, this.worldName, "", this.x, this.z
 				);
 				MessageUtils.printDebug("going to load current region");
 				this.region.loadCurrent();

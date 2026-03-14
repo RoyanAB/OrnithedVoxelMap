@@ -120,7 +120,7 @@ public abstract class GuiSlotMinimap {
 	}
 
 	protected void bindAmountScrolled() {
-		this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0F, this.getMaxScroll());
+		this.amountScrolled = MathHelper.clamp_float(this.amountScrolled, 0.0F, this.getMaxScroll());
 	}
 
 	public int getMaxScroll() {
@@ -231,7 +231,7 @@ public abstract class GuiSlotMinimap {
 		int maxScroll = this.getMaxScroll();
 		if (maxScroll > 0) {
 			int k1 = (this.bottom - this.top) * (this.bottom - this.top) / this.getContentHeight();
-			k1 = MathHelper.clamp(k1, 32, this.bottom - this.top - 8);
+			k1 = MathHelper.clamp_int(k1, 32, this.bottom - this.top - 8);
 			int l1 = (int) this.amountScrolled * (this.bottom - this.top - k1) / maxScroll + this.top;
 			if (l1 < this.top) {
 				l1 = this.top;
@@ -306,7 +306,7 @@ public abstract class GuiSlotMinimap {
 						}
 
 						int l1 = (int) ((float) ((this.bottom - this.top) * (this.bottom - this.top)) / this.getContentHeight());
-						l1 = MathHelper.clamp(l1, 32, this.bottom - this.top - 8);
+						l1 = MathHelper.clamp_int(l1, 32, this.bottom - this.top - 8);
 						this.scrollMultiplier = this.scrollMultiplier / ((float) (this.bottom - this.top - l1) / k1);
 					} else {
 						this.scrollMultiplier = 1.0F;

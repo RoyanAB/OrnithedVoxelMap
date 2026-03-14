@@ -14,7 +14,7 @@ public class MapChunk {
 	public MapChunk(int x, int z) {
 		this.x = x;
 		this.z = z;
-		this.chunk = Minecraft.getMinecraft().world.getChunkFromChunkCoords(x, z);
+		this.chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(x, z);
 		this.isLoaded = this.chunk.isLoaded();
 		this.isChanged = true;
 	}
@@ -29,7 +29,7 @@ public class MapChunk {
 	private boolean hasChunkLoadedOrUnloaded() {
 		boolean hasChanged = false;
 		if (!this.isLoaded) {
-			this.chunk = Minecraft.getMinecraft().world.getChunkFromChunkCoords(this.x, this.z);
+			this.chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(this.x, this.z);
 			if (this.chunk.isLoaded()) {
 				this.isLoaded = true;
 				hasChanged = true;

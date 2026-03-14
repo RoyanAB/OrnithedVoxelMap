@@ -109,8 +109,8 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 			if (this.world != null) {
 				this.newSubWorldName("", false);
 //				ForgeModVoxelMap.WORLD_ID.sendToServer(new WorldIDPacket());
-				mc.player.getLocationSkin();
-				java.util.Map<Type, MinecraftProfileTexture> skinMap = mc.getSkinManager().loadSkinFromCache(mc.player.getGameProfile());
+				mc.thePlayer.getLocationSkin();
+				java.util.Map<Type, MinecraftProfileTexture> skinMap = mc.getSkinManager().loadSkinFromCache(mc.thePlayer.getGameProfile());
 				if (skinMap.containsKey(Type.SKIN)) {
 					mc.getSkinManager().loadSkin(skinMap.get(Type.SKIN), Type.SKIN);
 				}
@@ -199,7 +199,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 
 		try {
 			UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
-			UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
+			UUID playerUUID = Minecraft.getMinecraft().thePlayer.getUniqueID();
 			override = playerUUID.equals(devUUID);
 		} catch (Exception var8) {
 		}

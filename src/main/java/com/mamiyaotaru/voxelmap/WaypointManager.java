@@ -342,9 +342,9 @@ public class WaypointManager implements IWaypointManager {
 		}
 
 		if (this.options.deathpoints != 0) {
-			EntityPlayerSP thePlayer = Minecraft.getMinecraft().player;
+			EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 			TreeSet<Integer> dimensions = new TreeSet<>();
-			dimensions.add(Minecraft.getMinecraft().player.dimension);
+			dimensions.add(Minecraft.getMinecraft().thePlayer.dimension);
 			this.addWaypoint(
 				new Waypoint(
 					"Latest Death",
@@ -1046,12 +1046,12 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public void check2dWaypoints() {
-		if (Minecraft.getMinecraft().player.dimension == 0 && this.old2dWayPts.size() > 0) {
+		if (Minecraft.getMinecraft().thePlayer.dimension == 0 && this.old2dWayPts.size() > 0) {
 			this.updatedPts = new ArrayList<>();
 
 			for (Waypoint pt : this.old2dWayPts) {
 				BlockPos blockPos = new BlockPos(pt.getX(), 0, pt.getZ());
-				Chunk chunk = Minecraft.getMinecraft().player.world.getChunkFromBlockCoords(blockPos);
+				Chunk chunk = Minecraft.getMinecraft().thePlayer.worldObj.getChunkFromBlockCoords(blockPos);
 				if (Math.abs(pt.getX() - GameVariableAccessShim.xCoord()) < 400
 					&& Math.abs(pt.getZ() - GameVariableAccessShim.zCoord()) < 400
 					&& chunk.isLoaded()) {

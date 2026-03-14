@@ -406,7 +406,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 	public void toggleDimensionSelected() {
 		if (this.waypoint.dimensions.size() > 1
 			&& this.waypoint.dimensions.contains(this.selectedDimension.ID)
-			&& this.selectedDimension.ID != Minecraft.getMinecraft().player.dimension) {
+			&& this.selectedDimension.ID != Minecraft.getMinecraft().thePlayer.dimension) {
 			this.waypoint.dimensions.remove(Integer.valueOf(this.selectedDimension.ID));
 		} else if (!this.waypoint.dimensions.contains(this.selectedDimension.ID)) {
 			this.waypoint.dimensions.add(Integer.valueOf(this.selectedDimension.ID));

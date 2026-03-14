@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap.textures;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mamiyaotaru.voxelmap.util.I18nUtils;
+import com.mamiyaotaru.voxelmap.util.MathHelperExtra;
 import net.minecraft.util.math.MathHelper;
 
 import java.text.Collator;
@@ -70,7 +71,7 @@ public class Stitcher {
 			}
 
 			if (allSameSize) {
-				int nextPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(stitcherHoldersArrayLength);
+				int nextPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(stitcherHoldersArrayLength);
 				int power = Integer.numberOfTrailingZeros(nextPowerOfTwo);
 				int width = (int) Math.pow(2.0, Math.ceil(power / 2.0)) * iconWidth;
 				int height = (int) Math.pow(2.0, Math.floor(power / 2.0)) * iconHeight;
@@ -96,8 +97,8 @@ public class Stitcher {
 			}
 		}
 
-		this.currentWidthToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentWidth);
-		this.currentHeightToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentHeight);
+		this.currentWidthToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentWidth);
+		this.currentHeightToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentHeight);
 		this.setStitchHolders.clear();
 	}
 
@@ -120,8 +121,8 @@ public class Stitcher {
 			}
 		}
 
-		this.currentWidthToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentWidth);
-		this.currentHeightToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentHeight);
+		this.currentWidthToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentWidth);
+		this.currentHeightToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentHeight);
 		this.setStitchHolders.clear();
 	}
 
@@ -156,10 +157,10 @@ public class Stitcher {
 
 	private boolean expandAndAllocateSlot(Stitcher.Holder holder) {
 		int expandBy = holder.getWidth();
-		int currentWidthToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentWidth);
-		int currentHeightToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentHeight);
-		int possibleNewWidthToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentWidth + expandBy);
-		int possibleNewHeightToPowerOfTwo = MathHelper.smallestEncompassingPowerOfTwo(this.currentHeight + expandBy);
+		int currentWidthToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentWidth);
+		int currentHeightToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentHeight);
+		int possibleNewWidthToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentWidth + expandBy);
+		int possibleNewHeightToPowerOfTwo = MathHelperExtra.smallestEncompassingPowerOfTwo(this.currentHeight + expandBy);
 		boolean isRoomToExpandRight = possibleNewWidthToPowerOfTwo <= this.maxWidth;
 		boolean isRoomToExpandDown = possibleNewHeightToPowerOfTwo <= this.maxHeight;
 		if (!isRoomToExpandRight && !isRoomToExpandDown) {
@@ -175,7 +176,7 @@ public class Stitcher {
 			shouldExpandRight = isRoomToExpandRight && currentWidthToPowerOfTwo <= currentHeightToPowerOfTwo;
 		}
 
-		if (MathHelper.smallestEncompassingPowerOfTwo((shouldExpandRight ? this.currentWidth : this.currentHeight) + expandBy)
+		if (MathHelperExtra.smallestEncompassingPowerOfTwo((shouldExpandRight ? this.currentWidth : this.currentHeight) + expandBy)
 			> (shouldExpandRight ? this.maxWidth : this.maxHeight)) {
 			return false;
 		}

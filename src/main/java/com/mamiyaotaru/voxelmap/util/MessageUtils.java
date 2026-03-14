@@ -7,7 +7,7 @@ public class MessageUtils {
 	private static final boolean debug = false;
 
 	public static void chatInfo(String s) {
-		Minecraft.getMinecraft().player.sendMessage(new TextComponentString(s));
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString(s));
 	}
 
 	public static void printDebug(String line) {

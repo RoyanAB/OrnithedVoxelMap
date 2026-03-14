@@ -11,7 +11,6 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntityPolarBear;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntityTameable;
@@ -110,13 +109,13 @@ public class RadarSimple implements IRadar {
 
 	public void calculateMobs() {
 		this.contacts.clear();
-		List<Entity> entities = this.game.world.getLoadedEntityList();
+		List<Entity> entities = this.game.theWorld.getLoadedEntityList();
 
 		for (int j = 0; j < entities.size(); j++) {
 			try {
 				Entity entity = entities.get(j);
 				if (entity != null
-					&& !entity.isInvisibleToPlayer(this.game.player)
+					&& !entity.isInvisibleToPlayer(this.game.thePlayer)
 					&& (
 					this.options.showHostiles && (this.options.radarAllowed || this.options.radarMobsAllowed) && this.isHostile(entity)
 						|| this.options.showPlayers && (this.options.radarAllowed || this.options.radarPlayersAllowed) && this.isPlayer(entity)
@@ -173,7 +172,7 @@ public class RadarSimple implements IRadar {
 		} else {
 			return !(entity instanceof EntityTameable)
 				|| !((EntityTameable) entity).isTamed()
-				|| !this.game.isSingleplayer() && !((EntityTameable) entity).getOwner().equals(this.game.player)
+				|| !this.game.isSingleplayer() && !((EntityTameable) entity).getOwner().equals(this.game.thePlayer)
 				? EnumMobs.GENERICNEUTRAL
 				: EnumMobs.GENERICTAME;
 		}
@@ -188,15 +187,15 @@ public class RadarSimple implements IRadar {
 			return true;
 		}
 
-		if (entity instanceof EntityPolarBear) {
-			for (Object object : ((EntityPolarBear) entity)
-				.world
-				.getEntitiesWithinAABB(EntityPolarBear.class, entity.getEntityBoundingBox().expand(8.0, 4.0, 8.0))) {
-				if (((EntityPolarBear) object).isChild()) {
-					return true;
-				}
-			}
-		}
+//		if (entity instanceof EntityPolarBear) {
+//			for (Object object : ((EntityPolarBear) entity)
+//				.world
+//				.getEntitiesWithinAABB(EntityPolarBear.class, entity.getEntityBoundingBox().expand(8.0, 4.0, 8.0))) {
+//				if (((EntityPolarBear) object).isChild()) {
+//					return true;
+//				}
+//			}
+//		}
 
 		if (entity instanceof EntityRabbit) {
 			return ((EntityRabbit) entity).getRabbitType() == 99;

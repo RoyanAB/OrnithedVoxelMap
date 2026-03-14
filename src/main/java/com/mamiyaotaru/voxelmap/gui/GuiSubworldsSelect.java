@@ -35,9 +35,9 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	public GuiSubworldsSelect(GuiScreen parent, IVoxelMap master) {
 		this.mc = Minecraft.getMinecraft();
 		this.parent = parent;
-		this.thePlayer = this.getMinecraft().player;
+		this.thePlayer = this.getMinecraft().thePlayer;
 		this.camera = new EntityPlayerSP(
-			this.getMinecraft(), this.getMinecraft().world, this.getMinecraft().getConnection(), this.thePlayer.getStatFileWriter()
+			this.getMinecraft(), this.getMinecraft().theWorld, this.getMinecraft().getConnection(), this.thePlayer.getStatFileWriter()
 		);
 		this.camera.movementInput = new MovementInputFromOptions(this.getMinecraft().gameSettings);
 		this.camera

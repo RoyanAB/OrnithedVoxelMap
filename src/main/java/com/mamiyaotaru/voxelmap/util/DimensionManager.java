@@ -133,9 +133,9 @@ public class DimensionManager implements IDimensionManager {
 
 		if (dim.name.equals("notLoaded") || dim.name.equals("failedToLoad")) {
 			try {
-				dim.name = Minecraft.getMinecraft().world.provider.getDimensionType().getName() + " " + ID;
+				dim.name = Minecraft.getMinecraft().theWorld.provider.getDimensionType().getName() + " " + ID;
 			} catch (Exception e) {
-				dim.name = "dimension " + ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")";
+				dim.name = "dimension " + ID + "(" + Minecraft.getMinecraft().theWorld.provider.getClass().getSimpleName() + ")";
 			}
 		}
 	}

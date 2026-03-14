@@ -25,7 +25,7 @@ public class MapChunkCache {
 	}
 
 	public void centerChunks(BlockPos blockPos) {
-		Chunk currentChunk = Minecraft.getMinecraft().world.getChunkFromBlockCoords(blockPos);
+		Chunk currentChunk = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(blockPos);
 		if (currentChunk != this.lastCenterChunk) {
 			if (this.lastCenterChunk == null) {
 				this.fillAllChunks(blockPos);
@@ -65,7 +65,7 @@ public class MapChunkCache {
 	}
 
 	private void fillAllChunks(BlockPos blockPos) {
-		Chunk currentChunk = Minecraft.getMinecraft().world.getChunkFromBlockCoords(blockPos);
+		Chunk currentChunk = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(blockPos);
 		int middleX = this.width / 2;
 		int middleZ = this.height / 2;
 

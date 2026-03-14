@@ -152,12 +152,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	private void getSkin() {
-		ResourceLocation skinLocation = this.mc.player.getLocationSkin();
+		ResourceLocation skinLocation = this.mc.thePlayer.getLocationSkin();
 		ThreadDownloadImageData imageData = null;
 
 		try {
-			if (skinLocation != DefaultPlayerSkin.getDefaultSkin(this.mc.player.getUniqueID())) {
-				imageData = AbstractClientPlayer.getDownloadImageSkin(skinLocation, TextFormatting.getTextWithoutFormattingCodes(this.mc.player.getName()));
+			if (skinLocation != DefaultPlayerSkin.getDefaultSkin(this.mc.thePlayer.getUniqueID())) {
+				imageData = AbstractClientPlayer.getDownloadImageSkin(skinLocation, TextFormatting.getTextWithoutFormattingCodes(this.mc.thePlayer.getName()));
 			}
 		} catch (Exception var6) {
 		}
@@ -171,7 +171,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		}
 
 		BufferedImage skinImage = ImageUtils.createBufferedImageFromCurrentGLImage();
-		boolean showHat = this.mc.player.isWearing(EnumPlayerModelParts.HAT);
+		boolean showHat = this.mc.thePlayer.isWearing(EnumPlayerModelParts.HAT);
 		if (showHat) {
 			skinImage = ImageUtils.addImages(ImageUtils.loadImage(skinImage, 8, 8, 8, 8), ImageUtils.loadImage(skinImage, 40, 8, 8, 8), 0.0F, 0.0F, 8, 8);
 		} else {
@@ -1203,11 +1203,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 
 				TreeSet<Integer> dimensions = new TreeSet<>();
-				dimensions.add(this.mc.player.dimension);
+				dimensions.add(this.mc.thePlayer.dimension);
 				this.newWaypoint = new Waypoint(
 					"",
-					this.mc.player.dimension != -1 ? x : x * 8,
-					this.mc.player.dimension != -1 ? z : z * 8,
+					this.mc.thePlayer.dimension != -1 ? x : x * 8,
+					this.mc.thePlayer.dimension != -1 ? z : z * 8,
 					y,
 					true,
 					r,
@@ -1225,11 +1225,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				} else {
 					y = y > 0 ? y : 64;
 					TreeSet<Integer> dimensions2 = new TreeSet<>();
-					dimensions2.add(this.mc.player.dimension);
+					dimensions2.add(this.mc.thePlayer.dimension);
 					Waypoint fakePoint = new Waypoint(
 						"",
-						this.mc.player.dimension != -1 ? x : x * 8,
-						this.mc.player.dimension != -1 ? z : z * 8,
+						this.mc.thePlayer.dimension != -1 ? x : x * 8,
+						this.mc.thePlayer.dimension != -1 ? z : z * 8,
 						y,
 						true,
 						1.0F,
@@ -1248,12 +1248,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				break;
 			case 3:
 				if (y == 0) {
-					y = this.mc.player.dimension != -1 ? 255 : 64;
+					y = this.mc.thePlayer.dimension != -1 ? 255 : 64;
 				}
 
-				this.mc.player.sendChatMessage("/tp " + this.mc.player.getName() + " " + x + " " + y + " " + z);
+				this.mc.thePlayer.sendChatMessage("/tp " + this.mc.thePlayer.getName() + " " + x + " " + y + " " + z);
 				if (!this.mc.isIntegratedServerRunning()) {
-					this.mc.player.sendChatMessage("/tppos " + x + " " + y + " " + z);
+					this.mc.thePlayer.sendChatMessage("/tppos " + x + " " + y + " " + z);
 				}
 				break;
 			case 4:
@@ -1289,14 +1289,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				if (hovered != null) {
 					this.selectedWaypoint = hovered;
 					boolean mp = !this.mc.isIntegratedServerRunning();
-					y = this.selectedWaypoint.getY() > 0 ? this.selectedWaypoint.getY() : (this.mc.player.dimension != -1 ? 128 : 64);
+					y = this.selectedWaypoint.getY() > 0 ? this.selectedWaypoint.getY() : (this.mc.thePlayer.dimension != -1 ? 128 : 64);
 					this.mc
-						.player
+						.thePlayer
 						.sendChatMessage(
-							"/tp " + this.mc.player.getName() + " " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ()
+							"/tp " + this.mc.thePlayer.getName() + " " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ()
 						);
 					if (mp) {
-						this.mc.player.sendChatMessage("/tppos " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ());
+						this.mc.thePlayer.sendChatMessage("/tppos " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ());
 					} else {
 						this.getMinecraft().displayGuiScreen(null);
 					}
@@ -1343,9 +1343,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		boolean singlePlayer = this.mc.isIntegratedServerRunning();
 		if (singlePlayer) {
 			try {
-				allowed = this.mc.getIntegratedServer().getPlayerList().canSendCommands(this.mc.player.getGameProfile());
+				allowed = this.mc.getIntegratedServer().getPlayerList().canSendCommands(this.mc.thePlayer.getGameProfile());
 			} catch (Exception e) {
-				allowed = this.mc.getIntegratedServer().worlds[0].getWorldInfo().areCommandsAllowed();
+				allowed = this.mc.getIntegratedServer().worldServers[0].getWorldInfo().areCommandsAllowed();
 			}
 		} else {
 			allowed = true;

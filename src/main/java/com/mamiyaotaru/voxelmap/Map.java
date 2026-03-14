@@ -262,7 +262,7 @@ public class Map implements Runnable, IMap {
 					}
 				}
 
-				for (this.active = true; this.game.player != null && this.world != null && this.active; this.active = false) {
+				for (this.active = true; this.game.thePlayer != null && this.world != null && this.active; this.active = false) {
 					if (!this.options.hide) {
 						try {
 							this.mapCalc(this.doFullRender);
@@ -359,11 +359,11 @@ public class Map implements Runnable, IMap {
 			}
 
 			TreeSet<Integer> dimensions = new TreeSet<>();
-			dimensions.add(this.game.player.dimension);
+			dimensions.add(this.game.thePlayer.dimension);
 			Waypoint newWaypoint = new Waypoint(
 				"",
-				this.game.player.dimension != -1 ? GameVariableAccessShim.xCoord() : GameVariableAccessShim.xCoord() * 8,
-				this.game.player.dimension != -1 ? GameVariableAccessShim.zCoord() : GameVariableAccessShim.zCoord() * 8,
+				this.game.thePlayer.dimension != -1 ? GameVariableAccessShim.xCoord() : GameVariableAccessShim.xCoord() * 8,
+				this.game.thePlayer.dimension != -1 ? GameVariableAccessShim.zCoord() : GameVariableAccessShim.zCoord() * 8,
 				GameVariableAccessShim.yCoord(),
 				true,
 				r,
@@ -478,7 +478,7 @@ public class Map implements Runnable, IMap {
 		}
 
 		this.timer = this.timer > 5000 ? 0 : this.timer + 1;
-		if (this.timer == 5000 && this.game.player.dimension == 0) {
+		if (this.timer == 5000 && this.game.thePlayer.dimension == 0) {
 			this.waypointManager.check2dWaypoints();
 		}
 	}
@@ -562,8 +562,8 @@ public class Map implements Runnable, IMap {
 			}
 
 			float potionEffect = 0.0F;
-			if (this.game.player.isPotionActive(MobEffects.NIGHT_VISION)) {
-				int duration = this.game.player.getActivePotionEffect(MobEffects.NIGHT_VISION).getDuration();
+			if (this.game.thePlayer.isPotionActive(MobEffects.NIGHT_VISION)) {
+				int duration = this.game.thePlayer.getActivePotionEffect(MobEffects.NIGHT_VISION).getDuration();
 				potionEffect = duration > 200 ? 1.0F : 0.7F + MathHelper.sin((duration - 1.0F) * (float) Math.PI * 0.2F) * 0.3F;
 			}
 
@@ -584,7 +584,7 @@ public class Map implements Runnable, IMap {
 			}
 
 			boolean scheduledUpdate = (this.timer - 50)
-				% (this.lastLightBrightnessTable[0] == 0.0F ? 250 : (this.game.player.dimension != -1 ? 500 : 5000))
+				% (this.lastLightBrightnessTable[0] == 0.0F ? 250 : (this.game.thePlayer.dimension != -1 ? 500 : 5000))
 				== 0;
 			if (lightChanged || scheduledUpdate) {
 				this.tickWithLightChange = this.tickCounter;
@@ -592,7 +592,7 @@ public class Map implements Runnable, IMap {
 				this.needLightmapRefresh = true;
 			}
 
-			boolean aboveHorizon = this.game.player.getPositionEyes(0.0F).yCoord + this.game.player.getEyeHeight() >= this.world.getHorizon();
+			boolean aboveHorizon = this.game.thePlayer.getPositionEyes(0.0F).yCoord + this.game.thePlayer.getEyeHeight() >= this.world.getHorizon();
 			if (aboveHorizon != this.lastAboveHorizon) {
 				this.needSkyColor = true;
 				this.lastAboveHorizon = aboveHorizon;
@@ -638,7 +638,7 @@ public class Map implements Runnable, IMap {
 			fogColor = -16777216 + (int) (rFog * 255.0) * 65536 + (int) (gFog * 255.0) * 256 + (int) (bFog * 255.0);
 		}
 
-		if (this.game.world.provider.isSurfaceWorld()
+		if (this.game.theWorld.provider.isSurfaceWorld()
 			&& this.game.gameSettings.getOptionFloatValue(Options.RENDER_DISTANCE) >= 4.0F
 			&& (!this.game.gameSettings.getOptionOrdinalValue(Options.USE_VBO) || this.optifineInstalled)) {
 			double rSky;
@@ -672,7 +672,7 @@ public class Map implements Runnable, IMap {
 			}
 
 			float fogDensity = Math.max(
-				0.0F, Math.min(1.0F, (fogEnd - (GameVariableAccessShim.yCoord() - (float) this.game.world.getHorizon())) / (fogEnd - fogStart))
+				0.0F, Math.min(1.0F, (fogEnd - (GameVariableAccessShim.yCoord() - (float) this.game.theWorld.getHorizon())) / (fogEnd - fogStart))
 			);
 			int skyColor = (int) (fogDensity * 255.0F) * 16777216 + (int) (rSky * 255.0) * 65536 + (int) (gSky * 255.0) * 256 + (int) (bSky * 255.0);
 			return this.colorManager.colorAdder(skyColor, fogColor);
@@ -697,8 +697,8 @@ public class Map implements Runnable, IMap {
 		scScale += this.fullscreenMap ? 0 : this.options.sizeModifier;
 		double scaledWidthD = (double) this.game.displayWidth / scScale;
 		double scaledHeightD = (double) this.game.displayHeight / scScale;
-		this.scWidth = MathHelper.ceil(scaledWidthD);
-		this.scHeight = MathHelper.ceil(scaledHeightD);
+		this.scWidth = MathHelperExtra.ceil(scaledWidthD);
+		this.scHeight = MathHelperExtra.ceil(scaledHeightD);
 		GLShim.glMatrixMode(5889);
 		GLShim.glPushMatrix();
 		GLShim.glLoadIdentity();
@@ -719,13 +719,13 @@ public class Map implements Runnable, IMap {
 			this.mapY = 37;
 		}
 
-		if (this.options.mapCorner == 1 && this.game.player.getActivePotionEffects().size() > 0) {
+		if (this.options.mapCorner == 1 && this.game.thePlayer.getActivePotionEffects().size() > 0) {
 			ScaledResolution scSize = new ScaledResolution(this.game);
 			int scHeight = scSize.getScaledHeight();
 			float resFactor = (float) this.scHeight / scHeight;
 			float statusIconOffset = 0.0F;
 
-			for (PotionEffect statusEffectInstance : this.game.player.getActivePotionEffects()) {
+			for (PotionEffect statusEffectInstance : this.game.thePlayer.getActivePotionEffects()) {
 				if (statusEffectInstance.getPotion().hasStatusIcon() && statusEffectInstance.doesShowParticles()) {
 					if (statusEffectInstance.getPotion().isBeneficial()) {
 						statusIconOffset = Math.max(statusIconOffset, 24.0F);
@@ -840,10 +840,10 @@ public class Map implements Runnable, IMap {
 
 	private void checkPermissionMessages() {
 		if (GameVariableAccessShim.getWorld() != null
-			&& this.game.player != null
+			&& this.game.thePlayer != null
 			&& this.game.ingameGUI != null
 			&& System.currentTimeMillis() - this.newServerTime < 5000L) {
-			UUID playerUUID = this.game.player.getUniqueID();
+			UUID playerUUID = this.game.thePlayer.getUniqueID();
 			Object guiNewChat = this.game.ingameGUI.getChatGUI();
 			if (guiNewChat == null) {
 				System.out.println("failed to get guiNewChat");
@@ -941,13 +941,13 @@ public class Map implements Runnable, IMap {
 		boolean netherPlayerInOpen = false;
 		this.blockPos.setXYZ(this.lastX, Math.max(Math.min(GameVariableAccessShim.yCoord(), this.worldHeight - 1), 0), this.lastZ);
 		Chunk playerChunk = this.world.getChunkFromBlockCoords(this.blockPos);
-		if (this.game.player.dimension == -1) {
+		if (this.game.thePlayer.dimension == -1) {
 			netherPlayerInOpen = playerChunk.getHeight(this.blockPos) <= currentY;
 			nether = currentY < 126;
 			if (this.options.cavesAllowed && this.options.showCaves && currentY >= 126 && !netherPlayerInOpen) {
 				caves = true;
 			}
-		} else if (this.game.player.dimension == 1) {
+		} else if (this.game.thePlayer.dimension == 1) {
 			boolean endPlayerInOpen = playerChunk.getHeight(this.blockPos) <= currentY;
 			if (this.options.cavesAllowed && this.options.showCaves && !endPlayerInOpen) {
 				caves = true;
@@ -1036,7 +1036,7 @@ public class Map implements Runnable, IMap {
 		boolean netherPlayerInOpen = false;
 		this.blockPos.setXYZ(this.lastX, Math.max(Math.min(GameVariableAccessShim.yCoord(), this.worldHeight - 1), 0), this.lastZ);
 		Chunk playerChunk = this.world.getChunkFromBlockCoords(this.blockPos);
-		if (this.game.player.dimension == -1) {
+		if (this.game.thePlayer.dimension == -1) {
 			int currentY = GameVariableAccessShim.yCoord();
 			netherPlayerInOpen = playerChunk.getHeight(this.blockPos) <= currentY;
 			nether = currentY < 126;

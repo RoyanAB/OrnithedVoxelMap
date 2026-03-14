@@ -62,7 +62,7 @@ public class WaypointContainer {
 				int z = pt.getZ();
 				int y = pt.getY();
 				BlockPos blockPos = new BlockPos(x, y, z);
-				Chunk chunk = this.mc.world.getChunkFromBlockCoords(blockPos);
+				Chunk chunk = this.mc.theWorld.getChunkFromBlockCoords(blockPos);
 				if (this.options.showBeacons && chunk.isLoaded()) {
 					double bottomOfWorld = 0.0 - renderPosY;
 					this.renderBeam(pt, x - renderPosX, bottomOfWorld, z - renderPosZ, 64.0F);

@@ -1145,7 +1145,7 @@ public class Radar implements IRadar {
 
 	private boolean isEntityShown(Entity entity) {
 		return entity != null
-			&& !entity.isInvisibleToPlayer(this.game.player)
+			&& !entity.isInvisibleToPlayer(this.game.thePlayer)
 			&& (
 			this.options.showHostiles && (this.options.radarAllowed || this.options.radarMobsAllowed) && this.isHostile(entity)
 				|| this.options.showPlayers && (this.options.radarAllowed || this.options.radarPlayersAllowed) && this.isPlayer(entity)
@@ -1155,7 +1155,7 @@ public class Radar implements IRadar {
 
 	public void calculateMobs() {
 		this.contacts.clear();
-		List<Entity> entities = this.game.world.getLoadedEntityList();
+		List<Entity> entities = this.game.theWorld.getLoadedEntityList();
 
 		for (int j = 0; j < entities.size(); j++) {
 			try {
@@ -1545,8 +1545,8 @@ public class Radar implements IRadar {
 						headBits = new ModelRenderer[]{(ModelRenderer) ReflectionUtils.getPrivateFieldValueByType(model, ModelOcelot.class, ModelRenderer.class, 6)};
 					} else if (model instanceof ModelPig) {
 						headBits = new ModelRenderer[]{((ModelPig) model).head};
-					} else if (model instanceof ModelPolarBear) {
-						headBits = new ModelRenderer[]{((ModelPolarBear) model).head};
+//					} else if (model instanceof ModelPolarBear) {
+//						headBits = new ModelRenderer[]{((ModelPolarBear) model).head};
 					} else if (model instanceof ModelRabbit) {
 						headBits = new ModelRenderer[]{
 							(ModelRenderer) ReflectionUtils.getPrivateFieldValueByType(model, ModelRabbit.class, ModelRenderer.class, 7),
@@ -2039,7 +2039,7 @@ public class Radar implements IRadar {
 					icon0 = this.textureAtlas.getAtlasSprite("blockArmor " + stateID + " 0");
 					icon1 = this.textureAtlas.getAtlasSprite("blockArmor " + stateID + " 1");
 					if (icon0 == this.textureAtlas.getMissingImage()) {
-						BufferedImage blockImage = this.master.getColorManager().getBlockImage(blockState, stack, entity.world);
+						BufferedImage blockImage = this.master.getColorManager().getBlockImage(blockState, stack, entity.worldObj);
 						if (blockImage != null) {
 							BufferedImage largeImage = ImageUtils.fillOutline(ImageUtils.pad(blockImage), this.options.outlines, true, 16, 0);
 							BufferedImage smallImage = ImageUtils.fillOutline(
@@ -2281,8 +2281,8 @@ public class Radar implements IRadar {
 			return EnumMobs.PIGZOMBIE;
 		} else if (entity instanceof EntityOtherPlayerMP) {
 			return EnumMobs.PLAYER;
-		} else if (entityClass.equals(EntityPolarBear.class)) {
-			return EnumMobs.POLARBEAR;
+//		} else if (entityClass.equals(EntityPolarBear.class)) {
+//			return EnumMobs.POLARBEAR;
 		} else if (entityClass.equals(EntityRabbit.class)) {
 			return EnumMobs.RABBIT;
 		} else if (entityClass.equals(EntitySheep.class)) {
@@ -2379,8 +2379,8 @@ public class Radar implements IRadar {
 			return EnumMobs.PIGZOMBIE;
 		} else if (entity instanceof EntityOtherPlayerMP) {
 			return EnumMobs.PLAYER;
-		} else if (entity instanceof EntityPolarBear) {
-			return EnumMobs.POLARBEAR;
+//		} else if (entity instanceof EntityPolarBear) {
+//			return EnumMobs.POLARBEAR;
 		} else if (entity instanceof EntityRabbit) {
 			return EnumMobs.RABBIT;
 		} else if (entity instanceof EntitySheep) {
@@ -2426,7 +2426,7 @@ public class Radar implements IRadar {
 		} else {
 			return !(entity instanceof EntityTameable)
 				|| !((EntityTameable) entity).isTamed()
-				|| !this.game.isSingleplayer() && !((EntityTameable) entity).getOwner().equals(this.game.player)
+				|| !this.game.isSingleplayer() && !((EntityTameable) entity).getOwner().equals(this.game.thePlayer)
 				? EnumMobs.GENERICNEUTRAL
 				: EnumMobs.GENERICTAME;
 		}
@@ -2683,15 +2683,15 @@ public class Radar implements IRadar {
 			return true;
 		}
 
-		if (entity instanceof EntityPolarBear) {
-			for (EntityPolarBear entitypolarbear : ((EntityPolarBear) entity)
-				.world
-				.getEntitiesWithinAABB(EntityPolarBear.class, entity.getEntityBoundingBox().expand(8.0, 4.0, 8.0))) {
-				if (entitypolarbear.isChild()) {
-					return true;
-				}
-			}
-		}
+//		if (entity instanceof EntityPolarBear) {
+//			for (EntityPolarBear entitypolarbear : ((EntityPolarBear) entity)
+//				.world
+//				.getEntitiesWithinAABB(EntityPolarBear.class, entity.getEntityBoundingBox().expand(8.0, 4.0, 8.0))) {
+//				if (entitypolarbear.isChild()) {
+//					return true;
+//				}
+//			}
+//		}
 
 		if (entity instanceof EntityRabbit) {
 			return ((EntityRabbit) entity).getRabbitType() == 99;

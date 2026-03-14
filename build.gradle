@@ -22,7 +22,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	mappings ploceus.mcpMappings('stable', '1.10.2', '29')
+	mappings ploceus.mcpMappings('stable', '1.9.4', '26')
 
 	ploceus.dependOsl(project.osl_version)
 }

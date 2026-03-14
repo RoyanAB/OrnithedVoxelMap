@@ -180,15 +180,15 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 
 			if (par1GuiButton.id == -4) {
 				boolean mp = !this.mc.isIntegratedServerRunning();
-				int y = this.selectedWaypoint.getY() > 0 ? this.selectedWaypoint.getY() : (this.options.game.player.dimension != -1 ? 128 : 64);
+				int y = this.selectedWaypoint.getY() > 0 ? this.selectedWaypoint.getY() : (this.options.game.thePlayer.dimension != -1 ? 128 : 64);
 				this.options
 					.game
-					.player
+					.thePlayer
 					.sendChatMessage(
-						"/tp " + this.options.game.player.getName() + " " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ()
+						"/tp " + this.options.game.thePlayer.getName() + " " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ()
 					);
 				if (mp) {
-					this.options.game.player.sendChatMessage("/tppos " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ());
+					this.options.game.thePlayer.sendChatMessage("/tppos " + this.selectedWaypoint.getX() + " " + y + " " + this.selectedWaypoint.getZ());
 				}
 
 				this.getMinecraft().displayGuiScreen(null);
@@ -305,11 +305,11 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		}
 
 		TreeSet<Integer> dimensions = new TreeSet<>();
-		dimensions.add(this.options.game.player.dimension);
+		dimensions.add(this.options.game.thePlayer.dimension);
 		this.newWaypoint = new Waypoint(
 			"",
-			this.options.game.player.dimension != -1 ? GameVariableAccessShim.xCoord() : GameVariableAccessShim.xCoord() * 8,
-			this.options.game.player.dimension != -1 ? GameVariableAccessShim.zCoord() : GameVariableAccessShim.zCoord() * 8,
+			this.options.game.thePlayer.dimension != -1 ? GameVariableAccessShim.xCoord() : GameVariableAccessShim.xCoord() * 8,
+			this.options.game.thePlayer.dimension != -1 ? GameVariableAccessShim.zCoord() : GameVariableAccessShim.zCoord() * 8,
 			GameVariableAccessShim.yCoord(),
 			true,
 			r,
@@ -364,9 +364,9 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		boolean singlePlayer = this.options.game.isIntegratedServerRunning();
 		if (singlePlayer) {
 			try {
-				allowed = this.mc.getIntegratedServer().getPlayerList().canSendCommands(this.mc.player.getGameProfile());
+				allowed = this.mc.getIntegratedServer().getPlayerList().canSendCommands(this.mc.thePlayer.getGameProfile());
 			} catch (Exception e) {
-				allowed = this.mc.getIntegratedServer().worlds[0].getWorldInfo().areCommandsAllowed();
+				allowed = this.mc.getIntegratedServer().worldServers[0].getWorldInfo().areCommandsAllowed();
 			}
 		} else {
 			allowed = true;

@@ -31,7 +31,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 	public GuiButtonRowListPlayers(GuiSelectPlayer par1GuiSelectPlayer) {
 		super(Minecraft.getMinecraft(), par1GuiSelectPlayer.getWidth(), par1GuiSelectPlayer.getHeight(), 89, par1GuiSelectPlayer.getHeight() - 65 + 4, 25);
 		this.parentGui = par1GuiSelectPlayer;
-		NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().player.connection;
+		NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().thePlayer.connection;
 		this.players = new ArrayList<>(netHandlerPlayClient.getPlayerInfoMap());
 		this.sort();
 		GuiButton everyoneButton = new GuiButton(-1, this.parentGui.getWidth() / 2 - 75, 0, 150, 20, I18nUtils.getString("minimap.waypointshare.all"));
@@ -163,7 +163,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 		private void drawIconForButton(GuiButton button) {
 			NetworkPlayerInfo networkPlayerInfo = GuiButtonRowListPlayers.this.playersFiltered.get(button.id);
 			GameProfile gameProfile = networkPlayerInfo.getGameProfile();
-			EntityPlayer entityPlayer = GuiButtonRowListPlayers.this.mc.world.getPlayerEntityByUUID(gameProfile.getId());
+			EntityPlayer entityPlayer = GuiButtonRowListPlayers.this.mc.theWorld.getPlayerEntityByUUID(gameProfile.getId());
 			GuiButtonRowListPlayers.this.mc.getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
 			Gui.drawScaledCustomSizeModalRect(button.xPosition + 6, button.yPosition + 6, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
 			if (entityPlayer != null && entityPlayer.isWearing(EnumPlayerModelParts.HAT)) {

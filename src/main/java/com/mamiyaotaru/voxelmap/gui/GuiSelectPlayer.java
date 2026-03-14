@@ -80,10 +80,10 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 			if (par1) {
 				String combined = this.message.getText() + " " + this.locInfo;
 				if (combined.length() > 100) {
-					this.mc.player.sendChatMessage(this.message.getText());
-					this.mc.player.sendChatMessage(this.locInfo);
+					this.mc.thePlayer.sendChatMessage(this.message.getText());
+					this.mc.thePlayer.sendChatMessage(this.locInfo);
 				} else {
-					this.mc.player.sendChatMessage(combined);
+					this.mc.thePlayer.sendChatMessage(combined);
 				}
 
 				this.getMinecraft().displayGuiScreen(this.parentScreen);
@@ -96,10 +96,10 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 	protected void sendMessageToPlayer(String name) {
 		String combined = "/msg " + name + " " + this.message.getText() + " " + this.locInfo;
 		if (combined.length() > 100) {
-			this.mc.player.sendChatMessage("/msg " + name + " " + this.message.getText());
-			this.mc.player.sendChatMessage("/msg " + name + " " + this.locInfo);
+			this.mc.thePlayer.sendChatMessage("/msg " + name + " " + this.message.getText());
+			this.mc.thePlayer.sendChatMessage("/msg " + name + " " + this.locInfo);
 		} else {
-			this.mc.player.sendChatMessage(combined);
+			this.mc.thePlayer.sendChatMessage(combined);
 		}
 
 		this.getMinecraft().displayGuiScreen(this.parentScreen);

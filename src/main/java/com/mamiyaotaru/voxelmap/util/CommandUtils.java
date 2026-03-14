@@ -73,7 +73,7 @@ public class CommandUtils {
 			finalTextComponent.appendSibling(textComponent);
 		}
 
-		Minecraft.getMinecraft().player.sendMessage(finalTextComponent);
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(finalTextComponent);
 		return false;
 	}
 
@@ -157,7 +157,7 @@ public class CommandUtils {
 			}
 
 			if (dimensions.size() == 0) {
-				dimensions.add(Minecraft.getMinecraft().player.dimension);
+				dimensions.add(Minecraft.getMinecraft().thePlayer.dimension);
 			}
 
 			if (x != null && z != null) {
@@ -201,7 +201,7 @@ public class CommandUtils {
 	}
 
 	public static void sendWaypoint(Waypoint waypoint) {
-		int dimension = Minecraft.getMinecraft().player.dimension;
+		int dimension = Minecraft.getMinecraft().thePlayer.dimension;
 		int color = ((int) (waypoint.red * 255.0F) & 0xFF) << 16 | ((int) (waypoint.green * 255.0F) & 0xFF) << 8 | (int) (waypoint.blue * 255.0F) & 0xFF;
 		String hexColor = Integer.toHexString(color);
 
@@ -241,12 +241,12 @@ public class CommandUtils {
 		for (Waypoint wp : AbstractVoxelMap.getInstance().getWaypointManager().getWaypoints()) {
 			if (wp.name.equalsIgnoreCase(details) && wp.inDimension && wp.inWorld) {
 				boolean mp = !Minecraft.getMinecraft().isIntegratedServerRunning();
-				int y = wp.getY() > 0 ? wp.getY() : (Minecraft.getMinecraft().player.dimension != -1 ? 128 : 64);
+				int y = wp.getY() > 0 ? wp.getY() : (Minecraft.getMinecraft().thePlayer.dimension != -1 ? 128 : 64);
 				Minecraft.getMinecraft()
-					.player
-					.sendChatMessage("/tp " + Minecraft.getMinecraft().player.getName() + " " + wp.getX() + " " + y + " " + wp.getZ());
+					.thePlayer
+					.sendChatMessage("/tp " + Minecraft.getMinecraft().thePlayer.getName() + " " + wp.getX() + " " + y + " " + wp.getZ());
 				if (mp) {
-					Minecraft.getMinecraft().player.sendChatMessage("/tppos " + wp.getX() + " " + y + " " + wp.getZ());
+					Minecraft.getMinecraft().thePlayer.sendChatMessage("/tppos " + wp.getX() + " " + y + " " + wp.getZ());
 				}
 
 				return;

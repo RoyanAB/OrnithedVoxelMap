@@ -58,7 +58,7 @@ public class EntityRendererMixin {
 		target = "Lnet/minecraft/client/gui/GuiIngame;renderGameOverlay(F)V",
 		shift = At.Shift.AFTER))
 	private void onRenderGameOverlayPost(float tickDelta, long nanoTime, CallbackInfo ci) {
-		if (this.mc.world != null && this.mc.player != null) {
+		if (this.mc.theWorld != null && this.mc.thePlayer != null) {
 			VoxelMapMod.tickHandler.onRenderOverlay();
 		}
 	}

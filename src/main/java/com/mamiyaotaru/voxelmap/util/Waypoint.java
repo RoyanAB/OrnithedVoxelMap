@@ -48,19 +48,19 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	}
 
 	public int getX() {
-		return Minecraft.getMinecraft().player.dimension == -1 ? this.x / 8 : this.x;
+		return Minecraft.getMinecraft().thePlayer.dimension == -1 ? this.x / 8 : this.x;
 	}
 
 	public void setX(int x) {
-		this.x = Minecraft.getMinecraft().player.dimension == -1 ? x * 8 : x;
+		this.x = Minecraft.getMinecraft().thePlayer.dimension == -1 ? x * 8 : x;
 	}
 
 	public int getZ() {
-		return Minecraft.getMinecraft().player.dimension == -1 ? this.z / 8 : this.z;
+		return Minecraft.getMinecraft().thePlayer.dimension == -1 ? this.z / 8 : this.z;
 	}
 
 	public void setZ(int z) {
-		this.z = Minecraft.getMinecraft().player.dimension == -1 ? z * 8 : z;
+		this.z = Minecraft.getMinecraft().thePlayer.dimension == -1 ? z * 8 : z;
 	}
 
 	public int getY() {
@@ -72,8 +72,8 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	}
 
 	public int compareTo(Waypoint arg0) {
-		double myDistance = this.getDistanceSqToEntity(Minecraft.getMinecraft().player);
-		double comparedDistance = arg0.getDistanceSqToEntity(Minecraft.getMinecraft().player);
+		double myDistance = this.getDistanceSqToEntity(Minecraft.getMinecraft().thePlayer);
+		double comparedDistance = arg0.getDistanceSqToEntity(Minecraft.getMinecraft().thePlayer);
 		return Double.compare(myDistance, comparedDistance);
 	}
 

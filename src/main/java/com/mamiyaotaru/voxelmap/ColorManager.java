@@ -198,7 +198,7 @@ public class ColorManager implements IColorManager {
 	}
 
 	public void loadColors() {
-		this.game.player.getLocationSkin();
+		this.game.thePlayer.getLocationSkin();
 		BlockRepository.getBlocks();
 		this.loadColorPicker();
 		this.loadTexturePackTerrainImage();
@@ -440,8 +440,8 @@ public class ColorManager implements IColorManager {
 					gfx.drawImage(waterColor, 0, 0, null);
 					gfx.dispose();
 					Biome biome = Biomes.FOREST;
-					double var1 = MathHelper.clamp(biome.getTemperature(), 0.0F, 1.0F);
-					double var2 = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
+					double var1 = MathHelper.clamp_float(biome.getTemperature(), 0.0F, 1.0F);
+					double var2 = MathHelper.clamp_float(biome.getRainfall(), 0.0F, 1.0F);
 					var2 *= var1;
 					var1 = 1.0 - var1;
 					var2 = 1.0 - var2;
@@ -548,7 +548,7 @@ public class ColorManager implements IColorManager {
 
 			if (block == BlockRepository.redstone) {
 				this.blockColorsWithDefaultTint[BlockRepository.getStateId(blockState)] = this.colorMultiplier(
-					color, this.game.getBlockColors().colorMultiplier(blockState, this.game.world, blockPos, 1) | 0xFF000000
+					color, this.game.getBlockColors().colorMultiplier(blockState, this.game.theWorld, blockPos, 1) | 0xFF000000
 				);
 			}
 
@@ -582,7 +582,7 @@ public class ColorManager implements IColorManager {
 			BlockRendererDispatcher blockRendererDispatcher = this.game.getBlockRendererDispatcher();
 			if (blockRenderType == EnumBlockRenderType.MODEL) {
 				try {
-					blockState = blockState.getActualState(this.game.world, blockPos);
+					blockState = blockState.getActualState(this.game.theWorld, blockPos);
 				} catch (Exception var11) {
 				}
 
@@ -707,9 +707,9 @@ public class ColorManager implements IColorManager {
 			if (blockPos == this.dummyBlockPos) {
 				tint = this.tintFromFakePlacedBlock(blockState, tempBlockPos, (byte) 4);
 			} else {
-				Chunk chunk = this.game.world.getChunkFromBlockCoords(blockPos);
+				Chunk chunk = this.game.theWorld.getChunkFromBlockCoords(blockPos);
 				if (chunk.isLoaded()) {
-					tint = this.game.getBlockColors().colorMultiplier(blockState, this.game.world, blockPos, 1) | 0xFF000000;
+					tint = this.game.getBlockColors().colorMultiplier(blockState, this.game.theWorld, blockPos, 1) | 0xFF000000;
 				} else {
 					tint = this.tintFromFakePlacedBlock(blockState, tempBlockPos, (byte) 4);
 				}
@@ -727,7 +727,7 @@ public class ColorManager implements IColorManager {
 	}
 
 	private int tintFromFakePlacedBlock(IBlockState blockState, MutableBlockPos loopBlockPos, byte biomeID) {
-		World world = this.game.world;
+		World world = this.game.theWorld;
 		if (world == null) {
 			return -1;
 		}
@@ -740,8 +740,8 @@ public class ColorManager implements IColorManager {
 		int tint = -1;
 
 		try {
-			int fakeX = (int) this.game.player.posX - 32;
-			int fakeZ = (int) this.game.player.posZ - 32;
+			int fakeX = (int) this.game.thePlayer.posX - 32;
+			int fakeZ = (int) this.game.thePlayer.posZ - 32;
 			byte[] fakeBiome = new byte[256];
 			Arrays.fill(fakeBiome, biomeID);
 			Chunk chunk = world.getChunkFromBlockCoords(loopBlockPos.withXYZ(fakeX, 0, fakeZ));
@@ -762,7 +762,7 @@ public class ColorManager implements IColorManager {
 	}
 
 	private void createTintTable(IBlockState blockState, MutableBlockPos loopBlockPos) {
-		World world = this.game.world;
+		World world = this.game.theWorld;
 		if (world != null) {
 			Block block = blockState.getBlock();
 			if (block != null) {
@@ -775,8 +775,8 @@ public class ColorManager implements IColorManager {
 						Arrays.fill(row, -1);
 					}
 
-					int fakeX = (int) this.game.player.posX - 32;
-					int fakeZ = (int) this.game.player.posZ - 32;
+					int fakeX = (int) this.game.thePlayer.posX - 32;
+					int fakeZ = (int) this.game.thePlayer.posZ - 32;
 					Chunk chunk = world.getChunkFromBlockCoords(loopBlockPos.withXYZ(fakeX, 0, fakeZ));
 					byte[] originalBiomes = new byte[256];
 					System.arraycopy(chunk.getBiomeArray(), 0, originalBiomes, 0, 256);
@@ -1788,8 +1788,8 @@ public class ColorManager implements IColorManager {
 					if (grid) {
 						tintMult = tintColorsBuff.getRGB(t, Math.min(Math.max(0, s * heightMultiplier - yOffset), tintColorsBuff.getHeight() - 1)) & 16777215;
 					} else {
-						double var1x = MathHelper.clamp(biome.getTemperature(), 0.0F, 1.0F);
-						double var2x = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
+						double var1x = MathHelper.clamp_float(biome.getTemperature(), 0.0F, 1.0F);
+						double var2x = MathHelper.clamp_float(biome.getRainfall(), 0.0F, 1.0F);
 						var2x *= var1x;
 						var1x = 1.0 - var1x;
 						var2x = 1.0 - var2x;
