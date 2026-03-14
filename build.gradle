@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id "xyz.wagyourtail.unimined" version "1.4.2-SNAPSHOT"
+}
+
+base {
+    archivesName = project.archives_base_name
+}
+version = "${project.version}+mc${project.minecraft_version}"
+group = project.maven_group
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 8
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        name = "sponge"
+        url = "https://repo.spongepowered.org/maven"
+    }
+}
+
+unimined.minecraft {
+    version project.minecraft_version
+
+    mappings {
+        searge()
+        mcp("snapshot", "20190311-1.13.2")
+    }
+
+    ornitheFabric {
+        loader project.loader_version
+    }
+}
+
+dependencies {
+    modImplementation unimined.osl(project.minecraft_version, project.osl_version)
+}
+
+processResources {
+    inputs.property 'version', version
+
+    filesMatching('fabric.mod.json') {
+        expand 'version': version
+    }
+}
