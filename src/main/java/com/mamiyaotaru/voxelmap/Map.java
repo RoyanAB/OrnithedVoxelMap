@@ -216,7 +216,7 @@ public class Map implements Runnable, IMap {
 			GLUtils.setupFBO();
 		}
 
-		this.fontRenderer = this.game.fontRenderer;
+		this.fontRenderer = this.game.fontRendererObj;
 		this.zoom = this.options.zoom;
 		this.setZoomScale();
 		this.optifineInstalled = false;
@@ -592,7 +592,7 @@ public class Map implements Runnable, IMap {
 				this.needLightmapRefresh = true;
 			}
 
-			boolean aboveHorizon = this.game.player.getPositionEyes(0.0F).y + this.game.player.getEyeHeight() >= this.world.getHorizon();
+			boolean aboveHorizon = this.game.player.getPositionEyes(0.0F).yCoord + this.game.player.getEyeHeight() >= this.world.getHorizon();
 			if (aboveHorizon != this.lastAboveHorizon) {
 				this.needSkyColor = true;
 				this.lastAboveHorizon = aboveHorizon;
@@ -650,9 +650,9 @@ public class Map implements Runnable, IMap {
 				rSky = 0.0;
 			} else {
 				Vec3d skyColorVec = this.world.getSkyColor(this.game.getRenderViewEntity(), 0.0F);
-				rSky = skyColorVec.x;
-				gSky = skyColorVec.y;
-				bSky = skyColorVec.z;
+				rSky = skyColorVec.xCoord;
+				gSky = skyColorVec.yCoord;
+				bSky = skyColorVec.zCoord;
 				if (this.world.provider.isSkyColored()) {
 					rSky = rSky * 0.2F + 0.04F;
 					gSky = gSky * 0.2F + 0.04F;
@@ -1027,7 +1027,7 @@ public class Map implements Runnable, IMap {
 
 	@Override
 	public void processChunk(Chunk chunk) {
-		this.rectangleCalc(chunk.x * 16, chunk.z * 16, chunk.x * 16 + 15, chunk.z * 16 + 15);
+		this.rectangleCalc(chunk.xPosition * 16, chunk.zPosition * 16, chunk.xPosition * 16 + 15, chunk.zPosition * 16 + 15);
 	}
 
 	private void rectangleCalc(int left, int top, int right, int bottom) {

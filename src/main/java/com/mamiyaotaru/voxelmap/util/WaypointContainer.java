@@ -96,7 +96,7 @@ public class WaypointContainer {
 		double size = Math.sin(angle) * distance;
 		Vec3d cameraPosPlusDirection = cameraEntity.getLook(partialTicks);
 		Vec3d cameraPosPlusDirectionTimesDistance = cameraPos.add(
-			new Vec3d(cameraPosPlusDirection.x * distance, cameraPosPlusDirection.y * distance, cameraPosPlusDirection.z * distance)
+			new Vec3d(cameraPosPlusDirection.xCoord * distance, cameraPosPlusDirection.yCoord * distance, cameraPosPlusDirection.zCoord * distance)
 		);
 		AxisAlignedBB axisalignedbb = new AxisAlignedBB(
 			waypoint.getX() + 0.5F - size,
@@ -107,7 +107,7 @@ public class WaypointContainer {
 			waypoint.getZ() + 0.5F + size
 		);
 		RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(cameraPos, cameraPosPlusDirectionTimesDistance);
-		if (axisalignedbb.contains(cameraPos)) {
+		if (axisalignedbb.isVecInside(cameraPos)) {
 			return distance >= 1.0;
 		} else return raytraceresult != null;
 	}

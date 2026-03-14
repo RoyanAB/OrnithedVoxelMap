@@ -88,13 +88,15 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 		this.dimensionNamePathPart = TextUtils.scrubNameFile(dimensionName + " (dimension " + dimensionID + ")");
 		boolean knownUnderground = false;
 		knownUnderground = knownUnderground || dimensionName.equalsIgnoreCase("erebus");
-		this.underground = !world.provider.isSurfaceWorld() && !world.provider.hasSkyLight() && dimensionID != 1 || knownUnderground;
+		this.underground = !world.provider.isSurfaceWorld() &&
+//			!world.provider.hasSkyLight() &&
+			dimensionID != 1 || knownUnderground;
 		this.remoteWorld = !Minecraft.getMinecraft().isIntegratedServerRunning();
 		persistentMap.getSettingsAndLightingChangeNotifier().addObserver(this);
 		this.x = x;
 		this.z = z;
 		if (!this.remoteWorld) {
-			WorldServer worldServer = Minecraft.getMinecraft().getIntegratedServer().getWorld(dimensionID);
+			WorldServer worldServer = Minecraft.getMinecraft().getIntegratedServer().worldServerForDimension(dimensionID);
 			this.chunkLoader = worldServer.getSaveHandler().getChunkLoader(worldServer.provider);
 		}
 
@@ -600,8 +602,8 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 					CachedRegion.this.load();
 				}
 
-				int chunkX = this.chunk.x - CachedRegion.this.x * 16;
-				int chunkZ = this.chunk.z - CachedRegion.this.z * 16;
+				int chunkX = this.chunk.xPosition - CachedRegion.this.x * 16;
+				int chunkZ = this.chunk.zPosition - CachedRegion.this.z * 16;
 				CachedRegion.this.loadChunkData(this.chunk, chunkX, chunkZ);
 				CachedRegion.this.empty = false;
 				CachedRegion.this.liveChunksUpdated = true;

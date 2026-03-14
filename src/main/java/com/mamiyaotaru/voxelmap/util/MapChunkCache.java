@@ -35,21 +35,21 @@ public class MapChunkCache {
 
 			int middleX = this.width / 2;
 			int middleZ = this.height / 2;
-			int movedX = currentChunk.x - this.lastCenterChunk.x;
-			int movedZ = currentChunk.z - this.lastCenterChunk.z;
+			int movedX = currentChunk.xPosition - this.lastCenterChunk.xPosition;
+			int movedZ = currentChunk.zPosition - this.lastCenterChunk.zPosition;
 			if (Math.abs(movedX) < this.width && Math.abs(movedZ) < this.height && currentChunk.getWorld().equals(this.lastCenterChunk.getWorld())) {
 				this.moveX(movedX);
 				this.moveZ(movedZ);
 
 				for (int z = movedZ > 0 ? this.height - movedZ : 0; z < (movedZ > 0 ? this.height : -movedZ); z++) {
 					for (int x = 0; x < this.width; x++) {
-						this.mapChunks[x + z * this.width] = new MapChunk(currentChunk.x - (middleX - x), currentChunk.z - (middleZ - z));
+						this.mapChunks[x + z * this.width] = new MapChunk(currentChunk.xPosition - (middleX - x), currentChunk.zPosition - (middleZ - z));
 					}
 				}
 
 				for (int z = 0; z < this.height; z++) {
 					for (int x = movedX > 0 ? this.width - movedX : 0; x < (movedX > 0 ? this.width : -movedX); x++) {
-						this.mapChunks[x + z * this.width] = new MapChunk(currentChunk.x - (middleX - x), currentChunk.z - (middleZ - z));
+						this.mapChunks[x + z * this.width] = new MapChunk(currentChunk.xPosition - (middleX - x), currentChunk.zPosition - (middleZ - z));
 					}
 				}
 			} else {
@@ -71,7 +71,7 @@ public class MapChunkCache {
 
 		for (int z = 0; z < this.height; z++) {
 			for (int x = 0; x < this.width; x++) {
-				this.mapChunks[x + z * this.width] = new MapChunk(currentChunk.x - (middleX - x), currentChunk.z - (middleZ - z));
+				this.mapChunks[x + z * this.width] = new MapChunk(currentChunk.xPosition - (middleX - x), currentChunk.zPosition - (middleZ - z));
 			}
 		}
 

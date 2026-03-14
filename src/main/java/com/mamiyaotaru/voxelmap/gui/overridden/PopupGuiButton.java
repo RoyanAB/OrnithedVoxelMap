@@ -20,22 +20,22 @@ public class PopupGuiButton extends GuiButton {
 
 	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (this.visible) {
-			FontRenderer fontrenderer = mc.fontRenderer;
+			FontRenderer fontrenderer = mc.fontRendererObj;
 			mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
 			GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			this.hovered = !this.parentScreen.overPopup(mouseX, mouseY)
-				&& mouseX >= this.x
-				&& mouseY >= this.y
-				&& mouseX < this.x + this.width
-				&& mouseY < this.y + this.height;
+				&& mouseX >= this.xPosition
+				&& mouseY >= this.yPosition
+				&& mouseX < this.xPosition + this.width
+				&& mouseY < this.yPosition + this.height;
 			int i = this.getHoverState(this.hovered);
 			GLShim.glEnable(3042);
 			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 			GLShim.glBlendFunc(770, 771);
-			this.drawTexturedModalRect(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
+			this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
 			this.drawTexturedModalRect(
-				this.x + this.width / 2,
-				this.y,
+				this.xPosition + this.width / 2,
+				this.yPosition,
 				200 - this.width / 2,
 				46 + i * 20,
 				this.width / 2,
@@ -50,7 +50,7 @@ public class PopupGuiButton extends GuiButton {
 			}
 
 			this.drawCenteredString(
-				fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, j
+				fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, j
 			);
 		}
 	}

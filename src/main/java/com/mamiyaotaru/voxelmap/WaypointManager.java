@@ -95,9 +95,9 @@ public class WaypointManager implements IWaypointManager {
 					packs.add(pack);
 				}
 
-				if (mc.getResourcePackRepository().getServerResourcePack() != null) {
-					packs.add(mc.getResourcePackRepository().getServerResourcePack());
-				}
+//				if (mc.getResourcePackRepository().getServerResourcePack() != null) {
+//					packs.add(mc.getResourcePackRepository().getServerResourcePack());
+//				}
 
 				for (IResourcePack pack : packs) {
 					if (pack instanceof FileResourcePack) {

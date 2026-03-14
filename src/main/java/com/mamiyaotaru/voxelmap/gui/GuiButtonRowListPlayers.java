@@ -147,7 +147,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			GuiButton button, int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected
 		) {
 			if (button != null) {
-				button.y = y;
+				button.yPosition = y;
 				button.drawButton(this.client, mouseX, mouseY);
 				if (button.id != -1) {
 					this.drawIconForButton(button);
@@ -165,9 +165,9 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			GameProfile gameProfile = networkPlayerInfo.getGameProfile();
 			EntityPlayer entityPlayer = GuiButtonRowListPlayers.this.mc.world.getPlayerEntityByUUID(gameProfile.getId());
 			GuiButtonRowListPlayers.this.mc.getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
-			Gui.drawScaledCustomSizeModalRect(button.x + 6, button.y + 6, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
+			Gui.drawScaledCustomSizeModalRect(button.xPosition + 6, button.yPosition + 6, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
 			if (entityPlayer != null && entityPlayer.isWearing(EnumPlayerModelParts.HAT)) {
-				Gui.drawScaledCustomSizeModalRect(button.x + 6, button.y + 6, 40.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
+				Gui.drawScaledCustomSizeModalRect(button.xPosition + 6, button.yPosition + 6, 40.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
 			}
 		}
 

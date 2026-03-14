@@ -28,7 +28,7 @@ public class Popup {
 
 	public Popup(int x, int y, int directX, int directY, ArrayList<Popup.PopupEntry> entries, PopupGuiScreen parentGui) {
 		this.mc = Minecraft.getMinecraft();
-		this.fontRendererObj = this.mc.fontRenderer;
+		this.fontRendererObj = this.mc.fontRendererObj;
 		this.parentGui = parentGui;
 		this.clickedX = x;
 		this.clickedY = y;

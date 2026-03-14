@@ -1539,8 +1539,6 @@ public class Radar implements IRadar {
 						};
 					} else if (model instanceof ModelHorse) {
 						headBits = new ModelRenderer[]{(ModelRenderer) ReflectionUtils.getPrivateFieldValueByType(model, ModelHorse.class, ModelRenderer.class)};
-					} else if (model instanceof ModelIllager) {
-						headBits = new ModelRenderer[]{((ModelIllager) model).head};
 					} else if (model instanceof ModelIronGolem) {
 						headBits = new ModelRenderer[]{((ModelIronGolem) model).ironGolemHead};
 					} else if (model instanceof ModelOcelot) {
@@ -2254,22 +2252,21 @@ public class Radar implements IRadar {
 			return EnumMobs.ENDERMAN;
 		} else if (entityClass.equals(EntityEndermite.class)) {
 			return EnumMobs.ENDERMITE;
-		} else if (entityClass.equals(EntityEvoker.class)) {
-			return EnumMobs.EVOKER;
+//		} else if (entityClass.equals(EntityEvoker.class)) {
+//			return EnumMobs.EVOKER;
 		} else if (entityClass.equals(EntityGhast.class)) {
 			return EnumMobs.GHAST;
 		} else if (entityClass.equals(EntityGuardian.class)) {
 			return EnumMobs.GUARDIAN;
-		} else if (entityClass.equals(EntityElderGuardian.class)) {
-			return EnumMobs.GUARDIANELDER;
+//		} else if (entityClass.equals(EntityElderGuardian.class)) {
+//			return EnumMobs.GUARDIANELDER;
 		} else if (entityClass.equals(EntityHorse.class)
-			|| entityClass.equals(EntityDonkey.class)
-			|| entityClass.equals(EntityMule.class)
-			|| entityClass.equals(EntitySkeletonHorse.class)
-			|| entityClass.equals(EntityZombieHorse.class)) {
+//			|| entityClass.equals(EntityDonkey.class)
+//			|| entityClass.equals(EntityMule.class)
+//			|| entityClass.equals(EntitySkeletonHorse.class)
+//			|| entityClass.equals(EntityZombieHorse.class)
+		) {
 			return EnumMobs.HORSE;
-		} else if (entityClass.equals(EntityLlama.class)) {
-			return EnumMobs.LLAMA;
 		} else if (entityClass.equals(EntityIronGolem.class)) {
 			return EnumMobs.IRONGOLEM;
 		} else if (entityClass.equals(EntityMagmaCube.class)) {
@@ -2294,7 +2291,10 @@ public class Radar implements IRadar {
 			return EnumMobs.SHULKER;
 		} else if (entityClass.equals(EntitySilverfish.class)) {
 			return EnumMobs.SILVERFISH;
-		} else if (entityClass.equals(EntitySkeleton.class) || entityClass.equals(EntityWitherSkeleton.class) || entityClass.equals(EntityStray.class)) {
+		} else if (entityClass.equals(EntitySkeleton.class)
+//			|| entityClass.equals(EntityWitherSkeleton.class)
+//			|| entityClass.equals(EntityStray.class)
+		) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
 			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getResourcePath();
 			return path.endsWith("wither_skeleton.png") ? EnumMobs.SKELETONWITHER : EnumMobs.SKELETON;
@@ -2306,12 +2306,12 @@ public class Radar implements IRadar {
 			return EnumMobs.SPIDER;
 		} else if (entityClass.equals(EntitySquid.class)) {
 			return EnumMobs.SQUID;
-		} else if (entityClass.equals(EntityVex.class)) {
-			return EnumMobs.VEX;
+//		} else if (entityClass.equals(EntityVex.class)) {
+//			return EnumMobs.VEX;
 		} else if (entityClass.equals(EntityVillager.class)) {
 			return EnumMobs.VILLAGER;
-		} else if (entityClass.equals(EntityVindicator.class)) {
-			return EnumMobs.VINDICATOR;
+//		} else if (entityClass.equals(EntityVindicator.class)) {
+//			return EnumMobs.VINDICATOR;
 		} else if (entityClass.equals(EntityWitch.class)) {
 			return EnumMobs.WITCH;
 		} else if (entityClass.equals(EntityWither.class)) {
@@ -2320,10 +2320,15 @@ public class Radar implements IRadar {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
 			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getResourcePath();
 			return path.endsWith("wolf_tame.png") ? EnumMobs.WOLFTAME : (path.endsWith("wolf_angry.png") ? EnumMobs.WOLFANGRY : EnumMobs.WOLF);
-		} else if (entityClass.equals(EntityZombie.class) || entityClass.equals(EntityHusk.class)) {
+		} else if (entityClass.equals(EntityZombie.class)
+//			|| entityClass.equals(EntityHusk.class)
+		) {
 			return EnumMobs.ZOMBIE;
 		} else {
-			return entityClass.equals(EntityZombieVillager.class) ? EnumMobs.ZOMBIEVILLAGER : EnumMobs.UNKNOWN;
+			return
+//				entityClass.equals(EntityZombieVillager.class) ?
+//					EnumMobs.ZOMBIEVILLAGER :
+					EnumMobs.UNKNOWN;
 		}
 	}
 
@@ -2348,17 +2353,17 @@ public class Radar implements IRadar {
 			return EnumMobs.ENDERMAN;
 		} else if (entity instanceof EntityEndermite) {
 			return EnumMobs.ENDERMITE;
-		} else if (entity instanceof EntityEvoker) {
-			return EnumMobs.EVOKER;
+//		} else if (entity instanceof EntityEvoker) {
+//			return EnumMobs.EVOKER;
 		} else if (entity instanceof EntityGhast) {
 			return EnumMobs.GHAST;
-		} else if (entity instanceof EntityElderGuardian) {
-			return EnumMobs.GUARDIANELDER;
+//		} else if (entity instanceof EntityElderGuardian) {
+//			return EnumMobs.GUARDIANELDER;
 		} else if (entity instanceof EntityGuardian) {
 			return EnumMobs.GUARDIAN;
-		} else if (entity instanceof EntityLlama) {
-			return EnumMobs.LLAMA;
-		} else if (entity instanceof AbstractHorse) {
+//		} else if (entity instanceof EntityLlama) {
+//			return EnumMobs.LLAMA;
+		} else if (entity instanceof EntityHorse) {
 			return EnumMobs.HORSE;
 		} else if (entity instanceof EntityIronGolem) {
 			return EnumMobs.IRONGOLEM;
@@ -2384,7 +2389,7 @@ public class Radar implements IRadar {
 			return EnumMobs.SHULKER;
 		} else if (entity instanceof EntitySilverfish) {
 			return EnumMobs.SILVERFISH;
-		} else if (entity instanceof AbstractSkeleton) {
+		} else if (entity instanceof EntitySkeleton) {
 			return EnumMobs.SKELETON;
 		} else if (entity instanceof EntitySlime) {
 			return EnumMobs.SLIME;
@@ -2394,12 +2399,12 @@ public class Radar implements IRadar {
 			return EnumMobs.SPIDER;
 		} else if (entity instanceof EntitySquid) {
 			return EnumMobs.SQUID;
-		} else if (entity instanceof EntityVex) {
-			return EnumMobs.VEX;
+//		} else if (entity instanceof EntityVex) {
+//			return EnumMobs.VEX;
 		} else if (entity instanceof EntityVillager) {
 			return EnumMobs.VILLAGER;
-		} else if (entity instanceof EntityVindicator) {
-			return EnumMobs.VINDICATOR;
+//		} else if (entity instanceof EntityVindicator) {
+//			return EnumMobs.VINDICATOR;
 		} else if (entity instanceof EntityWitch) {
 			return EnumMobs.WITCH;
 		} else if (entity instanceof EntityWither) {
@@ -2408,8 +2413,8 @@ public class Radar implements IRadar {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
 			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getResourcePath();
 			return path.endsWith("wolf_tame.png") ? EnumMobs.WOLFTAME : (path.endsWith("wolf_angry.png") ? EnumMobs.WOLFANGRY : EnumMobs.WOLF);
-		} else if (entity instanceof EntityZombieVillager) {
-			return EnumMobs.ZOMBIEVILLAGER;
+//		} else if (entity instanceof EntityZombieVillager) {
+//			return EnumMobs.ZOMBIEVILLAGER;
 		} else {
 			return entity instanceof EntityZombie ? EnumMobs.ZOMBIE : EnumMobs.UNKNOWN;
 		}

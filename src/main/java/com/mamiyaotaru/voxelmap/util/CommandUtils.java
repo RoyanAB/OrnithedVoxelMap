@@ -16,6 +16,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.lwjgl.input.Keyboard;
@@ -254,7 +255,7 @@ public class CommandUtils {
 	}
 
 	public static int getSafeHeight(int x, int y, int z, World worldObj) {
-		boolean inNetherDimension = worldObj.provider.isNether();
+		boolean inNetherDimension = (worldObj.provider.getDimensionType() == DimensionType.NETHER);
 		BlockPos blockPos = new BlockPos(x, y, z);
 		Chunk chunk = worldObj.getChunkFromBlockCoords(blockPos);
 		worldObj.getChunkProvider().provideChunk(blockPos.getX() >> 4, blockPos.getZ() >> 4);

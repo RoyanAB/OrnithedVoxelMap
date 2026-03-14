@@ -39,6 +39,6 @@ public class GuiScreenMinimap extends GuiScreen {
 	}
 
 	public FontRenderer getFontRenderer() {
-		return this.fontRenderer;
+		return this.fontRendererObj;
 	}
 }

@@ -52,7 +52,9 @@ public class ComparisonCachedRegion {
 		int dimensionID = DimensionManager.getDimensionIDfromProvider(world.provider);
 		this.dimensionNamePathPart = TextUtils.scrubNameFile(dimensionName + " (dimension " + dimensionID + ")");
 		boolean knownUnderground = false;
-		this.underground = !world.provider.isSurfaceWorld() && !world.provider.hasSkyLight() && dimensionID != 1 || knownUnderground;
+		this.underground = !world.provider.isSurfaceWorld() &&
+//			!world.provider.hasSkyLight() &&
+			dimensionID != 1 || knownUnderground;
 		this.x = x;
 		this.z = z;
 	}
