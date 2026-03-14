@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "voxelmap",
+  "version": "${version}",
+  "name": "Voxelmap",
+  "description": "Minimap and world map",
+  "authors": [
+    "MamiyaOtaru"
+  ],
+  "contributors": [
+    "Zan, Lahwran"
+  ],
+  "license": "CC0-1.0",
+  "icon": "assets/voxelmap/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "init": [
+      "com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod"
+    ]
+  },
+  "mixins": [
+    "voxelmap.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "minecraft": "1.12.2",
+    "osl-entrypoints": ">=0.4.0"
+  }
+}
