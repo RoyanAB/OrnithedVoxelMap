@@ -1209,11 +1209,7 @@ public class Radar implements IRadar {
 		}
 
 		this.newMobs = false;
-		this.contacts.sort(new Comparator<Contact>() {
-			public int compare(Contact contact1, Contact contact2) {
-				return contact1.y - contact2.y;
-			}
-		});
+		this.contacts.sort((contact1, contact2) -> contact1.y - contact2.y);
 	}
 
 	private void tryCustomIcon(Contact contact) {
@@ -1392,7 +1388,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException ex) {
+					} catch (IOException ignored) {
 					}
 				}
 

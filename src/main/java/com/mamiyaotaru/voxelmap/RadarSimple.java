@@ -163,11 +163,7 @@ public class RadarSimple implements IRadar {
 			}
 		}
 
-		this.contacts.sort(new Comparator<Contact>() {
-			public int compare(Contact contact1, Contact contact2) {
-				return contact1.y - contact2.y;
-			}
-		});
+		this.contacts.sort(Comparator.comparingInt(contact -> contact.y));
 	}
 
 	private EnumMobs getUnknownMobNeutrality(Entity entity) {
