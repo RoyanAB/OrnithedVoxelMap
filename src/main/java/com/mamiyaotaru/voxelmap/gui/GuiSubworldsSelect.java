@@ -10,11 +10,9 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.util.RecipeBookClient;
 import net.minecraft.util.MovementInputFromOptions;
 
-import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Objects;
 
 public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCallback {
 	EntityPlayerSP thePlayer;
@@ -39,7 +37,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 		this.parent = parent;
 		this.thePlayer = this.getMinecraft().player;
 		this.camera = new EntityPlayerSP(
-			this.getMinecraft(), this.getMinecraft().world, this.getMinecraft().getConnection(), this.thePlayer.getStatFileWriter(), new RecipeBookClient()
+			this.getMinecraft(), this.getMinecraft().world, Objects.requireNonNull(this.getMinecraft().getConnection()), this.thePlayer.getStatFileWriter(), new RecipeBookClient()
 		);
 		this.camera.movementInput = new MovementInputFromOptions(this.getMinecraft().gameSettings);
 		this.camera
@@ -87,11 +85,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 		this.cancelBtn = new GuiButton(0, centerX - 100, this.height - 30, I18nUtils.getString("gui.cancel"));
 		this.buttonList.add(this.cancelBtn);
 		final Collator collator = I18nUtils.getLocaleAwareCollator();
-		Collections.sort(knownSubworldNames, new Comparator<String>() {
-			public int compare(String name1, String name2) {
-				return -collator.compare(name1, name2);
-			}
-		});
+		knownSubworldNames.sort((name1, name2) -> -collator.compare(name1, name2));
 		int numKnownSubworlds = knownSubworldNames.size();
 		int completeRows = (int) Math.floor((float) (numKnownSubworlds + 1) / buttonsPerRow);
 		int lastRowShiftBy = (int) (Math.ceil((float) (numKnownSubworlds + 1) / buttonsPerRow) * buttonsPerRow - (numKnownSubworlds + 1));
@@ -231,11 +225,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 
 	private void worldSelected(String selectedSubworldName) {
 		this.waypointManager.setSubworldName(selectedSubworldName, false);
-		if (this.parent == null) {
-			this.getMinecraft().displayGuiScreen(null);
-		} else {
-			this.getMinecraft().displayGuiScreen(this.parent);
-		}
+		this.getMinecraft().displayGuiScreen(this.parent);
 	}
 
 	private void editWorld(String subworldNameToEdit) {

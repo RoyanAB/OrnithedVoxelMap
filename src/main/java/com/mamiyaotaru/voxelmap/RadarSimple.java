@@ -20,14 +20,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 public class RadarSimple implements IRadar {
-	public MapSettingsManager minimapOptions = null;
-	public RadarSettingsManager options = null;
+	public MapSettingsManager minimapOptions;
+	public RadarSettingsManager options;
 	UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 	private Minecraft game;
-	private LayoutVariables layoutVariables = null;
+	private LayoutVariables layoutVariables;
 	private final TextureAtlas textureAtlas;
 	private final boolean enabled = true;
 	private boolean completedLoading = false;
@@ -112,9 +115,9 @@ public class RadarSimple implements IRadar {
 		this.contacts.clear();
 		List<Entity> entities = this.game.world.getLoadedEntityList();
 
-		for (int j = 0; j < entities.size(); j++) {
+		for (Entity value : entities) {
 			try {
-				Entity entity = entities.get(j);
+				Entity entity = value;
 				if (entity != null
 					&& !entity.isInvisibleToPlayer(this.game.player)
 					&& (
@@ -160,7 +163,7 @@ public class RadarSimple implements IRadar {
 			}
 		}
 
-		Collections.sort(this.contacts, new Comparator<Contact>() {
+		this.contacts.sort(new Comparator<Contact>() {
 			public int compare(Contact contact1, Contact contact2) {
 				return contact1.y - contact2.y;
 			}
@@ -243,7 +246,7 @@ public class RadarSimple implements IRadar {
 				contact.angle -= 90.0F;
 			}
 
-			boolean inRange = false;
+			boolean inRange;
 			if (this.minimapOptions.squareMap) {
 				double radLocate = Math.toRadians(contact.angle);
 				double dispX = contact.distance * Math.cos(radLocate);

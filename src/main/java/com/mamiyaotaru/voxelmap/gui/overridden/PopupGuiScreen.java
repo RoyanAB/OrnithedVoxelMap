@@ -1,6 +1,5 @@
 package com.mamiyaotaru.voxelmap.gui.overridden;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupGuiScreen {
@@ -55,7 +54,7 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
 
 	@Override
 	public boolean popupOpen() {
-		return this.popups.size() > 0;
+		return !this.popups.isEmpty();
 	}
 
 	public void drawScreen(int x, int y, float dunno) {

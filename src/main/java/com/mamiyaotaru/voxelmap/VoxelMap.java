@@ -15,18 +15,18 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReloadListener {
-	private MapSettingsManager mapOptions = null;
-	private RadarSettingsManager radarOptions = null;
-	private PersistentMapSettingsManager persistentMapOptions = null;
-	private IMap map = null;
-	private IRadar radar = null;
-	private IRadar radarSimple = null;
-	private PersistentMap persistentMap = null;
-	private ISettingsAndLightingChangeNotifier settingsAndLightingChangeNotifier = null;
-	private WorldUpdateListener worldUpdateListener = null;
-	private IColorManager colorManager = null;
-	private IWaypointManager waypointManager = null;
-	private IDimensionManager dimensionManager = null;
+	private MapSettingsManager mapOptions;
+	private RadarSettingsManager radarOptions;
+	private PersistentMapSettingsManager persistentMapOptions;
+	private IMap map;
+	private IRadar radar;
+	private IRadar radarSimple;
+	private PersistentMap persistentMap;
+	private ISettingsAndLightingChangeNotifier settingsAndLightingChangeNotifier;
+	private WorldUpdateListener worldUpdateListener;
+	private IColorManager colorManager;
+	private IWaypointManager waypointManager;
+	private IDimensionManager dimensionManager;
 	private World world;
 
 	public VoxelMap() {
@@ -201,7 +201,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 			UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 			UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
 			override = playerUUID.equals(devUUID);
-		} catch (Exception var8) {
+		} catch (Exception ignored) {
 		}
 
 		this.radarOptions.radarAllowed = hasFullRadarPermission || override;

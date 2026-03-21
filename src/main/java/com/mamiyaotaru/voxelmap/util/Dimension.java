@@ -1,8 +1,8 @@
 package com.mamiyaotaru.voxelmap.util;
 
 public class Dimension {
-	public String name = "notLoaded";
-	public int ID = -10;
+	public String name;
+	public int ID;
 
 	public Dimension(String name, int ID) {
 		this.name = name;

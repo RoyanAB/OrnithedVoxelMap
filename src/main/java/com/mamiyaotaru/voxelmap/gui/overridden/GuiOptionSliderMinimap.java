@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
 public class GuiOptionSliderMinimap extends GuiButton {
-	public float sliderValue = 1.0F;
+	public float sliderValue;
 	public boolean dragging = false;
 	private final ISettingsManager options;
 	private EnumOptionsMinimap enumOptions = null;

@@ -9,20 +9,17 @@ import net.minecraft.world.WorldProvider;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class DimensionManager implements IDimensionManager {
-	private static Method providersGetDimensionMethod = null;
+	private static Method providersGetDimensionMethod;
 
 	static {
 		try {
 			Class<?> worldProviderClass = Class.forName("net.minecraft.world.WorldProvider");
 			Class<?>[] argClasses = new Class[0];
 			providersGetDimensionMethod = worldProviderClass.getMethod("getDimension", argClasses);
-		} catch (ClassNotFoundException e) {
-			providersGetDimensionMethod = null;
-		} catch (NoSuchMethodException ex) {
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
 			providersGetDimensionMethod = null;
 		}
 	}
@@ -36,15 +33,11 @@ public class DimensionManager implements IDimensionManager {
 	}
 
 	public static int getDimensionIDfromProvider(WorldProvider provider) {
-		int id = 0;
+		int id;
 		if (providersGetDimensionMethod != null) {
 			try {
 				id = (Integer) providersGetDimensionMethod.invoke(provider);
-			} catch (IllegalAccessException e) {
-				id = provider.getDimensionType().getId();
-			} catch (IllegalArgumentException ex) {
-				id = provider.getDimensionType().getId();
-			} catch (InvocationTargetException exx) {
+			} catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
 				id = provider.getDimensionType().getId();
 			}
 		} else {
@@ -64,13 +57,12 @@ public class DimensionManager implements IDimensionManager {
 		this.dimensions.clear();
 
 		for (int t = -1; t <= 1; t++) {
-			String name = "notLoaded";
+			String name;
 			WorldProvider provider = null;
 
 			try {
 				provider = DimensionType.getById(t).createDimension();
-			} catch (Exception e) {
-				provider = null;
+			} catch (Exception ignored) {
 			}
 
 			if (provider != null) {
@@ -88,13 +80,12 @@ public class DimensionManager implements IDimensionManager {
 		for (Waypoint pt : this.master.getWaypointManager().getWaypoints()) {
 			for (Integer t : pt.dimensions) {
 				if (this.getDimensionByID(t) == null) {
-					String name = "notLoaded";
+					String name;
 					WorldProvider provider = null;
 
 					try {
 						provider = DimensionType.getById(t).createDimension();
-					} catch (Exception e) {
-						provider = null;
+					} catch (Exception ignored) {
 					}
 
 					if (provider != null) {
@@ -111,11 +102,7 @@ public class DimensionManager implements IDimensionManager {
 			}
 		}
 
-		Collections.sort(this.dimensions, new Comparator<Dimension>() {
-			public int compare(Dimension dim1, Dimension dim2) {
-				return dim1.ID - dim2.ID;
-			}
-		});
+		this.dimensions.sort(Comparator.comparingInt(dim -> dim.ID));
 	}
 
 	@Override
@@ -124,11 +111,7 @@ public class DimensionManager implements IDimensionManager {
 		if (dim == null) {
 			dim = new Dimension("notLoaded", ID);
 			this.dimensions.add(dim);
-			Collections.sort(this.dimensions, new Comparator<Dimension>() {
-				public int compare(Dimension dim1, Dimension dim2) {
-					return dim1.ID - dim2.ID;
-				}
-			});
+			this.dimensions.sort(Comparator.comparingInt(dim2 -> dim2.ID));
 		}
 
 		if (dim.name.equals("notLoaded") || dim.name.equals("failedToLoad")) {

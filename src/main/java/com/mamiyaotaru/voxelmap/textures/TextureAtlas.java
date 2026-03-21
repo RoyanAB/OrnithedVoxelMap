@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,7 +28,6 @@ public class TextureAtlas extends AbstractTexture {
 	private final Map<String, Sprite> mapUploadedSprites;
 	private final String basePath;
 	private final IIconCreator iconCreator;
-	private final int mipmapLevels = 0;
 	private final Sprite missingImage;
 	private final Sprite failedImage;
 	private Stitcher stitcher;
@@ -57,7 +55,7 @@ public class TextureAtlas extends AbstractTexture {
 		this.failedImage.setTextureData(missingTextureData);
 	}
 
-	public void loadTexture(IResourceManager resourceManager) throws IOException {
+	public void loadTexture(IResourceManager resourceManager) {
 		if (this.iconCreator != null) {
 			this.loadTextureAtlas(this.iconCreator);
 		}
@@ -83,11 +81,7 @@ public class TextureAtlas extends AbstractTexture {
 			this.stitcher.addSprite(icon);
 		}
 
-		try {
-			this.stitcher.doStitch();
-		} catch (StitcherException e) {
-			throw e;
-		}
+		this.stitcher.doStitch();
 
 		logger.info("Created: {}x{} {}-atlas", new Object[]{this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight(), this.basePath});
 		TextureUtil.allocateTextureImpl(this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
@@ -135,11 +129,7 @@ public class TextureAtlas extends AbstractTexture {
 		int oldWidth = this.stitcher.getCurrentImageWidth();
 		int oldHeight = this.stitcher.getCurrentImageHeight();
 
-		try {
-			this.stitcher.doStitchNew();
-		} catch (StitcherException var20) {
-			throw var20;
-		}
+		this.stitcher.doStitchNew();
 
 		if (oldWidth == this.stitcher.getCurrentImageWidth() && oldHeight == this.stitcher.getCurrentImageHeight()) {
 			GLShim.glBindTexture(3553, this.glTextureId);
@@ -186,10 +176,9 @@ public class TextureAtlas extends AbstractTexture {
 	}
 
 	public Sprite getIconAt(float x, float y) {
-		Iterator<Entry<String, Sprite>> uploadedSpritesEntriesIterator = this.mapUploadedSprites.entrySet().iterator();
 
-		while (uploadedSpritesEntriesIterator.hasNext()) {
-			Sprite icon = uploadedSpritesEntriesIterator.next().getValue();
+		for (Entry<String, Sprite> stringSpriteEntry : this.mapUploadedSprites.entrySet()) {
+			Sprite icon = stringSpriteEntry.getValue();
 			if (x >= icon.originX && x < icon.originX + icon.width && y >= icon.originY && y < icon.originY + icon.height) {
 				return icon;
 			}
@@ -247,7 +236,7 @@ public class TextureAtlas extends AbstractTexture {
 	}
 
 	public Sprite registerIconForBufferedImage(String name, BufferedImage bufferedImage) {
-		if (name != null && !name.equals("")) {
+		if (name != null && !name.isEmpty()) {
 			Sprite icon = this.mapRegisteredSprites.get(name);
 			if (icon == null) {
 				icon = Sprite.spriteFromString(name);
@@ -263,7 +252,7 @@ public class TextureAtlas extends AbstractTexture {
 	}
 
 	public void registerOrOverwriteSprite(String name, BufferedImage bufferedImage) {
-		if (name != null && !name.equals("")) {
+		if (name != null && !name.isEmpty()) {
 			Sprite icon = this.mapRegisteredSprites.get(name);
 			if (icon != null) {
 				icon.bufferedImageToIntData(bufferedImage);

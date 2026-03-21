@@ -44,7 +44,7 @@ public class ComparisonCachedRegion {
 		this.worldName = worldName;
 		this.subworldName = subworldName;
 		this.worldNamePathPart = TextUtils.scrubNameFile(worldName);
-		if (subworldName != "") {
+		if (!subworldName.isEmpty()) {
 			this.subworldNamePathPart = TextUtils.scrubNameFile(subworldName) + "/";
 		}
 

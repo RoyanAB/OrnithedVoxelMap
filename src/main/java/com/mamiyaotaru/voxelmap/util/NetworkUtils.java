@@ -29,7 +29,7 @@ public class NetworkUtils {
 									interfaceAddresses.add(interfaceAddress);
 								}
 							}
-						} catch (Exception var6) {
+						} catch (Exception ignored) {
 						}
 					}
 
@@ -39,19 +39,18 @@ public class NetworkUtils {
 						}
 					}
 				}
-			} catch (Exception var7) {
+			} catch (Exception ignored) {
 			}
 		}
 	}
 
 	public static boolean isOnLan(InetAddress serverAddress) {
-		for (int t = 0; t < interfaceAddresses.size(); t++) {
+		for (InterfaceAddress address : interfaceAddresses) {
 			try {
-				InterfaceAddress interfaceAddress = interfaceAddresses.get(t);
-				if (onSameNetwork(serverAddress, interfaceAddress.getAddress(), interfaceAddress.getNetworkPrefixLength())) {
+				if (onSameNetwork(serverAddress, address.getAddress(), address.getNetworkPrefixLength())) {
 					return true;
 				}
-			} catch (Exception var3) {
+			} catch (Exception ignored) {
 			}
 		}
 

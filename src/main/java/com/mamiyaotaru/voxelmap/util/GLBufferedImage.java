@@ -14,7 +14,7 @@ public class GLBufferedImage extends BufferedImage implements IGLBufferedImage {
 	protected ByteBuffer buffer;
 	protected byte[] bytes;
 	protected int index = 0;
-	protected Object bufferLock = new Object();
+	protected final Object bufferLock = new Object();
 
 	public GLBufferedImage(int width, int height, int imageType) {
 		super(width, height, imageType);
@@ -67,7 +67,7 @@ public class GLBufferedImage extends BufferedImage implements IGLBufferedImage {
 		int index = (x + y * this.getWidth()) * 4;
 		synchronized (this.bufferLock) {
 			this.bytes[index] = (byte) (color24 >> 24);
-			this.bytes[index + 1] = (byte) (color24 >> 0);
+			this.bytes[index + 1] = (byte) (color24);
 			this.bytes[index + 2] = (byte) (color24 >> 8);
 			this.bytes[index + 3] = (byte) (color24 >> 16);
 		}

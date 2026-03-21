@@ -9,8 +9,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 
-import java.io.IOException;
-
 public class GuiMinimapControls extends GuiScreenMinimap {
 	protected String screenTitle = "Controls";
 	private final GuiScreen parentScreen;

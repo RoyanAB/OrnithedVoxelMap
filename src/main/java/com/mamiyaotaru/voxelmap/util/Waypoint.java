@@ -10,18 +10,18 @@ import java.util.TreeSet;
 public class Waypoint implements Serializable, Comparable<Waypoint> {
 	private static final long serialVersionUID = 8136790917447997951L;
 	public String name;
-	public String imageSuffix = "";
-	public String world = "";
-	public TreeSet<Integer> dimensions = new TreeSet<>();
+	public String imageSuffix;
+	public String world;
+	public TreeSet<Integer> dimensions;
 	public int x;
 	public int z;
 	public int y;
 	public boolean enabled;
 	public boolean inWorld = true;
 	public boolean inDimension = true;
-	public float red = 0.0F;
-	public float green = 1.0F;
-	public float blue = 0.0F;
+	public float red;
+	public float green;
+	public float blue;
 
 	public Waypoint(
 		String name, int x, int z, int y, boolean enabled, float red, float green, float blue, String suffix, String world, TreeSet<Integer> dimensions

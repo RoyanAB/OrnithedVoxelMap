@@ -63,7 +63,7 @@ public class WorldMatcher {
 				this.loadRegions(subworldNamesArray);
 				int attempts = 0;
 
-				while (!WorldMatcher.this.cancelled && (this.candidateRegions.size() == 0 || this.region.getLoadedChunks() < 5) && attempts < 5) {
+				while (!WorldMatcher.this.cancelled && (this.candidateRegions.isEmpty() || this.region.getLoadedChunks() < 5) && attempts < 5) {
 					attempts++;
 
 					try {
@@ -84,14 +84,14 @@ public class WorldMatcher {
 								+ WorldMatcher.this.master.getWaypointManager().getCurrentWorldName()
 						);
 						this.loadRegions(subworldNamesArray);
-					} else if (this.candidateRegions.size() > 0) {
+					} else if (!this.candidateRegions.isEmpty()) {
 						MessageUtils.printDebug("going to load current region");
 						this.region.loadCurrent();
 						MessageUtils.printDebug("loaded chunks in local region: " + this.region.getLoadedChunks());
 					}
 
 					if (attempts >= 5) {
-						if (this.candidateRegions.size() == 0) {
+						if (this.candidateRegions.isEmpty()) {
 							MessageUtils.printDebug("no candidate regions at current coordinates, bailing");
 						} else {
 							MessageUtils.printDebug("took too long to load local region, bailing");
@@ -137,7 +137,7 @@ public class WorldMatcher {
 				for (String subworldName : subworldNamesArray) {
 					if (!WorldMatcher.this.cancelled) {
 						File subworldDir = new File(this.cachedRegionFileDir, subworldName + "/" + this.dimensionNamePathPart);
-						if (subworldDir != null && subworldDir.isDirectory()) {
+						if (subworldDir.isDirectory()) {
 							ComparisonCachedRegion candidateRegion = new ComparisonCachedRegion(
 								WorldMatcher.this.map, this.x + "," + this.z, WorldMatcher.this.world, this.worldName, subworldName, this.x, this.z
 							);

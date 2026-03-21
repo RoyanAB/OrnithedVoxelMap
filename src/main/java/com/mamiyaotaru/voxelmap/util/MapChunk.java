@@ -5,11 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.chunk.Chunk;
 
 public class MapChunk {
-	private int x = 0;
-	private int z = 0;
+	private final int x;
+	private final int z;
 	private Chunk chunk;
-	private boolean isChanged = false;
-	private boolean isLoaded = false;
+	private boolean isChanged;
+	private boolean isLoaded;
 
 	public MapChunk(int x, int z) {
 		this.x = x;
@@ -34,7 +34,7 @@ public class MapChunk {
 				this.isLoaded = true;
 				hasChanged = true;
 			}
-		} else if (this.isLoaded && !this.chunk.isLoaded()) {
+		} else if (!this.chunk.isLoaded()) {
 			this.isLoaded = false;
 			hasChanged = true;
 		}

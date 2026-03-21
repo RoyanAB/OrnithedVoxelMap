@@ -17,8 +17,8 @@ import java.awt.*;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 
 class GuiSlotWaypoints extends GuiSlotMinimap {
 	final GuiWaypoints parentGui;
@@ -130,31 +130,21 @@ class GuiSlotWaypoints extends GuiSlotMinimap {
 		final int order = ascending ? 1 : -1;
 		if (sortKey == 1) {
 			final ArrayList<Waypoint> masterWaypointsList = this.parentGui.waypointManager.getWaypoints();
-			Collections.sort(this.waypoints, new Comparator<Waypoint>() {
-				public int compare(Waypoint waypoint1, Waypoint waypoint2) {
-					return Double.compare(masterWaypointsList.indexOf(waypoint1), masterWaypointsList.indexOf(waypoint2)) * order;
-				}
-			});
+			this.waypoints.sort((waypoint1, waypoint2) -> Double.compare(masterWaypointsList.indexOf(waypoint1), masterWaypointsList.indexOf(waypoint2)) * order);
 		} else if (sortKey == 3) {
 			if (ascending) {
 				Collections.sort(this.waypoints);
 			} else {
-				Collections.sort(this.waypoints, Collections.reverseOrder());
+				this.waypoints.sort(Collections.reverseOrder());
 			}
 		} else if (sortKey == 2) {
 			final Collator collator = I18nUtils.getLocaleAwareCollator();
-			Collections.sort(this.waypoints, new Comparator<Waypoint>() {
-				public int compare(Waypoint waypoint1, Waypoint waypoint2) {
-					return collator.compare(waypoint1.name, waypoint2.name) * order;
-				}
-			});
+			this.waypoints.sort((waypoint1, waypoint2) -> collator.compare(waypoint1.name, waypoint2.name) * order);
 		} else if (sortKey == 4) {
-			Collections.sort(this.waypoints, new Comparator<Waypoint>() {
-				public int compare(Waypoint waypoint1, Waypoint waypoint2) {
-					float hue1 = Color.RGBtoHSB((int) (waypoint1.red * 255.0F), (int) (waypoint1.green * 255.0F), (int) (waypoint1.blue * 255.0F), null)[0];
-					float hue2 = Color.RGBtoHSB((int) (waypoint2.red * 255.0F), (int) (waypoint2.green * 255.0F), (int) (waypoint2.blue * 255.0F), null)[0];
-					return Double.compare(hue1, hue2) * order;
-				}
+			this.waypoints.sort((waypoint1, waypoint2) -> {
+				float hue1 = Color.RGBtoHSB((int) (waypoint1.red * 255.0F), (int) (waypoint1.green * 255.0F), (int) (waypoint1.blue * 255.0F), null)[0];
+				float hue2 = Color.RGBtoHSB((int) (waypoint2.red * 255.0F), (int) (waypoint2.green * 255.0F), (int) (waypoint2.blue * 255.0F), null)[0];
+				return Double.compare(hue1, hue2) * order;
 			});
 		}
 
@@ -168,7 +158,7 @@ class GuiSlotWaypoints extends GuiSlotMinimap {
 
 		while (iterator.hasNext()) {
 			Waypoint waypoint = iterator.next();
-			if (!TextFormatting.getTextWithoutFormattingCodes(waypoint.name).toLowerCase().contains(filterString)) {
+			if (!Objects.requireNonNull(TextFormatting.getTextWithoutFormattingCodes(waypoint.name)).toLowerCase().contains(filterString)) {
 				if (waypoint == this.parentGui.selectedWaypoint) {
 					this.parentGui.setSelectedWaypoint(null);
 				}

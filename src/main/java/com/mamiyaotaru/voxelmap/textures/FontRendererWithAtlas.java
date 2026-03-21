@@ -21,20 +21,17 @@ import java.util.Random;
 
 public class FontRendererWithAtlas extends FontRenderer implements IResourceManagerReloadListener {
 	private final ResourceLocation locationFontTexture;
-	private final TextureManager renderEngine;
 	public int FONT_HEIGHT = 9;
 	public Random fontRandom = new Random();
 	private final int[] charWidthArray = new int[256];
 	private final int[] colorCode = new int[32];
 	private Sprite fontIcon = null;
-	private int ref = 0;
 	private float posX;
 	private float posY;
 	private float red;
 	private float blue;
 	private float green;
 	private float alpha;
-	private int textColor;
 	private boolean randomStyle;
 	private boolean boldStyle;
 	private boolean italicStyle;
@@ -44,14 +41,13 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 	public FontRendererWithAtlas(GameSettings gameSettings, ResourceLocation locationFontTexture, TextureManager renderEngine, boolean unicodeFlag) {
 		super(gameSettings, locationFontTexture, renderEngine, unicodeFlag);
 		this.locationFontTexture = locationFontTexture;
-		this.renderEngine = renderEngine;
 		renderEngine.bindTexture(this.locationFontTexture);
 
 		for (int colorCodeIndex = 0; colorCodeIndex < 32; colorCodeIndex++) {
 			int var6 = (colorCodeIndex >> 3 & 1) * 85;
 			int red = (colorCodeIndex >> 2 & 1) * 170 + var6;
 			int green = (colorCodeIndex >> 1 & 1) * 170 + var6;
-			int blue = (colorCodeIndex >> 0 & 1) * 170 + var6;
+			int blue = (colorCodeIndex & 1) * 170 + var6;
 			if (colorCodeIndex == 6) {
 				red += 85;
 			}
@@ -126,7 +122,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 			while (thisCharacterWidth >= 0 && onlyBlankPixels) {
 				int pixelX = characterX * characterWidth + thisCharacterWidth;
 
-				for (int characterPixelYPos = 0; characterPixelYPos < characterHeight && onlyBlankPixels; characterPixelYPos++) {
+				for (int characterPixelYPos = 0; characterPixelYPos < characterHeight; characterPixelYPos++) {
 					int pixelY = (characterY * characterWidth + characterPixelYPos) * sheetWidth;
 					if ((sheetImageData[pixelX + pixelY] >> 24 & 0xFF) != 0) {
 						onlyBlankPixels = false;
@@ -148,7 +144,6 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 	}
 
 	public void setFontRef(int ref) {
-		this.ref = ref;
 	}
 
 	private float renderCharAtPos(int charIndex, char character, boolean shadow) {
@@ -161,7 +156,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 		float fontScaleX = (this.fontIcon.width - 2) / 128.0F;
 		float fontScaleY = (this.fontIcon.height - 2) / 128.0F;
 		float charXPosInSheet = charIndex % 16 * 8 * fontScaleX + this.fontIcon.originX + 1.0F;
-		float charYPosInSheet = charIndex / 16 * 8 * fontScaleY + this.fontIcon.originY + 1.0F;
+		float charYPosInSheet = (float) charIndex / 16 * 8 * fontScaleY + this.fontIcon.originY + 1.0F;
 		float shadowOffset = shadow ? 1.0F : 0.0F;
 		float charWidth = this.charWidthArray[charIndex] - 0.01F;
 		GL11.glBegin(5);
@@ -218,7 +213,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 					this.strikethroughStyle = false;
 					this.underlineStyle = false;
 					this.italicStyle = false;
-					if (formatCode < 0 || formatCode > 15) {
+					if (formatCode < 0) {
 						formatCode = 15;
 					}
 
@@ -227,7 +222,6 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 					}
 
 					int color = this.colorCode[formatCode];
-					this.textColor = color;
 					GLShim.glColor4f((color >> 16) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, this.alpha);
 				} else if (formatCode == 16) {
 					this.randomStyle = true;
@@ -276,10 +270,10 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 						BufferBuilder vertexBuffer = tessellator.getBuffer();
 						GLShim.glDisable(3553);
 						vertexBuffer.begin(7, DefaultVertexFormats.POSITION);
-						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
-						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
-						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
-						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
+						vertexBuffer.pos(this.posX, this.posY + (double) this.FONT_HEIGHT / 2, 0.0).endVertex();
+						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + (double) this.FONT_HEIGHT / 2, 0.0).endVertex();
+						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + (double) this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
+						vertexBuffer.pos(this.posX, this.posY + (double) this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
 						tessellator.draw();
 						GLShim.glEnable(3553);
 					}

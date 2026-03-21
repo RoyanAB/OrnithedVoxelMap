@@ -3,9 +3,6 @@ package com.mamiyaotaru.voxelmap.interfaces;
 import net.minecraft.block.state.IBlockState;
 
 public interface IMapData {
-	int DATABITS = 17;
-	int BYTESPERDATUM = 4;
-
 	int getWidth();
 
 	int getHeight();

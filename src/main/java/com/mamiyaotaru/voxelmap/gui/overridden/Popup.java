@@ -41,8 +41,8 @@ public class Popup {
 		this.w = 0;
 		this.h = this.entries.length * 20;
 
-		for (int t = 0; t < this.entries.length; t++) {
-			int entryWidth = this.fontRendererObj.getStringWidth(this.entries[t].name);
+		for (PopupEntry entry : this.entries) {
+			int entryWidth = this.fontRendererObj.getStringWidth(entry.name);
 			if (entryWidth > this.w) {
 				this.w = entryWidth;
 			}

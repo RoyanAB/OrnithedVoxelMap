@@ -14,7 +14,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiYesNo;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -22,18 +21,11 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	protected final MapSettingsManager options;
 	protected final IWaypointManager waypointManager;
 	private final GuiScreen parentScreen;
-	private final int EDIT = -1;
-	private final int DELETE = -2;
-	private final int HIGHLIGHT = -3;
-	private final int TELEPORT = -4;
-	private final int SHARE = -5;
-	private final int NEW = -6;
-	private final int OPTIONS = -7;
 	protected String screenTitle = "Waypoints";
 	protected GuiTextField filter;
-	protected Waypoint selectedWaypoint = null;
-	protected Waypoint highlightedWaypoint = null;
-	protected Waypoint newWaypoint = null;
+	protected Waypoint selectedWaypoint;
+	protected Waypoint highlightedWaypoint;
+	protected Waypoint newWaypoint;
 	private final IVoxelMap master;
 	private GuiSlotWaypoints waypointList;
 	private GuiButton buttonEdit;
@@ -48,7 +40,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private GuiButton buttonSortDistance;
 	private GuiButton buttonSortColor;
 	private boolean addClicked = false;
-	private String tooltip = null;
+	private String tooltip;
 	private final Random generator = new Random();
 	private boolean changedSort = false;
 
@@ -295,7 +287,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		float r;
 		float g;
 		float b;
-		if (this.waypointManager.getWaypoints().size() == 0) {
+		if (this.waypointManager.getWaypoints().isEmpty()) {
 			r = 0.0F;
 			g = 1.0F;
 			b = 0.0F;

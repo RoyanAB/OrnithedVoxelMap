@@ -11,21 +11,6 @@ import java.util.Arrays;
 import java.util.zip.DataFormatException;
 
 public class CompressibleMapData extends AbstractMapData {
-	public static final int DATABITS = 18;
-	public static final int BYTESPERDATUM = 1;
-	private static final int HEIGHTPOS = 0;
-	private static final int BLOCKSTATEPOS = 1;
-	private static final int LIGHTPOS = 3;
-	private static final int OCEANFLOORHEIGHTPOS = 4;
-	private static final int OCEANFLOORBLOCKSTATEPOS = 5;
-	private static final int OCEANFLOORLIGHTPOS = 7;
-	private static final int TRANSPARENTHEIGHTPOS = 8;
-	private static final int TRANSPARENTBLOCKSTATEPOS = 9;
-	private static final int TRANSPARENTLIGHTPOS = 11;
-	private static final int FOLIAGEHEIGHTPOS = 12;
-	private static final int FOLIAGEBLOCKSTATEPOS = 13;
-	private static final int FOLIAGELIGHTPOS = 15;
-	private static final int BIOMEIDPOS = 16;
 	private static byte[] compressedEmptyData = new byte[1179648];
 
 	static {
@@ -40,7 +25,7 @@ public class CompressibleMapData extends AbstractMapData {
 
 	int count = 1;
 	private byte[] data;
-	private boolean isCompressed = false;
+	private boolean isCompressed;
 	private BiMap<IBlockState, Integer> stateToInt = null;
 
 	public CompressibleMapData(int width, int height) {
@@ -313,7 +298,7 @@ public class CompressibleMapData extends AbstractMapData {
 			try {
 				this.isCompressed = true;
 				this.data = CompressionUtils.compress(this.data);
-			} catch (IOException var2) {
+			} catch (IOException ignored) {
 			}
 		}
 	}
@@ -327,8 +312,7 @@ public class CompressibleMapData extends AbstractMapData {
 			try {
 				this.data = CompressionUtils.decompress(this.data);
 				this.isCompressed = false;
-			} catch (IOException var2) {
-			} catch (DataFormatException var3) {
+			} catch (IOException | DataFormatException ignored) {
 			}
 		}
 	}

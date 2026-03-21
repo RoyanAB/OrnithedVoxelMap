@@ -15,13 +15,12 @@ public class Contact {
 	public double distance;
 	public float brightness;
 	public EnumMobs type;
-	public UUID uuid = null;
+	public UUID uuid;
 	public String name = "_";
 	public int rotationFactor = 0;
-	public String skinURL = "";
-	public Entity entity = null;
-	public Sprite[] icons = null;
-	public Sprite[] armorIcons = new Sprite[]{null, null};
+	public Entity entity;
+	public Sprite[] icons;
+	public Sprite[] armorIcons;
 	public int armorColor = -1;
 
 	public Contact(Entity entity, EnumMobs type) {

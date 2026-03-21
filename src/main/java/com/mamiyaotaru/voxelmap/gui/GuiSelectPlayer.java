@@ -8,9 +8,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import org.lwjgl.input.Keyboard;
-
-import java.io.IOException;
-
 public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final GuiScreen parentScreen;
 	private final int maxMessageLength = 78;
@@ -18,7 +15,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 	protected boolean allClicked = false;
 	protected GuiTextField message;
 	protected GuiTextField filter;
-	private boolean sharingWaypoint = true;
+	private final boolean sharingWaypoint;
 	private GuiButtonRowListPlayers playerList;
 	private String tooltip = null;
 	private final String locInfo;

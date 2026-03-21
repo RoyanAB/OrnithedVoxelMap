@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
+import java.util.Objects;
 
 public class GuiMinimapPerformance extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{
@@ -48,8 +48,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 		int leftBorder = this.getLeftBorder();
 		int var2 = 0;
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			String text = this.options.getKeyText(option);
 			if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMES)
 				&& !this.options.multicore
@@ -65,7 +64,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 		}
 
 		String worldSeedDisplay = this.master.getWorldSeed();
-		if (worldSeedDisplay.equals("")) {
+		if (worldSeedDisplay.isEmpty()) {
 			worldSeedDisplay = I18nUtils.getString("selectWorld.versionUnknown");
 		}
 
@@ -75,13 +74,12 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 		);
 		this.worldSeedButton.setText(this.master.getWorldSeed());
 		this.buttonList.add(this.worldSeedButton);
-		var2++;
 
 		for (Object buttonObj : this.getButtonList()) {
 			if (buttonObj instanceof GuiOptionButtonMinimap) {
 				GuiOptionButtonMinimap button = (GuiOptionButtonMinimap) buttonObj;
 				if (button.returnEnumOptions().equals(EnumOptionsMinimap.SLIMECHUNKS)) {
-					button.enabled = this.mc.isIntegratedServerRunning() || !this.master.getWorldSeed().equals("");
+					button.enabled = this.mc.isIntegratedServerRunning() || !this.master.getWorldSeed().isEmpty();
 				}
 			}
 		}
@@ -105,18 +103,18 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 					|| par1GuiButton.id == EnumOptionsMinimap.BIOMES.ordinal()
 			)
 				&& !this.options.multicore
-				&& this.options.getOptionBooleanValue(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id))) {
+				&& this.options.getOptionBooleanValue(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id)))) {
 				perfBomb = "§c";
 			}
 
-			par1GuiButton.displayString = perfBomb + this.options.getKeyText(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id));
+			par1GuiButton.displayString = perfBomb + this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id)));
 		}
 
 		for (Object buttonObj : this.getButtonList()) {
 			if (buttonObj instanceof GuiOptionButtonMinimap) {
 				GuiOptionButtonMinimap button = (GuiOptionButtonMinimap) buttonObj;
 				if (button.returnEnumOptions().equals(EnumOptionsMinimap.SLIMECHUNKS)) {
-					button.enabled = this.mc.isIntegratedServerRunning() || !this.master.getWorldSeed().equals("");
+					button.enabled = this.mc.isIntegratedServerRunning() || !this.master.getWorldSeed().isEmpty();
 				}
 			}
 		}
@@ -132,12 +130,11 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 			String newSeed = this.worldSeedButton.getText();
 			this.master.setWorldSeed(newSeed);
 			String worldSeedDisplay = this.master.getWorldSeed();
-			if (worldSeedDisplay.equals("")) {
+			if (worldSeedDisplay.isEmpty()) {
 				worldSeedDisplay = I18nUtils.getString("selectWorld.versionUnknown");
 			}
 
-			String buttonText = I18nUtils.getString("options.minimap.worldseed") + ": " + worldSeedDisplay;
-			this.worldSeedButton.displayString = buttonText;
+			this.worldSeedButton.displayString = I18nUtils.getString("options.minimap.worldseed") + ": " + worldSeedDisplay;
 			this.worldSeedButton.setText(this.master.getWorldSeed());
 			this.master.getMap().forceFullRender(true);
 
@@ -145,7 +142,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 				if (buttonObj instanceof GuiOptionButtonMinimap) {
 					GuiOptionButtonMinimap button = (GuiOptionButtonMinimap) buttonObj;
 					if (button.returnEnumOptions().equals(EnumOptionsMinimap.SLIMECHUNKS)) {
-						button.enabled = this.mc.isIntegratedServerRunning() || !this.master.getWorldSeed().equals("");
+						button.enabled = this.mc.isIntegratedServerRunning() || !this.master.getWorldSeed().isEmpty();
 					}
 				}
 			}

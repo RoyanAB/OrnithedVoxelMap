@@ -9,6 +9,8 @@ import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.util.Objects;
+
 public class GuiRadarOptions extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptionsFull = new EnumOptionsMinimap[]{
 		EnumOptionsMinimap.SHOWRADAR,
@@ -50,8 +52,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 			relevantOptions = relevantOptionsSimple;
 		}
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
 				this.getWidth() / 2 - 155 + var2 % 2 * 160,
@@ -107,9 +108,9 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 					return;
 				}
 
-				buttonClicked.displayString = this.options.getKeyText(EnumOptionsMinimap.getEnumOptions(buttonClicked.id));
+				buttonClicked.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(buttonClicked.id)));
 
-				for (Object buttonObj : this.getButtonList()) {
+				for (GuiButton buttonObj : this.getButtonList()) {
 					if (buttonObj instanceof GuiOptionButtonMinimap) {
 						GuiOptionButtonMinimap button = (GuiOptionButtonMinimap) buttonObj;
 						if (!button.returnEnumOptions().equals(EnumOptionsMinimap.SHOWRADAR)) {
@@ -132,7 +133,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 								&& (this.options.radarAllowed || this.options.radarMobsAllowed);
 						}
 					} else if (buttonObj instanceof GuiButton) {
-						GuiButton buttonx = (GuiButton) buttonObj;
+						GuiButton buttonx = buttonObj;
 						if (buttonx.id == 101) {
 							buttonx.enabled = this.options.showRadar;
 						}

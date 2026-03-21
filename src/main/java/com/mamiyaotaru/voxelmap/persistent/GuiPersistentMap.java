@@ -31,7 +31,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.TreeSet;
@@ -44,15 +43,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private final MapSettingsManager mapOptions;
 	private final PersistentMapSettingsManager options;
 	private final Object closedLock = new Object();
-	private final int NEW = 0;
-	private final int HIGHLIGHTPOINT = 1;
-	private final int SHAREPOINT = 2;
-	private final int TPTOPOINT = 3;
-	private final int EDIT = 4;
-	private final int DELETE = 5;
-	private final int HIGHLIGHTWP = 6;
-	private final int SHAREWP = 7;
-	private final int TPTOWP = 8;
 	public boolean editClicked = false;
 	public boolean deleteClicked = false;
 	public boolean addClicked = false;
@@ -79,9 +69,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	int lastMouseX = 0;
 	int lastMouseY = 0;
 	boolean leftMouseButtonDown = false;
-	float zoom = 4.0F;
-	float zoomStart = 4.0F;
-	float zoomGoal = 4.0F;
+	float zoom;
+	float zoomStart;
+	float zoomGoal;
 	long timeOfZoom = 0L;
 	int zoomDirectX = 0;
 	int zoomDirectY = 0;
@@ -160,7 +150,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			if (skinLocation != DefaultPlayerSkin.getDefaultSkin(this.mc.player.getUniqueID())) {
 				imageData = AbstractClientPlayer.getDownloadImageSkin(skinLocation, TextFormatting.getTextWithoutFormattingCodes(this.mc.player.getName()));
 			}
-		} catch (Exception var6) {
+		} catch (Exception ignored) {
 		}
 
 		if (imageData != null) {
@@ -207,7 +197,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			.add(
 				new PopupGuiButton(
 					100,
-					this.sideMargin + 0,
+					this.sideMargin,
 					this.getHeight() - 28,
 					this.buttonWidth,
 					20,
@@ -292,7 +282,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		String worldName = "";
 		if (this.mc.isIntegratedServerRunning()) {
 			worldName = this.mc.getIntegratedServer().getWorldName();
-			if (worldName == null || worldName.equals("")) {
+			if (worldName == null || worldName.isEmpty()) {
 				worldName = "Singleplayer World";
 			}
 		} else {
@@ -301,7 +291,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				worldName = serverData.serverName;
 			}
 
-			if (worldName == null || worldName.equals("")) {
+			if (worldName == null || worldName.isEmpty()) {
 				worldName = "Multiplayer Server";
 			}
 		}
@@ -309,11 +299,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		StringBuilder worldNameBuilder = new StringBuilder("§r").append(worldName);
 		String subworldName = this.master.getWaypointManager().getCurrentSubworldDescriptor(true);
 		this.subworldName = subworldName;
-		if ((subworldName == null || subworldName.equals("")) && this.master.getWaypointManager().isMultiworld()) {
+		if ((subworldName == null || subworldName.isEmpty()) && this.master.getWaypointManager().isMultiworld()) {
 			subworldName = "???";
 		}
 
-		if (subworldName != null && !subworldName.equals("")) {
+		if (subworldName != null && !subworldName.isEmpty()) {
 			worldNameBuilder.append(" - ").append(subworldName);
 		}
 
@@ -327,14 +317,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			worldName = worldName.substring(0, worldName.length() - 1);
 			worldNameBuilder = new StringBuilder(worldName);
 			worldNameBuilder.append("...");
-			if (subworldName != null && !subworldName.equals("")) {
+			if (subworldName != null && !subworldName.isEmpty()) {
 				worldNameBuilder.append(" - ").append(subworldName);
 			}
 
 			this.worldNameDisplay = worldNameBuilder.toString();
 		}
 
-		if (subworldName != null && !subworldName.equals("")) {
+		if (subworldName != null && !subworldName.isEmpty()) {
 			while (this.worldNameDisplayLength > this.maxWorldNameDisplayLength && subworldName.length() > 5) {
 				worldNameBuilder = new StringBuilder(worldName);
 				worldNameBuilder.append("...");
@@ -392,7 +382,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		if (mouseRoll != 0) {
 			if (mouseRoll > 0) {
 				this.zoomGoal *= 1.26F;
-			} else if (mouseRoll < 0) {
+			} else {
 				this.zoomGoal /= 1.26F;
 			}
 
@@ -424,8 +414,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			this.coordinates.mouseClicked(mouseX, mouseY, par3);
 			this.editingCoordinates = this.coordinates.isFocused();
 			if (this.editingCoordinates && !this.lastEditingCoordinates) {
-				int x = 0;
-				int z = 0;
+				int x;
+				int z;
 				if (this.oldNorth) {
 					x = (int) Math.floor(this.mapCenterZ);
 					z = -((int) Math.floor(this.mapCenterX));
@@ -486,7 +476,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			this.coordinates.setTextColor(isGood ? 16777215 : 16711680);
 			if (typedChar == '\r' && this.coordinates.isFocused() && isGood) {
 				String[] xz = this.coordinates.getText().split(",");
-				this.centerAt(Integer.valueOf(xz[0].trim()), Integer.valueOf(xz[1].trim()));
+				this.centerAt(Integer.parseInt(xz[0].trim()), Integer.parseInt(xz[1].trim()));
 				this.editingCoordinates = false;
 				this.lastEditingCoordinates = false;
 				this.switchToKeyboardInput();
@@ -500,9 +490,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			Integer.valueOf(xz[0].trim());
 			Integer.valueOf(xz[1].trim());
 			return true;
-		} catch (NumberFormatException e) {
-			return false;
-		} catch (ArrayIndexOutOfBoundsException ex) {
+		} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
 			return false;
 		}
 	}
@@ -635,10 +623,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		this.centerX = this.getWidth() / 2;
 		this.centerY = (this.bottom - this.top) / 2;
-		int left = 0;
-		int right = 0;
-		int top = 0;
-		int bottom = 0;
+		int left;
+		int right;
+		int top;
+		int bottom;
 		if (this.oldNorth) {
 			left = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
 			right = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
@@ -676,8 +664,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			);
 		}
 
-		for (int t = 0; t < this.regions.length; t++) {
-			CachedRegion region = this.regions[t];
+		for (CachedRegion region : this.regions) {
 			int glid = region.getGLID();
 			if (glid != 0) {
 				GLUtils.disp(glid);
@@ -711,8 +698,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			cursorX = mouseDirectX;
 			cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
 		} else {
-			cursorX = Display.getWidth() / 2;
-			cursorY = Display.getHeight() - Display.getHeight() / 2 - this.top * this.guiToDirectMouse;
+			cursorX = (float) Display.getWidth() / 2;
+			cursorY = Display.getHeight() - (float) Display.getHeight() / 2 - this.top * this.guiToDirectMouse;
 		}
 
 		float cursorCoordZ;
@@ -777,7 +764,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			still = still && this.deltaX == 0.0F && this.deltaY == 0.0F;
 			still = still && ThreadManager.executorService.getActiveCount() == 0;
 			if (still && !this.lastStill) {
-				int column = 0;
+				int column;
 				if (this.oldNorth) {
 					column = (int) Math.floor(Math.floor(this.mapCenterZ - this.centerY * this.guiToMap) / 256.0) - (left - 1);
 				} else {
@@ -833,13 +820,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				ArrayList<AbstractMapData.BiomeLabel> labels = this.biomeMapData.getBiomeLabels();
 				GLShim.glDisable(2929);
 
-				for (int tx = 0; tx < labels.size(); tx++) {
-					AbstractMapData.BiomeLabel label = labels.get(tx);
+				for (AbstractMapData.BiomeLabel label : labels) {
 					if (label.segmentSize > minimumSize) {
 						int nameWidth = this.chkLen(label.name);
 						float x = label.x * biomeScaleX / this.scScale;
 						float z = label.z * biomeScaleY / this.scScale;
-						this.write(label.name, x - nameWidth / 2, this.top + z - 3.0F, 16777215);
+						this.write(label.name, x - (float) nameWidth / 2, this.top + z - 3.0F, 16777215);
 					}
 				}
 
@@ -880,7 +866,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		this.drawString(this.getFontRenderer(), this.worldNameDisplay, this.getWidth() - this.sideMargin - this.worldNameDisplayLength, 16, 16777215);
 		if (this.buttonMultiworld != null) {
-			if ((this.subworldName == null || this.subworldName.equals("")) && this.master.getWaypointManager().isMultiworld()) {
+			if ((this.subworldName == null || this.subworldName.isEmpty()) && this.master.getWaypointManager().isMultiworld()) {
 				String attention = "";
 				if ((int) (System.currentTimeMillis() / 1000L % 2L) == 0) {
 					attention = "§c";
@@ -1075,15 +1061,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 	private void createPopup(int mouseX, int mouseY, int mouseDirectX, int mouseDirectY) {
 		ArrayList<Popup.PopupEntry> entries = new ArrayList<>();
-		float cursorX = mouseDirectX;
 		float cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
 		float cursorCoordX;
 		float cursorCoordZ;
 		if (this.oldNorth) {
 			cursorCoordX = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-			cursorCoordZ = -(cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
+			cursorCoordZ = -((float) mouseDirectX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
 		} else {
-			cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
+			cursorCoordX = (float) mouseDirectX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
 			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 		}
 
@@ -1163,15 +1148,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	public void popupAction(Popup popup, int action) {
 		int mouseDirectX = popup.clickedDirectX;
 		int mouseDirectY = popup.clickedDirectY;
-		float cursorX = mouseDirectX;
 		float cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
 		float cursorCoordX;
 		float cursorCoordZ;
 		if (this.oldNorth) {
 			cursorCoordX = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-			cursorCoordZ = -(cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
+			cursorCoordZ = -((float) mouseDirectX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
 		} else {
-			cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
+			cursorCoordX = (float) mouseDirectX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
 			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 		}
 
@@ -1193,7 +1177,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				float r;
 				float g;
 				float b;
-				if (this.waypointManager.getWaypoints().size() == 0) {
+				if (this.waypointManager.getWaypoints().isEmpty()) {
 					r = 0.0F;
 					g = 1.0F;
 					b = 0.0F;
@@ -1340,7 +1324,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	public boolean canTeleport() {
-		boolean allowed = false;
+		boolean allowed;
 		boolean singlePlayer = this.mc.isIntegratedServerRunning();
 		if (singlePlayer) {
 			try {

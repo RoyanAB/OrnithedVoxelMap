@@ -6,9 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import java.util.Arrays;
 
 public class BiomeMapData extends AbstractMapData {
-	public static final int DATABITS = 1;
-	public static final int BYTESPERDATUM = 4;
-	private static final int BIOMEIDPOS = 0;
 	private int[] data;
 
 	public BiomeMapData(int width, int height) {

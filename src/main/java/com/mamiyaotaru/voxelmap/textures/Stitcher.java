@@ -54,7 +54,7 @@ public class Stitcher {
 	}
 
 	public void doStitch() {
-		Stitcher.Holder[] stitchHoldersArray = this.setStitchHolders.toArray(new Stitcher.Holder[this.setStitchHolders.size()]);
+		Stitcher.Holder[] stitchHoldersArray = this.setStitchHolders.toArray(new Holder[0]);
 		Arrays.sort(stitchHoldersArray);
 		Stitcher.Holder[] tempStitchHoldersArray = stitchHoldersArray;
 		int stitcherHoldersArrayLength = stitchHoldersArray.length;
@@ -66,7 +66,7 @@ public class Stitcher {
 
 			for (int stitcherHolderIndex = 1; stitcherHolderIndex < stitcherHoldersArrayLength && allSameSize; stitcherHolderIndex++) {
 				holder = tempStitchHoldersArray[stitcherHolderIndex];
-				allSameSize = allSameSize && holder.width == iconWidth && holder.height == iconHeight;
+				allSameSize = holder.width == iconWidth && holder.height == iconHeight;
 			}
 
 			if (allSameSize) {
@@ -102,7 +102,7 @@ public class Stitcher {
 	}
 
 	public void doStitchNew() {
-		Stitcher.Holder[] stitchHoldersArray = this.setStitchHolders.toArray(new Stitcher.Holder[this.setStitchHolders.size()]);
+		Stitcher.Holder[] stitchHoldersArray = this.setStitchHolders.toArray(new Holder[0]);
 		Arrays.sort(stitchHoldersArray);
 		Stitcher.Holder[] tempStitchHoldersArray = stitchHoldersArray;
 		int stitcherHoldersArrayLength = stitchHoldersArray.length;
@@ -145,8 +145,8 @@ public class Stitcher {
 	}
 
 	private boolean allocateSlot(Stitcher.Holder holder) {
-		for (int stitcherSlotsIndex = 0; stitcherSlotsIndex < this.stitchSlots.size(); stitcherSlotsIndex++) {
-			if (this.stitchSlots.get(stitcherSlotsIndex).addSlot(holder)) {
+		for (Slot stitchSlot : this.stitchSlots) {
+			if (stitchSlot.addSlot(holder)) {
 				return true;
 			}
 		}

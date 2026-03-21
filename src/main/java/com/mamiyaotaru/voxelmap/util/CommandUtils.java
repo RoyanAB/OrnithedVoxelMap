@@ -27,9 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandUtils {
-	private static final String newWaypointCommand = "/newWaypoint ";
 	private static final int newWaypointCommandLength = "/newWaypoint ".length();
-	private static final String teleportCommand = "/ztp ";
 	private static final int teleportCommandLength = "/ztp ".length();
 	public static Pattern pattern = Pattern.compile("\\[(\\w+\\s*:\\s*[-#]?[^\\[\\]]+)(,\\s*\\w+\\s*:\\s*[-#]?[^\\[\\]]+)+\\]", 2);
 	private static final Random generator = new Random();
@@ -37,7 +35,7 @@ public class CommandUtils {
 	public static boolean checkForWaypoints(ITextComponent chat, String message) {
 		message = chat.getUnformattedText();
 		ArrayList<String> waypointStrings = getWaypointStrings(message);
-		if (waypointStrings.size() <= 0) {
+		if (waypointStrings.isEmpty()) {
 			return true;
 		}
 
@@ -109,53 +107,69 @@ public class CommandUtils {
 			String world = "";
 			TreeSet<Integer> dimensions = new TreeSet<>();
 
-			for (int t = 0; t < pairs.length; t++) {
-				int splitIndex = pairs[t].indexOf(":");
+			for (String pair : pairs) {
+				int splitIndex = pair.indexOf(":");
 				if (splitIndex != -1) {
-					String key = pairs[t].substring(0, splitIndex).toLowerCase().trim();
-					String value = pairs[t].substring(splitIndex + 1).trim();
-					if (key.equals("name")) {
-						name = TextUtils.descrubName(value);
-					} else if (key.equals("x")) {
-						x = Integer.parseInt(value);
-					} else if (key.equals("z")) {
-						z = Integer.parseInt(value);
-					} else if (key.equals("y")) {
-						y = Integer.parseInt(value);
-					} else if (key.equals("enabled")) {
-						enabled = Boolean.parseBoolean(value);
-					} else if (key.equals("red")) {
-						red = Float.parseFloat(value);
-					} else if (key.equals("green")) {
-						green = Float.parseFloat(value);
-					} else if (key.equals("blue")) {
-						blue = Float.parseFloat(value);
-					} else if (key.equals("color")) {
-						int color = Integer.decode(value);
-						red = (color >> 16 & 0xFF) / 255.0F;
-						green = (color >> 8 & 0xFF) / 255.0F;
-						blue = (color >> 0 & 0xFF) / 255.0F;
-					} else if (key.equals("suffix") || key.equals("icon")) {
-						suffix = value;
-					} else if (key.equals("world")) {
-						world = TextUtils.descrubName(value);
-					} else if (key.equals("dimensions")) {
-						String[] dimensionStrings = value.split("#");
+					String key = pair.substring(0, splitIndex).toLowerCase().trim();
+					String value = pair.substring(splitIndex + 1).trim();
+					switch (key) {
+						case "name":
+							name = TextUtils.descrubName(value);
+							break;
+						case "x":
+							x = Integer.parseInt(value);
+							break;
+						case "z":
+							z = Integer.parseInt(value);
+							break;
+						case "y":
+							y = Integer.parseInt(value);
+							break;
+						case "enabled":
+							enabled = Boolean.parseBoolean(value);
+							break;
+						case "red":
+							red = Float.parseFloat(value);
+							break;
+						case "green":
+							green = Float.parseFloat(value);
+							break;
+						case "blue":
+							blue = Float.parseFloat(value);
+							break;
+						case "color":
+							int color = Integer.decode(value);
+							red = (color >> 16 & 0xFF) / 255.0F;
+							green = (color >> 8 & 0xFF) / 255.0F;
+							blue = (color & 0xFF) / 255.0F;
+							break;
+						case "suffix":
+						case "icon":
+							suffix = value;
+							break;
+						case "world":
+							world = TextUtils.descrubName(value);
+							break;
+						case "dimensions":
+							String[] dimensionStrings = value.split("#");
 
-						for (int s = 0; s < dimensionStrings.length; s++) {
-							dimensions.add(Integer.parseInt(dimensionStrings[s]));
-						}
-					} else if (key.equals("dimension") || key.equals("dim")) {
-						dimensions.add(Integer.parseInt(value));
+							for (String dimensionString : dimensionStrings) {
+								dimensions.add(Integer.parseInt(dimensionString));
+							}
+							break;
+						case "dimension":
+						case "dim":
+							dimensions.add(Integer.parseInt(value));
+							break;
 					}
 				}
 			}
 
-			if (world == "") {
+			if (world.isEmpty()) {
 				world = AbstractVoxelMap.getInstance().getWaypointManager().getCurrentSubworldDescriptor(false);
 			}
 
-			if (dimensions.size() == 0) {
+			if (dimensions.isEmpty()) {
 				dimensions.add(Minecraft.getMinecraft().player.dimension);
 			}
 
@@ -167,8 +181,7 @@ public class CommandUtils {
 
 				waypoint = new Waypoint(name, x, z, y, enabled, red, green, blue, suffix, world, dimensions);
 			}
-		} catch (NumberFormatException e) {
-			waypoint = null;
+		} catch (NumberFormatException ignored) {
 		}
 
 		return waypoint;
@@ -210,18 +223,18 @@ public class CommandUtils {
 
 		hexColor = "#" + hexColor;
 		String world = AbstractVoxelMap.getInstance().getWaypointManager().getCurrentSubworldDescriptor(false);
-		if (waypoint.world != null && waypoint.world != "") {
+		if (waypoint.world != null && !waypoint.world.isEmpty()) {
 			world = waypoint.world;
 		}
 
 		String suffix = waypoint.imageSuffix;
 		Object[] args = new Object[]{TextUtils.scrubNameRegex(waypoint.name), waypoint.getX(), waypoint.getY(), waypoint.getZ(), dimension};
 		String message = String.format("[name:%s, x:%s, y:%s, z:%s, dim:%s", args);
-		if (world != null && !world.equals("")) {
+		if (world != null && !world.isEmpty()) {
 			message = message + ", world:" + world;
 		}
 
-		if (suffix != null && !suffix.equals("")) {
+		if (suffix != null && !suffix.isEmpty()) {
 			message = message + ", icon:" + suffix;
 		}
 

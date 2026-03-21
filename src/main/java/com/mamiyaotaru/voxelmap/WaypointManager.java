@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
@@ -33,7 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class WaypointManager implements IWaypointManager {
-	public MapSettingsManager options = null;
+	public MapSettingsManager options;
 	IVoxelMap master;
 	TextureAtlas textureAtlas;
 	TextureAtlas textureAtlasChooser;
@@ -42,12 +43,10 @@ public class WaypointManager implements IWaypointManager {
 	private boolean needSave = false;
 	private ArrayList<Waypoint> wayPts = new ArrayList<>();
 	private ArrayList<Waypoint> old2dWayPts = new ArrayList<>();
-	private ArrayList<Waypoint> updatedPts;
-	private Waypoint highlightedWaypoint = null;
+	private Waypoint highlightedWaypoint;
 	private String worldName = "";
 	private String latestRealmsID = "";
 	private String currentSubWorldName = "";
-	private String currentSubWorldHash = "";
 	private String currentSubworldDescriptor = "";
 	private String currentSubworldDescriptorNoCodes = "";
 	private boolean multiworld = false;
@@ -56,8 +55,8 @@ public class WaypointManager implements IWaypointManager {
 	private final TreeSet<String> knownSubworldNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 	private final HashSet<String> oldNorthWorldNames = new HashSet<>();
 	private final HashMap<String, String> worldSeeds = new HashMap<>();
-	private BackgroundImageInfo backgroundImageInfo = null;
-	private WaypointContainer waypointContainer = null;
+	private BackgroundImageInfo backgroundImageInfo;
+	private WaypointContainer waypointContainer;
 	private File settingsFile;
 	private Long lastNewWorldNameTime = 0L;
 	private final Object waypointLock = new Object();
@@ -87,10 +86,9 @@ public class WaypointManager implements IWaypointManager {
 				}
 
 				List<net.minecraft.client.resources.ResourcePackRepository.Entry> packEntries = mc.getResourcePackRepository().getRepositoryEntries();
-				Iterator<net.minecraft.client.resources.ResourcePackRepository.Entry> packEntriesIterator = packEntries.iterator();
 
-				while (packEntriesIterator.hasNext()) {
-					IResourcePack pack = packEntriesIterator.next().getResourcePack();
+				for (ResourcePackRepository.Entry packEntry : packEntries) {
+					IResourcePack pack = packEntry.getResourcePack();
 					packs.add(pack);
 				}
 
@@ -101,13 +99,13 @@ public class WaypointManager implements IWaypointManager {
 				for (IResourcePack pack : packs) {
 					if (pack instanceof FileResourcePack) {
 						FileResourcePack filePack = (FileResourcePack) pack;
-						this.addImagesFromFilePack(filePack, images);
+						this.addImagesFromFilePack(filePack);
 					} else if (pack instanceof FolderResourcePack) {
 						FolderResourcePack folderPack = (FolderResourcePack) pack;
-						this.addImagesFromFolderPack(folderPack, images);
+						this.addImagesFromFolderPack(folderPack);
 					} else if (pack instanceof BuiltInModResourcePack) {
 						BuiltInModResourcePack builtInModResourcePack = (BuiltInModResourcePack) pack;
-						this.addImagesFromBuiltInModResourcePack(builtInModResourcePack, images);
+						this.addImagesFromBuiltInModResourcePack(builtInModResourcePack);
 					}
 				}
 
@@ -131,38 +129,37 @@ public class WaypointManager implements IWaypointManager {
 				}
 			}
 
-			void addImagesFromFilePack(FileResourcePack filePack, List<ResourceLocation> imagesx) {
+			void addImagesFromFilePack(FileResourcePack filePack) {
 				Object zipFileObj = ReflectionUtils.getPrivateFieldValueByType(filePack, FileResourcePack.class, ZipFile.class);
 				if (zipFileObj != null) {
 					ZipFile zipFile = (ZipFile) zipFileObj;
-					this.addImagesFromFile(zipFile, imagesx);
+					this.addImagesFromFile(zipFile);
 				}
 			}
 
-			void addImagesFromFolderPack(FolderResourcePack folderPack, List<ResourceLocation> imagesx) {
+			void addImagesFromFolderPack(FolderResourcePack folderPack) {
 				Object rootFolderObj = ReflectionUtils.getPrivateFieldValueByType(folderPack, AbstractResourcePack.class, File.class);
 				if (rootFolderObj != null) {
 					File rootFolder = (File) rootFolderObj;
-					this.addImagesFromFolder(rootFolder, imagesx);
+					this.addImagesFromFolder(rootFolder);
 				}
 			}
 
-			void addImagesFromBuiltInModResourcePack(BuiltInModResourcePack builtInModResourcePack, List<ResourceLocation> imagesx) {
+			void addImagesFromBuiltInModResourcePack(BuiltInModResourcePack builtInModResourcePack) {
 				try {
 					File path = new File(((BuiltInModResourcePackAccessor) builtInModResourcePack).getMod().getOrigin().toString());
 					if (path.isFile()) {
 						ZipFile zipFile = new ZipFile(((BuiltInModResourcePackAccessor) builtInModResourcePack).getMod().getOrigin().toString());
-						if (zipFile != null)
-							this.addImagesFromFile(zipFile, imagesx);
+						this.addImagesFromFile(zipFile);
 					} else if (path.isDirectory()) {
-						this.addImagesFromFolder(path, imagesx);
+						this.addImagesFromFolder(path);
 					}
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			}
 
-			void addImagesFromFile(ZipFile zipFile, List<ResourceLocation> imagesx) {
+			void addImagesFromFile(ZipFile zipFile) {
 				ZipEntry waypointsFolder = zipFile.getEntry("assets/voxelmap/images/waypoints");
 				if (waypointsFolder != null) {
 					Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -179,10 +176,10 @@ public class WaypointManager implements IWaypointManager {
 				}
 			}
 
-			void addImagesFromFolder(File rootFolder, List<ResourceLocation> imagesx) {
+			void addImagesFromFolder(File rootFolder) {
 				File assetsDir = new File(rootFolder, "assets/voxelmap/images/waypoints");
 				if (assetsDir.isDirectory()) {
-					for (File file : assetsDir.listFiles()) {
+					for (File file : Objects.requireNonNull(assetsDir.listFiles())) {
 						if (file.getName().toLowerCase().endsWith(".png")) {
 							String name = "images/waypoints/" + file.getName();
 							images.add(new ResourceLocation("voxelmap", name));
@@ -245,7 +242,7 @@ public class WaypointManager implements IWaypointManager {
 				}
 			}
 
-			if (!this.worldName.equals(mapName) && mapName != null && !mapName.equals("")) {
+			if (!this.worldName.equals(mapName) && mapName != null && !mapName.isEmpty()) {
 				this.currentDimension = 0.5F;
 				this.worldName = mapName;
 				this.loadWaypoints();
@@ -259,6 +256,7 @@ public class WaypointManager implements IWaypointManager {
 	}
 
 	public String getMapName() {
+		assert this.game.getIntegratedServer() != null;
 		return this.game.getIntegratedServer().getWorldName();
 	}
 
@@ -268,7 +266,7 @@ public class WaypointManager implements IWaypointManager {
 		try {
 			ServerData serverData = this.game.getCurrentServerData();
 			if (serverData != null) {
-				boolean isOnLAN = false;
+				boolean isOnLAN;
 				isOnLAN = serverData.isOnLAN();
 				if (isOnLAN) {
 					System.out.println("LAN server detected!");
@@ -276,7 +274,7 @@ public class WaypointManager implements IWaypointManager {
 				} else {
 					serverName = serverData.serverIP;
 				}
-			} else if (!this.latestRealmsID.equals("")) {
+			} else if (!this.latestRealmsID.isEmpty()) {
 				System.out.println("REALMS server detected!");
 				serverName = this.latestRealmsID;
 			} else {
@@ -334,7 +332,7 @@ public class WaypointManager implements IWaypointManager {
 			}
 		}
 
-		if (this.options.deathpoints != 2 && toDel.size() > 0) {
+		if (this.options.deathpoints != 2 && !toDel.isEmpty()) {
 			for (Waypoint pt : toDel) {
 				this.deleteWaypoint(pt);
 			}
@@ -373,7 +371,7 @@ public class WaypointManager implements IWaypointManager {
 			this.waypointContainer = new WaypointContainer(this.options);
 
 			for (Waypoint pt : this.wayPts) {
-				pt.inDimension = pt.dimensions.size() == 0 || pt.dimensions.contains(dimension);
+				pt.inDimension = pt.dimensions.isEmpty() || pt.dimensions.contains(dimension);
 
 				this.waypointContainer.addWaypoint(pt);
 			}
@@ -386,8 +384,8 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public void setOldNorth(boolean oldNorth) {
-		String oldNorthWorldName = "";
-		if (this.knownSubworldNames.size() == 0) {
+		String oldNorthWorldName;
+		if (this.knownSubworldNames.isEmpty()) {
 			oldNorthWorldName = "all";
 		} else {
 			oldNorthWorldName = this.getCurrentSubworldDescriptor(false);
@@ -419,7 +417,7 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public synchronized void setSubworldName(String name, boolean fromServer) {
-		boolean notNull = !name.equals("");
+		boolean notNull = !name.isEmpty();
 		if (notNull || System.currentTimeMillis() - this.lastNewWorldNameTime > 2000L) {
 			if (notNull) {
 				if (fromServer) {
@@ -440,9 +438,8 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public synchronized void setSubworldHash(String hash) {
-		this.currentSubWorldHash = hash;
-		if (this.currentSubWorldName.equals("")) {
-			this.setSubWorldDescriptor(this.currentSubWorldHash);
+		if (this.currentSubWorldName.isEmpty()) {
+			this.setSubWorldDescriptor(hash);
 		}
 	}
 
@@ -459,12 +456,12 @@ public class WaypointManager implements IWaypointManager {
 		String currentSubWorldDescriptorScrubbed = TextUtils.scrubName(this.currentSubworldDescriptorNoCodes);
 		synchronized (this.waypointLock) {
 			for (Waypoint pt : this.wayPts) {
-				pt.inWorld = currentSubWorldDescriptorScrubbed == "" || pt.world == "" || currentSubWorldDescriptorScrubbed.equals(pt.world);
+				pt.inWorld = currentSubWorldDescriptorScrubbed.isEmpty() || pt.world.isEmpty() || currentSubWorldDescriptorScrubbed.equals(pt.world);
 			}
 		}
 
 		if (serverSaysOldNorth) {
-			if (this.currentSubworldDescriptorNoCodes.equals("")) {
+			if (this.currentSubworldDescriptorNoCodes.isEmpty()) {
 				this.oldNorthWorldNames.add("all");
 			} else {
 				this.oldNorthWorldNames.add(this.currentSubworldDescriptorNoCodes);
@@ -475,7 +472,7 @@ public class WaypointManager implements IWaypointManager {
 	}
 
 	private void newSubworldName(String name) {
-		if (name != null && !name.equals("")) {
+		if (name != null && !name.isEmpty()) {
 			this.multiworld = true;
 			if (this.knownSubworldNames.add(name)) {
 				if (this.loaded) {
@@ -553,7 +550,7 @@ public class WaypointManager implements IWaypointManager {
 	@Override
 	public String getWorldSeed() {
 		String key = "all";
-		if (this.knownSubworldNames.size() > 0) {
+		if (!this.knownSubworldNames.isEmpty()) {
 			key = this.getCurrentSubworldDescriptor(false);
 		}
 
@@ -569,7 +566,7 @@ public class WaypointManager implements IWaypointManager {
 	public void setWorldSeed(String newSeed) {
 		System.out.println("waypoint manager gets new world seed: " + newSeed);
 		String worldName = "all";
-		if (this.knownSubworldNames.size() > 0) {
+		if (!this.knownSubworldNames.isEmpty()) {
 			worldName = this.getCurrentSubworldDescriptor(false);
 		}
 
@@ -596,7 +593,7 @@ public class WaypointManager implements IWaypointManager {
 		this.settingsFile = new File(saveDir, worldNameSave + ".points");
 
 		try {
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.settingsFile), StandardCharsets.UTF_8));
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(Files.newOutputStream(this.settingsFile.toPath()), StandardCharsets.UTF_8));
 			String knownSubworldsString = "";
 
 			for (String subworldName : this.knownSubworldNames) {
@@ -627,7 +624,7 @@ public class WaypointManager implements IWaypointManager {
 						dimensionsString = dimensionsString + dimension + "#";
 					}
 
-					if (dimensionsString.equals("")) {
+					if (dimensionsString.isEmpty()) {
 						dimensionsString = "-1#0#";
 					}
 
@@ -673,7 +670,7 @@ public class WaypointManager implements IWaypointManager {
 		this.oldNorthWorldNames.clear();
 		this.worldSeeds.clear();
 		synchronized (this.waypointLock) {
-			boolean loaded = false;
+			boolean loaded;
 			this.wayPts = new ArrayList<>();
 			String worldNameStandard = this.getCurrentWorldName();
 			if (worldNameStandard.endsWith(":25565")) {
@@ -716,7 +713,7 @@ public class WaypointManager implements IWaypointManager {
 			this.saveWaypoints();
 		}
 
-		this.multiworld = this.multiworld || this.knownSubworldNames.size() > 0;
+		this.multiworld = this.multiworld || !this.knownSubworldNames.isEmpty();
 	}
 
 	private boolean loadWaypointsExtensible(String worldNameStandard) {
@@ -742,26 +739,25 @@ public class WaypointManager implements IWaypointManager {
 				String subWorldsS = properties.getProperty("subworlds", "");
 				String[] subWorlds = subWorldsS.split(",");
 
-				for (int t = 0; t < subWorlds.length; t++) {
-					if (!subWorlds[t].equals("")) {
-						this.knownSubworldNames.add(TextUtils.descrubName(subWorlds[t]));
+				for (String subWorld : subWorlds) {
+					if (!subWorld.isEmpty()) {
+						this.knownSubworldNames.add(TextUtils.descrubName(subWorld));
 					}
 				}
 
 				String oldNorthWorldsS = properties.getProperty("oldNorthWorlds", "");
 				String[] oldNorthWorlds = oldNorthWorldsS.split(",");
 
-				for (int tx = 0; tx < oldNorthWorlds.length; tx++) {
-					if (!oldNorthWorlds[tx].equals("")) {
-						this.oldNorthWorldNames.add(TextUtils.descrubName(oldNorthWorlds[tx]));
+				for (String oldNorthWorld : oldNorthWorlds) {
+					if (!oldNorthWorld.isEmpty()) {
+						this.oldNorthWorldNames.add(TextUtils.descrubName(oldNorthWorld));
 					}
 				}
 
 				String worldSeedsS = properties.getProperty("seeds", "");
 				String[] worldSeedPairs = worldSeedsS.split(",");
 
-				for (int txx = 0; txx < worldSeedPairs.length; txx++) {
-					String pair = worldSeedPairs[txx];
+				for (String pair : worldSeedPairs) {
 					String[] worldSeedPair = pair.split("#");
 					if (worldSeedPair.length == 2) {
 						this.worldSeeds.put(worldSeedPair[0], worldSeedPair[1]);
@@ -769,11 +765,11 @@ public class WaypointManager implements IWaypointManager {
 				}
 
 				fr.close();
-			} catch (IOException var25) {
+			} catch (IOException ignored) {
 			}
 
 			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(this.settingsFile), StandardCharsets.UTF_8));
+				BufferedReader in = new BufferedReader(new InputStreamReader(Files.newInputStream(this.settingsFile.toPath()), StandardCharsets.UTF_8));
 
 				String sCurrentLine;
 				while ((sCurrentLine = in.readLine()) != null) {
@@ -791,49 +787,61 @@ public class WaypointManager implements IWaypointManager {
 						String world = "";
 						TreeSet<Integer> dimensions = new TreeSet<>();
 
-						for (int txxx = 0; txxx < pairs.length; txxx++) {
-							int splitIndex = pairs[txxx].indexOf(":");
+						for (String pair : pairs) {
+							int splitIndex = pair.indexOf(":");
 							if (splitIndex != -1) {
-								String key = pairs[txxx].substring(0, splitIndex).toLowerCase().trim();
-								String value = pairs[txxx].substring(splitIndex + 1).trim();
-								if (key.equals("name")) {
-									name = TextUtils.descrubName(value);
-								} else if (key.equals("x")) {
-									x = Integer.parseInt(value);
-								} else if (key.equals("z")) {
-									z = Integer.parseInt(value);
-								} else if (key.equals("y")) {
-									y = Integer.parseInt(value);
-								} else if (key.equals("enabled")) {
-									enabled = Boolean.parseBoolean(value);
-								} else if (key.equals("red")) {
-									red = Float.parseFloat(value);
-								} else if (key.equals("green")) {
-									green = Float.parseFloat(value);
-								} else if (key.equals("blue")) {
-									blue = Float.parseFloat(value);
-								} else if (key.equals("suffix")) {
-									suffix = value;
-								} else if (key.equals("world")) {
-									world = TextUtils.descrubName(value);
-								} else if (key.equals("dimensions")) {
-									String[] dimensionStrings = value.split("#");
+								String key = pair.substring(0, splitIndex).toLowerCase().trim();
+								String value = pair.substring(splitIndex + 1).trim();
+								switch (key) {
+									case "name":
+										name = TextUtils.descrubName(value);
+										break;
+									case "x":
+										x = Integer.parseInt(value);
+										break;
+									case "z":
+										z = Integer.parseInt(value);
+										break;
+									case "y":
+										y = Integer.parseInt(value);
+										break;
+									case "enabled":
+										enabled = Boolean.parseBoolean(value);
+										break;
+									case "red":
+										red = Float.parseFloat(value);
+										break;
+									case "green":
+										green = Float.parseFloat(value);
+										break;
+									case "blue":
+										blue = Float.parseFloat(value);
+										break;
+									case "suffix":
+										suffix = value;
+										break;
+									case "world":
+										world = TextUtils.descrubName(value);
+										break;
+									case "dimensions":
+										String[] dimensionStrings = value.split("#");
 
-									for (int s = 0; s < dimensionStrings.length; s++) {
-										dimensions.add(Integer.parseInt(dimensionStrings[s]));
-									}
+										for (String dimensionString : dimensionStrings) {
+											dimensions.add(Integer.parseInt(dimensionString));
+										}
 
-									if (dimensions.size() == 0) {
-										dimensions.add(0);
-										dimensions.add(-1);
-									}
+										if (dimensions.isEmpty()) {
+											dimensions.add(0);
+											dimensions.add(-1);
+										}
+										break;
 								}
 							}
 						}
 
-						if (!name.equals("")) {
+						if (!name.isEmpty()) {
 							this.loadWaypoint(name, x, z, y, enabled, red, green, blue, suffix, world, dimensions);
-							if (!world.equals("")) {
+							if (!world.isEmpty()) {
 								this.knownSubworldNames.add(TextUtils.descrubName(world));
 							}
 						}
@@ -1004,7 +1012,7 @@ public class WaypointManager implements IWaypointManager {
 						int color = Integer.parseInt(curLine[5], 16);
 						float red = (color >> 16 & 0xFF) / 255.0F;
 						float green = (color >> 8 & 0xFF) / 255.0F;
-						float blue = (color >> 0 & 0xFF) / 255.0F;
+						float blue = (color & 0xFF) / 255.0F;
 						int x = Integer.parseInt(curLine[1]);
 						int z = Integer.parseInt(curLine[3]);
 						if (dimension == -1) {
@@ -1045,8 +1053,8 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public void check2dWaypoints() {
-		if (Minecraft.getMinecraft().player.dimension == 0 && this.old2dWayPts.size() > 0) {
-			this.updatedPts = new ArrayList<>();
+		if (Minecraft.getMinecraft().player.dimension == 0 && !this.old2dWayPts.isEmpty()) {
+			ArrayList<Waypoint> updatedPts = new ArrayList<>();
 
 			for (Waypoint pt : this.old2dWayPts) {
 				BlockPos blockPos = new BlockPos(pt.getX(), 0, pt.getZ());
@@ -1055,12 +1063,12 @@ public class WaypointManager implements IWaypointManager {
 					&& Math.abs(pt.getZ() - GameVariableAccessShim.zCoord()) < 400
 					&& chunk.isLoaded()) {
 					pt.setY(chunk.getHeight(blockPos));
-					this.updatedPts.add(pt);
+					updatedPts.add(pt);
 					this.saveWaypoints();
 				}
 			}
 
-			this.old2dWayPts.removeAll(this.updatedPts);
+			this.old2dWayPts.removeAll(updatedPts);
 			System.out.println("remaining old 2d waypoints: " + this.old2dWayPts.size());
 		}
 	}
@@ -1124,7 +1132,7 @@ public class WaypointManager implements IWaypointManager {
 		try {
 			String path = this.getCurrentWorldName();
 			String subworldDescriptor = this.getCurrentSubworldDescriptor(false);
-			if (subworldDescriptor != null && !subworldDescriptor.equals("")) {
+			if (subworldDescriptor != null && !subworldDescriptor.isEmpty()) {
 				path = path + "/" + subworldDescriptor;
 			}
 
@@ -1163,7 +1171,7 @@ public class WaypointManager implements IWaypointManager {
 			}
 
 			isr.close();
-		} catch (Exception var18) {
+		} catch (Exception ignored) {
 		}
 	}
 

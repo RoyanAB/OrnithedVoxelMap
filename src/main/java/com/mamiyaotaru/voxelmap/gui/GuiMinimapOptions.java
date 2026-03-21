@@ -10,8 +10,9 @@ import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.util.Objects;
+
 public class GuiMinimapOptions extends GuiScreenMinimap {
-	private static EnumOptionsMinimap[] relevantOptions;
 	private final MapSettingsManager options;
 	protected String screenTitle = "Minimap Options";
 	private final GuiScreen parent;
@@ -24,7 +25,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 	}
 
 	public void initGui() {
-		relevantOptions = new EnumOptionsMinimap[]{
+		EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{
 			EnumOptionsMinimap.COORDS,
 			EnumOptionsMinimap.HIDE,
 			EnumOptionsMinimap.LOCATION,
@@ -37,8 +38,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 		int var2 = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.title");
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
 				this.getWidth() / 2 - 155 + var2 % 2 * 160,
@@ -73,7 +73,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 		if (par1GuiButton.enabled) {
 			if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
 				this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions(), 1);
-				par1GuiButton.displayString = this.options.getKeyText(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id));
+				par1GuiButton.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id)));
 				if (((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions() == EnumOptionsMinimap.OLDNORTH) {
 					this.master.getWaypointManager().setOldNorth(this.options.oldNorth);
 				}

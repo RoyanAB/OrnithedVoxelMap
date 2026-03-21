@@ -21,10 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class WaypointContainer {
-	private final String TARGETFLAG = "*&^TARget%$^";
-	public MapSettingsManager options = null;
+	public MapSettingsManager options;
 	private final ArrayList<Waypoint> wayPts = new ArrayList<>();
-	private Waypoint highlightedWaypoint = null;
+	private Waypoint highlightedWaypoint;
 	private final Minecraft mc;
 
 	public WaypointContainer(MapSettingsManager options) {
@@ -45,7 +44,7 @@ public class WaypointContainer {
 	}
 
 	private void sortWaypoints() {
-		Collections.sort(this.wayPts, Collections.reverseOrder());
+		this.wayPts.sort(Collections.reverseOrder());
 	}
 
 	public void renderWaypoints(float partialTicks) {
@@ -173,7 +172,7 @@ public class WaypointContainer {
 
 	private void renderLabel(Waypoint pt, double distance, boolean isPointedAt, String name, double par3, double par5, double par7, int par9) {
 		GLShim.glAlphaFunc(516, 0.1F);
-		boolean target = name == "*&^TARget%$^";
+		boolean target = name.equals("*&^TARget%$^");
 		if (target) {
 			if (pt.red != 2.0F && pt.green != 0.0F && pt.blue != 0.0F) {
 				isPointedAt = false;

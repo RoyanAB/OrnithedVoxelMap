@@ -10,31 +10,12 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class MapSettingsManager implements ISettingsManager {
 	public static MapSettingsManager instance;
-	public final int SORT_DATE = 1;
-	public final int SORT_NAME = 2;
-	public final int SORT_DISTANCE = 3;
-	public final int SORT_COLOR = 4;
-	public final int TOP_LEFT = 0;
-	public final int TOP_RIGHT = 1;
-	public final int BOTTOM_RIGHT = 2;
-	public final int BOTTOM_LEFT = 3;
-	public final int SMALL = -1;
-	public final int MEDIUM = 0;
-	public final int LARGE = 1;
-	public final int XL = 2;
-	public final int XXL = 3;
-	public final int XXXL = 4;
-	public final int OFF = 0;
-	public final int SOLID = 1;
-	public final int TRANSPARENT = 2;
-	public final int MOST_RECENT = 1;
-	public final int ALL = 2;
 	public boolean showUnderMenus;
 	public boolean hide = false;
 	public boolean lightmap = true;
@@ -63,11 +44,10 @@ public class MapSettingsManager implements ISettingsManager {
 	public KeyBinding keyBindMobToggle = new KeyBinding("key.minimap.togglemobs", 0, "controls.minimap.title");
 	public KeyBinding keyBindWaypointToggle = new KeyBinding("key.minimap.toggleingamewaypoints", 0, "controls.minimap.title");
 	public KeyBinding[] keyBindings;
-	public Minecraft game = null;
+	public Minecraft game;
 	protected boolean coords = true;
 	protected boolean showCaves = true;
 	protected boolean welcome = true;
-	protected int regularZoom = 2;
 	protected boolean realTimeTorches = false;
 	private File settingsFile;
 	private final int availableProcessors = Runtime.getRuntime().availableProcessors();
@@ -110,77 +90,111 @@ public class MapSettingsManager implements ISettingsManager {
 			if (this.settingsFile.exists()) {
 				BufferedReader in;
 				String sCurrentLine;
-				for (in = new BufferedReader(new InputStreamReader(new FileInputStream(this.settingsFile), StandardCharsets.UTF_8.newDecoder()));
+				for (in = new BufferedReader(new InputStreamReader(Files.newInputStream(this.settingsFile.toPath()), StandardCharsets.UTF_8.newDecoder()));
 					 (sCurrentLine = in.readLine()) != null;
 					 KeyBinding.resetKeyBindingArrayAndHash()
 				) {
 					String[] curLine = sCurrentLine.split(":");
-					if (curLine[0].equals("Zoom Level")) {
-						this.zoom = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Hide Minimap")) {
-						this.hide = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Show Coordinates")) {
-						this.coords = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Enable Cave Mode")) {
-						this.showCaves = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Dynamic Lighting")) {
-						this.lightmap = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Height Map")) {
-						this.heightmap = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Slope Map")) {
-						this.slopemap = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Blur")) {
-						this.filtering = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Water Transparency")) {
-						this.waterTransparency = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Block Transparency")) {
-						this.blockTransparency = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Biomes")) {
-						this.biomes = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Biome Overlay")) {
-						this.biomeOverlay = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Chunk Grid")) {
-						this.chunkGrid = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Slime Chunks")) {
-						this.slimeChunks = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Square Map")) {
-						this.squareMap = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Rotation")) {
-						this.rotates = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Old North")) {
-						this.oldNorth = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Waypoint Beacons")) {
-						this.showBeacons = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Waypoint Signs")) {
-						this.showWaypoints = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Deathpoints")) {
-						this.deathpoints = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Waypoint Max Distance")) {
-						this.maxWaypointDisplayDistance = Math.max(-1, Math.min(10000, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Waypoint Sort By")) {
-						this.sort = Math.max(1, Math.min(4, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Welcome Message")) {
-						this.welcome = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Real Time Torch Flicker")) {
-						this.realTimeTorches = Boolean.parseBoolean(curLine[1]);
-					} else if (curLine[0].equals("Map Corner")) {
-						this.mapCorner = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Map Size")) {
-						this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
-					} else if (curLine[0].equals("Zoom Key")) {
-						this.setKeyBindingFromDescription(this.keyBindZoom, curLine[1]);
-					} else if (curLine[0].equals("Fullscreen Key")) {
-						this.setKeyBindingFromDescription(this.keyBindFullscreen, curLine[1]);
-					} else if (curLine[0].equals("Menu Key")) {
-						this.setKeyBindingFromDescription(this.keyBindMenu, curLine[1]);
-					} else if (curLine[0].equals("Waypoint Menu Key")) {
-						this.setKeyBindingFromDescription(this.keyBindWaypointMenu, curLine[1]);
-					} else if (curLine[0].equals("Waypoint Key")) {
-						this.setKeyBindingFromDescription(this.keyBindWaypoint, curLine[1]);
-					} else if (curLine[0].equals("Mob Key")) {
-						this.setKeyBindingFromDescription(this.keyBindMobToggle, curLine[1]);
-					} else if (curLine[0].equals("In-game Waypoint Key")) {
-						this.setKeyBindingFromDescription(this.keyBindWaypointToggle, curLine[1]);
+					switch (curLine[0]) {
+						case "Zoom Level":
+							this.zoom = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
+							break;
+						case "Hide Minimap":
+							this.hide = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Show Coordinates":
+							this.coords = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Enable Cave Mode":
+							this.showCaves = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Dynamic Lighting":
+							this.lightmap = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Height Map":
+							this.heightmap = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Slope Map":
+							this.slopemap = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Blur":
+							this.filtering = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Water Transparency":
+							this.waterTransparency = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Block Transparency":
+							this.blockTransparency = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Biomes":
+							this.biomes = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Biome Overlay":
+							this.biomeOverlay = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
+							break;
+						case "Chunk Grid":
+							this.chunkGrid = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Slime Chunks":
+							this.slimeChunks = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Square Map":
+							this.squareMap = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Rotation":
+							this.rotates = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Old North":
+							this.oldNorth = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Waypoint Beacons":
+							this.showBeacons = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Waypoint Signs":
+							this.showWaypoints = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Deathpoints":
+							this.deathpoints = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
+							break;
+						case "Waypoint Max Distance":
+							this.maxWaypointDisplayDistance = Math.max(-1, Math.min(10000, Integer.parseInt(curLine[1])));
+							break;
+						case "Waypoint Sort By":
+							this.sort = Math.max(1, Math.min(4, Integer.parseInt(curLine[1])));
+							break;
+						case "Welcome Message":
+							this.welcome = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Real Time Torch Flicker":
+							this.realTimeTorches = Boolean.parseBoolean(curLine[1]);
+							break;
+						case "Map Corner":
+							this.mapCorner = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
+							break;
+						case "Map Size":
+							this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
+							break;
+						case "Zoom Key":
+							this.setKeyBindingFromDescription(this.keyBindZoom, curLine[1]);
+							break;
+						case "Fullscreen Key":
+							this.setKeyBindingFromDescription(this.keyBindFullscreen, curLine[1]);
+							break;
+						case "Menu Key":
+							this.setKeyBindingFromDescription(this.keyBindMenu, curLine[1]);
+							break;
+						case "Waypoint Menu Key":
+							this.setKeyBindingFromDescription(this.keyBindWaypointMenu, curLine[1]);
+							break;
+						case "Waypoint Key":
+							this.setKeyBindingFromDescription(this.keyBindWaypoint, curLine[1]);
+							break;
+						case "Mob Key":
+							this.setKeyBindingFromDescription(this.keyBindMobToggle, curLine[1]);
+							break;
+						case "In-game Waypoint Key":
+							this.setKeyBindingFromDescription(this.keyBindWaypointToggle, curLine[1]);
+							break;
 					}
 				}
 
@@ -192,7 +206,7 @@ public class MapSettingsManager implements ISettingsManager {
 			}
 
 			this.saveAll();
-		} catch (Exception var5) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -206,7 +220,7 @@ public class MapSettingsManager implements ISettingsManager {
 
 		try {
 			PrintWriter out = new PrintWriter(
-				new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.settingsFile), StandardCharsets.UTF_8.newEncoder()))
+				new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(this.settingsFile.toPath()), StandardCharsets.UTF_8.newEncoder()))
 			);
 			out.println("Zoom Level:" + this.zoom);
 			out.println("Hide Minimap:" + this.hide);
@@ -475,10 +489,8 @@ public class MapSettingsManager implements ISettingsManager {
 					this.heightmap = true;
 				} else if (this.heightmap) {
 					this.slopemap = true;
-					this.heightmap = true;
 				} else {
 					this.slopemap = true;
-					this.heightmap = false;
 				}
 				break;
 			case BEACONS:
@@ -489,11 +501,9 @@ public class MapSettingsManager implements ISettingsManager {
 					this.showBeacons = false;
 					this.showWaypoints = true;
 				} else if (this.showWaypoints) {
-					this.showWaypoints = true;
 					this.showBeacons = true;
 				} else {
 					this.showBeacons = true;
-					this.showWaypoints = false;
 				}
 				break;
 			case LOCATION:

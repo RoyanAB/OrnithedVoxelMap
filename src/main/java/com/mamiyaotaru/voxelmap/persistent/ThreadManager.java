@@ -1,5 +1,7 @@
 package com.mamiyaotaru.voxelmap.persistent;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,7 +17,7 @@ public class ThreadManager {
 	public static void emptyQueue() {
 		for (Runnable runnable : queue) {
 			if (runnable instanceof FutureTask) {
-				((FutureTask) runnable).cancel(false);
+				((FutureTask<?>) runnable).cancel(false);
 			}
 		}
 
@@ -31,7 +33,7 @@ public class ThreadManager {
 		}
 
 		@Override
-		public Thread newThread(Runnable runnable) {
+		public Thread newThread(@NotNull Runnable runnable) {
 			return new Thread(runnable, this.name + " " + this.threadCount.getAndIncrement());
 		}
 	}

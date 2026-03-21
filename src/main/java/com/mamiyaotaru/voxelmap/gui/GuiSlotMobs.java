@@ -7,9 +7,8 @@ import org.lwjgl.input.Mouse;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 
 class GuiSlotMobs extends GuiSlotMinimap {
 	final GuiMobs parentGui;
@@ -36,12 +35,10 @@ class GuiSlotMobs extends GuiSlotMinimap {
 		}
 
 		final Collator collator = I18nUtils.getLocaleAwareCollator();
-		Collections.sort(this.mobNames, new Comparator<String>() {
-			public int compare(String name1, String name2) {
-				name1 = GuiSlotMobs.getTranslatedName(name1);
-				name2 = GuiSlotMobs.getTranslatedName(name2);
-				return collator.compare(name1, name2);
-			}
+		this.mobNames.sort((name1, name2) -> {
+			name1 = GuiSlotMobs.getTranslatedName(name1);
+			name2 = GuiSlotMobs.getTranslatedName(name2);
+			return collator.compare(name1, name2);
 		});
 		this.mobNamesFiltered = new ArrayList<>(this.mobNames);
 	}
@@ -135,7 +132,7 @@ class GuiSlotMobs extends GuiSlotMinimap {
 		while (iterator.hasNext()) {
 			String mobName = iterator.next();
 			if (!getTranslatedName(mobName).toLowerCase().contains(filterString)) {
-				if (mobName == this.parentGui.selectedMobName) {
+				if (Objects.equals(mobName, this.parentGui.selectedMobName)) {
 					this.parentGui.setSelectedMob(null);
 				}
 

@@ -11,18 +11,16 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
-
 public class GuiMobs extends GuiScreenMinimap {
 	protected final RadarSettingsManager options;
 	private final GuiScreen parentScreen;
 	protected String screenTitle = "Select Mobs";
 	protected GuiTextField filter;
-	protected String selectedMobName = null;
+	protected String selectedMobName;
 	private GuiSlotMobs mobsList;
 	private GuiButton buttonEnable;
 	private GuiButton buttonDisable;
-	private String tooltip = null;
+	private String tooltip;
 
 	public GuiMobs(GuiScreen parentScreen, RadarSettingsManager options) {
 		this.parentScreen = parentScreen;

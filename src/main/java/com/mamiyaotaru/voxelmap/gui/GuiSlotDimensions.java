@@ -105,8 +105,6 @@ class GuiSlotDimensions extends GuiSlotMinimap {
 				tooltip = this.parentGui.waypoint.dimensions.contains(dim.ID)
 					? I18nUtils.getString("minimap.waypoints.dimension.applies")
 					: I18nUtils.getString("minimap.waypoints.dimension.notapplies");
-			} else {
-				tooltip = null;
 			}
 
 			GuiAddWaypoint.setTooltip(this.parentGui, tooltip);

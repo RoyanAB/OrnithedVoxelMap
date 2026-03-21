@@ -28,7 +28,7 @@ public class BiomeRepository {
 					String[] curLine = sCurrentLine.split(":");
 					if (curLine.length == 2) {
 						String name = curLine[0];
-						int color = 0;
+						int color;
 
 						try {
 							color = Integer.decode(curLine[1]);
@@ -59,7 +59,7 @@ public class BiomeRepository {
 				String[] curLine = sCurrentLine.split(":");
 				if (curLine.length == 2) {
 					String name = curLine[0];
-					int color = 0;
+					int color;
 
 					try {
 						color = Integer.decode(curLine[1]);

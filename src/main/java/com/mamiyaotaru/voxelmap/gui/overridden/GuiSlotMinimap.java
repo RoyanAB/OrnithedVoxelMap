@@ -23,7 +23,6 @@ public abstract class GuiSlotMinimap {
 	protected int slotWidth = 220;
 	protected int mouseX;
 	protected int mouseY;
-	protected boolean centerListVertically = true;
 	protected int headerPadding;
 	private int height;
 	private int scrollUpButtonID;
@@ -32,7 +31,6 @@ public abstract class GuiSlotMinimap {
 	private float scrollMultiplier;
 	private float amountScrolled;
 	private int selectedElement = -1;
-	private long lastClicked;
 	private long lastClickedTouch = 0L;
 	private boolean showSelectionBox = true;
 	private boolean showTopBottomBG = true;
@@ -148,11 +146,11 @@ public abstract class GuiSlotMinimap {
 	public void actionPerformed(GuiButton button) {
 		if (button.enabled) {
 			if (button.id == this.scrollUpButtonID) {
-				this.amountScrolled = this.amountScrolled - this.slotHeight * 2 / 3;
+				this.amountScrolled = this.amountScrolled - (float) (this.slotHeight * 2) / 3;
 				this.initialClickY = -2.0F;
 				this.bindAmountScrolled();
 			} else if (button.id == this.scrollDownButtonID) {
-				this.amountScrolled = this.amountScrolled + this.slotHeight * 2 / 3;
+				this.amountScrolled = this.amountScrolled + (float) (this.slotHeight * 2) / 3;
 				this.initialClickY = -2.0F;
 				this.bindAmountScrolled();
 			}
@@ -290,7 +288,6 @@ public abstract class GuiSlotMinimap {
 					int slotIndex = mouseYInList / this.slotHeight;
 					if (slotIndex < this.getSize() && this.mouseX >= leftEdge && this.mouseX <= rightEdge && slotIndex >= 0 && mouseYInList >= 0) {
 						this.selectedElement = slotIndex;
-						this.lastClicked = Minecraft.getSystemTime();
 					} else if (this.mouseX >= leftEdge && this.mouseX <= rightEdge && mouseYInList < 0) {
 						this.clickedHeader(this.mouseX - leftEdge, this.mouseY - this.top + (int) this.amountScrolled - 4);
 						flag1 = false;
@@ -329,11 +326,11 @@ public abstract class GuiSlotMinimap {
 			if (mouseRoll != 0) {
 				if (mouseRoll > 0) {
 					mouseRoll = -1;
-				} else if (mouseRoll < 0) {
+				} else {
 					mouseRoll = 1;
 				}
 
-				this.amountScrolled = this.amountScrolled + mouseRoll * this.slotHeight / 2;
+				this.amountScrolled = this.amountScrolled + (float) (mouseRoll * this.slotHeight) / 2;
 			}
 		}
 	}
@@ -342,10 +339,6 @@ public abstract class GuiSlotMinimap {
 		if (this.isMouseYWithinSlotBounds(mouseY)) {
 			int i = this.getSlotIndexFromScreenCoords(mouseX, mouseY);
 			if (i >= 0) {
-				int j = this.left + this.width / 2 - this.getListWidth() / 2 + 2;
-				int k = this.top + 4 - this.getAmountScrolled() + i * this.slotHeight + this.headerPadding;
-				int l = mouseX - j;
-				int i1 = mouseY - k;
 				boolean flag = i == this.selectedElement && Minecraft.getSystemTime() - this.lastClickedTouch < 250L;
 				if (flag) {
 					this.setEnabled(false);
@@ -361,13 +354,6 @@ public abstract class GuiSlotMinimap {
 	}
 
 	public boolean mouseReleased(int x, int y, int mouseEvent) {
-		for (int i = 0; i < this.getSize(); i++) {
-			int j = this.left + this.width / 2 - this.getListWidth() / 2 + 2;
-			int k = this.top + 4 - this.getAmountScrolled() + i * this.slotHeight + this.headerPadding;
-			int l = x - j;
-			int var8 = y - k;
-		}
-
 		this.setEnabled(true);
 		return false;
 	}

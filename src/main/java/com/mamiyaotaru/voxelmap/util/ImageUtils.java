@@ -114,7 +114,7 @@ public class ImageUtils {
 				for (int y = 0; y < imageHeight; y++) {
 					int index = y * imageWidth * 4 + x * 4;
 					byte var8 = 0;
-					int color24 = var8 | (bytes[index + 2] & 255) << 0;
+					int color24 = var8 | (bytes[index + 2] & 255);
 					color24 |= (bytes[index + 1] & 255) << 8;
 					color24 |= (bytes[index] & 255) << 16;
 					color24 |= (bytes[index + 3] & 255) << 24;
@@ -170,7 +170,7 @@ public class ImageUtils {
 						for (int y = 0; y < fboHeight && startY + y < imageHeight; y++) {
 							int index = y * fboWidth * 4 + x * 4;
 							byte var8 = 0;
-							int color24 = var8 | (bytes[index + 2] & 255) << 0;
+							int color24 = var8 | (bytes[index + 2] & 255);
 							color24 |= (bytes[index + 1] & 255) << 8;
 							color24 |= (bytes[index] & 255) << 16;
 							color24 |= (bytes[index + 3] & 255) << 24;
@@ -257,8 +257,8 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage eraseArea(BufferedImage image, int x, int y, int w, int h, int imageWidth, int imageHeight) {
-		float scaleX = image.getWidth() / imageWidth;
-		float scaleY = image.getHeight() / imageHeight;
+		float scaleX = (float) image.getWidth() / imageWidth;
+		float scaleY = (float) image.getHeight() / imageHeight;
 		x = (int) (x * scaleX);
 		y = (int) (y * scaleY);
 		w = (int) (w * scaleX);
@@ -298,7 +298,7 @@ public class ImageUtils {
 			mobSkin = temp;
 		}
 
-		float scale = mobSkin.getWidth(null) / imageWidth;
+		float scale = (float) mobSkin.getWidth(null) / imageWidth;
 		x = (int) (x * scale);
 		y = (int) (y * scale);
 		w = (int) (w * scale);
@@ -307,8 +307,7 @@ public class ImageUtils {
 		h = Math.max(1, h);
 		x = Math.min(mobSkin.getWidth(null) - w, x);
 		y = Math.min(mobSkin.getHeight(null) - h, y);
-		BufferedImage base = mobSkin.getSubimage(x, y, w, h);
-		return base;
+		return mobSkin.getSubimage(x, y, w, h);
 	}
 
 	public static BufferedImage addImages(BufferedImage base, BufferedImage overlay, float x, float y, int baseWidth, int baseHeight) {
@@ -408,10 +407,10 @@ public class ImageUtils {
 					if (newColor != -420) {
 						if (solid) {
 							if (armor
-								&& !(t <= imageWidth / 2 - armorOutlineFraction)
-								&& !(t >= imageWidth / 2 + armorOutlineFraction - 1.0F)
-								&& !(s <= imageHeight / 2 - armorOutlineFraction)
-								&& !(s >= imageHeight / 2 + armorOutlineFraction - 1.0F)) {
+								&& !(t <= (float) imageWidth / 2 - armorOutlineFraction)
+								&& !(t >= (float) imageWidth / 2 + armorOutlineFraction - 1.0F)
+								&& !(s <= (float) imageHeight / 2 - armorOutlineFraction)
+								&& !(s >= (float) imageHeight / 2 + armorOutlineFraction - 1.0F)) {
 								newColor = 0;
 							} else {
 								newColor = -16777216;
@@ -419,8 +418,8 @@ public class ImageUtils {
 						} else {
 							int red = newColor >> 16 & 0xFF;
 							int green = newColor >> 8 & 0xFF;
-							int blue = newColor >> 0 & 0xFF;
-							newColor = 0 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
+							int blue = newColor & 0xFF;
+							newColor = (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
 						}
 
 						temp.setRGB(s, t, newColor);
@@ -498,7 +497,7 @@ public class ImageUtils {
 		int top = -1;
 		int bottom = image.getHeight();
 		boolean foundColor = false;
-		int color = 0;
+		int color;
 
 		while (!foundColor && left < right - 1) {
 			left++;
@@ -561,7 +560,7 @@ public class ImageUtils {
 		int top = -1;
 		int bottom = height;
 		boolean foundColor = false;
-		int color = 0;
+		int color;
 
 		while (!foundColor && left < width / 2 - 1 && top < height / 2 - 1) {
 			left++;
@@ -604,7 +603,7 @@ public class ImageUtils {
 	public static float percentageOfEdgePixelsThatAreSolid(BufferedImage image) {
 		float edgePixels = image.getWidth() * 2 + image.getHeight() * 2 - 2;
 		float edgePixelsWithColor = 0.0F;
-		int color = 0;
+		int color;
 
 		for (int t = 0; t < image.getHeight(); t++) {
 			color = image.getRGB(0, t);

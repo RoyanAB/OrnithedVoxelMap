@@ -20,8 +20,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
-
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
 	protected Dimension selectedDimension = null;
 	protected Waypoint waypoint;
@@ -102,7 +100,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 			);
 		this.getButtonList()
 			.add(new PopupGuiButton(8, this.getWidth() / 2 - 101, buttonListY + 48, 100, 20, I18nUtils.getString("minimap.waypoints.sortbyicon") + ":     ", this));
-		this.doneButton.enabled = this.waypointName.getText().length() > 0;
+		this.doneButton.enabled = !this.waypointName.getText().isEmpty();
 		this.dimensionList = new GuiSlotDimensions(this);
 		this.dimensionList.registerScrollButtons(9, 10);
 	}
@@ -200,7 +198,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				this.actionPerformed(this.doneButton);
 			}
 
-			boolean acceptable = this.waypointName.getText().length() > 0;
+			boolean acceptable = !this.waypointName.getText().isEmpty();
 
 			try {
 				Integer.parseInt(this.waypointX.getText());
@@ -229,7 +227,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				int color = this.colorManager.getColorPicker().getRGB(mouseX - (this.getWidth() / 2 - 128), mouseY - (this.getHeight() / 2 - 128));
 				this.waypoint.red = (color >> 16 & 0xFF) / 255.0F;
 				this.waypoint.green = (color >> 8 & 0xFF) / 255.0F;
-				this.waypoint.blue = (color >> 0 & 0xFF) / 255.0F;
+				this.waypoint.blue = (color & 0xFF) / 255.0F;
 				this.choosingColor = false;
 			}
 		} else if (this.choosingIcon) {
@@ -259,8 +257,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				&& mouseX < this.getWidth() / 2 + displayWidth / 2
 				&& mouseY >= this.getHeight() / 2 - displayHeight / 2
 				&& mouseY < this.getHeight() / 2 + displayHeight / 2) {
-				float x = (mouseX - (this.getWidth() / 2 - displayWidth / 2)) * scale;
-				float y = (mouseY - (this.getHeight() / 2 - displayHeight / 2)) * scale;
+				float x = (mouseX - ((float) this.getWidth() / 2 - (float) displayWidth / 2)) * scale;
+				float y = (mouseY - ((float) this.getHeight() / 2 - (float) displayHeight / 2)) * scale;
 				Sprite icon = chooser.getIconAt(x, y);
 				if (icon != chooser.getMissingImage()) {
 					this.waypoint.imageSuffix = icon.getIconName().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
@@ -330,7 +328,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		GLUtils.disp(chooser.getGlTextureId());
 		GLShim.glTexParameteri(3553, 10241, 9729);
 		Sprite icon = chooser.getAtlasSprite("voxelmap:images/waypoints/waypoint" + this.waypoint.imageSuffix + ".png");
-		this.drawTexturedModalRect(this.getWidth() / 2 - 25, buttonListY + 48 + 2, icon, 16.0F, 16.0F);
+		this.drawTexturedModalRect((float) this.getWidth() / 2 - 25, buttonListY + 48 + 2, icon, 16.0F, 16.0F);
 		if (this.choosingColor || this.choosingIcon) {
 			this.drawDefaultBackground();
 		}
@@ -386,8 +384,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				&& mouseX <= this.getWidth() / 2 + displayWidth / 2
 				&& mouseY >= this.getHeight() / 2 - displayHeight / 2
 				&& mouseY <= this.getHeight() / 2 + displayHeight / 2) {
-				float x = (mouseX - (this.getWidth() / 2 - displayWidth / 2)) * scale;
-				float y = (mouseY - (this.getHeight() / 2 - displayHeight / 2)) * scale;
+				float x = (mouseX - ((float) this.getWidth() / 2 - (float) displayWidth / 2)) * scale;
+				float y = (mouseY - ((float) this.getHeight() / 2 - (float) displayHeight / 2)) * scale;
 				icon = chooser.getIconAt(x, y);
 				if (icon != chooser.getMissingImage()) {
 					this.tooltip = icon.getIconName().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
@@ -409,14 +407,12 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		if (this.waypoint.dimensions.size() > 1
 			&& this.waypoint.dimensions.contains(this.selectedDimension.ID)
 			&& this.selectedDimension.ID != Minecraft.getMinecraft().player.dimension) {
-			this.waypoint.dimensions.remove(Integer.valueOf(this.selectedDimension.ID));
-		} else if (!this.waypoint.dimensions.contains(this.selectedDimension.ID)) {
-			this.waypoint.dimensions.add(Integer.valueOf(this.selectedDimension.ID));
-		}
+			this.waypoint.dimensions.remove(this.selectedDimension.ID);
+		} else this.waypoint.dimensions.add(this.selectedDimension.ID);
 	}
 
 	protected void drawTooltip(String par1Str, int mouseX, int mouseY) {
-		if (par1Str != null && !par1Str.equals("")) {
+		if (par1Str != null && !par1Str.isEmpty()) {
 			int var4 = mouseX + 12;
 			int var5 = mouseY - 12;
 			int var6 = this.getFontRenderer().getStringWidth(par1Str);

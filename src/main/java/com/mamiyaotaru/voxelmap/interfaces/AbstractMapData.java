@@ -11,7 +11,7 @@ public abstract class AbstractMapData implements IMapData {
 	public ArrayList<AbstractMapData.Segment> segments;
 	protected int width;
 	protected int height;
-	protected Object dataLock = new Object();
+	protected final Object dataLock = new Object();
 	private final Object labelLock = new Object();
 	private final ArrayList<AbstractMapData.BiomeLabel> labels = new ArrayList<>();
 
@@ -84,10 +84,8 @@ public abstract class AbstractMapData implements IMapData {
 	}
 
 	public ArrayList<AbstractMapData.BiomeLabel> getBiomeLabels() {
-		ArrayList<AbstractMapData.BiomeLabel> labelsToReturn = new ArrayList<>();
 		synchronized (this.labelLock) {
-			labelsToReturn.addAll(this.labels);
-			return labelsToReturn;
+			return new ArrayList<>(this.labels);
 		}
 	}
 
@@ -105,7 +103,7 @@ public abstract class AbstractMapData implements IMapData {
 		public boolean inSegment = false;
 		public boolean isCandidate = false;
 		public int layer = -1;
-		public int biomeID = -1;
+		public int biomeID;
 
 		public Point(int x, int z, int biomeID) {
 			this.x = x;
@@ -151,7 +149,7 @@ public abstract class AbstractMapData implements IMapData {
 			ArrayList<AbstractMapData.Point> candidatePoints = new ArrayList<>();
 			candidatePoints.add(this.memberPoints.remove(0));
 
-			while (candidatePoints.size() > 0) {
+			while (!candidatePoints.isEmpty()) {
 				AbstractMapData.Point point = candidatePoints.remove(0);
 				point.isCandidate = false;
 				if (point.biomeID == this.biomeID) {
@@ -262,16 +260,16 @@ public abstract class AbstractMapData implements IMapData {
 
 		public void morphologicallyErode(boolean horizontalBias) {
 			float labelWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(this.name) + 8;
-			float multi = AbstractMapData.this.width / 32;
+			float multi = (float) AbstractMapData.this.width / 32;
 			float shellWidth = 2.0F;
 			float labelPadding = labelWidth / 16.0F * multi / shellWidth;
 			int layer = 0;
 
-			while (this.currentShell.size() > 0 && layer < labelPadding) {
+			while (!this.currentShell.isEmpty() && layer < labelPadding) {
 				this.currentShell = this.getNextShell(this.currentShell, ++layer, horizontalBias);
 			}
 
-			if (this.currentShell.size() > 0) {
+			if (!this.currentShell.isEmpty()) {
 				ArrayList<AbstractMapData.Point> remainingPoints = new ArrayList<>();
 
 				for (AbstractMapData.Point point : this.memberPoints) {
@@ -351,7 +349,7 @@ public abstract class AbstractMapData implements IMapData {
 				}
 			}
 
-			if (nextShell.size() > 0) {
+			if (!nextShell.isEmpty()) {
 				return nextShell;
 			}
 

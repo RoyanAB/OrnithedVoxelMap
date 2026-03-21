@@ -12,10 +12,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.Objects;
 
 public class RadarSettingsManager implements ISubSettingsManager {
-	public final int SIMPLE = 1;
-	public final int FULL = 2;
 	public Minecraft game;
 	public int radarMode = 2;
 	public boolean showRadar = true;
@@ -47,57 +46,72 @@ public class RadarSettingsManager implements ISubSettingsManager {
 			String sCurrentLine;
 			while ((sCurrentLine = in.readLine()) != null) {
 				String[] curLine = sCurrentLine.split(":");
-				if (curLine[0].equals("Radar Mode")) {
-					this.radarMode = Math.max(1, Math.min(2, Integer.parseInt(curLine[1])));
-				} else if (curLine[0].equals("Show Radar")) {
-					this.showRadar = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Hostiles")) {
-					this.showHostiles = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Players")) {
-					this.showPlayers = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Neutrals")) {
-					this.showNeutrals = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Filter Mob Icons")) {
-					this.filtering = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Outline Mob Icons")) {
-					this.outlines = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Player Helmets")) {
-					this.showHelmetsPlayers = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Mob Helmets")) {
-					this.showHelmetsMobs = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Player Names")) {
-					this.showPlayerNames = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Font Scale")) {
-					this.fontScale = Float.parseFloat(curLine[1]);
-				} else if (curLine[0].equals("Randomobs")) {
-					this.randomobs = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Facing")) {
-					this.showFacing = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Hidden Mobs")) {
-					this.applyHiddenMobSettings(curLine[1]);
+				switch (curLine[0]) {
+					case "Radar Mode":
+						this.radarMode = Math.max(1, Math.min(2, Integer.parseInt(curLine[1])));
+						break;
+					case "Show Radar":
+						this.showRadar = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Hostiles":
+						this.showHostiles = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Players":
+						this.showPlayers = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Neutrals":
+						this.showNeutrals = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Filter Mob Icons":
+						this.filtering = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Outline Mob Icons":
+						this.outlines = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Player Helmets":
+						this.showHelmetsPlayers = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Mob Helmets":
+						this.showHelmetsMobs = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Player Names":
+						this.showPlayerNames = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Font Scale":
+						this.fontScale = Float.parseFloat(curLine[1]);
+						break;
+					case "Randomobs":
+						this.randomobs = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Facing":
+						this.showFacing = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Hidden Mobs":
+						this.applyHiddenMobSettings(curLine[1]);
+						break;
 				}
 			}
 
 			in.close();
-		} catch (Exception var5) {
+		} catch (Exception ignored) {
 		}
 	}
 
 	private void applyHiddenMobSettings(String hiddenMobs) {
 		String[] mobsToHide = hiddenMobs.split(",");
 
-		for (int t = 0; t < mobsToHide.length; t++) {
+		for (String s : mobsToHide) {
 			boolean builtIn = false;
 
 			for (EnumMobs mob : EnumMobs.values()) {
-				if (mob.id.equals(mobsToHide[t])) {
+				if (mob.id.equals(s)) {
 					mob.enabled = false;
 					builtIn = true;
 				}
 			}
 
 			if (!builtIn) {
-				CustomMobsManager.add(mobsToHide[t], false);
+				CustomMobsManager.add(s, false);
 			}
 		}
 	}
@@ -175,18 +189,16 @@ public class RadarSettingsManager implements ISubSettingsManager {
 	}
 
 	public String getOptionListValue(EnumOptionsMinimap par1EnumOptions) {
-		switch (par1EnumOptions) {
-			case RADARMODE:
-				if (this.radarMode == 2) {
-					return I18nUtils.getString("options.minimap.radar.radarmode.full");
-				}
+		if (Objects.requireNonNull(par1EnumOptions) == EnumOptionsMinimap.RADARMODE) {
+			if (this.radarMode == 2) {
+				return I18nUtils.getString("options.minimap.radar.radarmode.full");
+			}
 
-				return I18nUtils.getString("options.minimap.radar.radarmode.simple");
-			default:
-				throw new IllegalArgumentException(
-					"Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a list value applicable to minimap)"
-				);
+			return I18nUtils.getString("options.minimap.radar.radarmode.simple");
 		}
+		throw new IllegalArgumentException(
+			"Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a list value applicable to minimap)"
+		);
 	}
 
 	@Override

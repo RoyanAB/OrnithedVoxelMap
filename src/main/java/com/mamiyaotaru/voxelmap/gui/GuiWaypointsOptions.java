@@ -9,6 +9,8 @@ import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.util.Objects;
+
 public class GuiWaypointsOptions extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.DEATHPOINTS};
 	private final GuiScreen parent;
@@ -65,7 +67,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 		if (par1GuiButton.enabled) {
 			if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
 				this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions(), 1);
-				par1GuiButton.displayString = this.options.getKeyText(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id));
+				par1GuiButton.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id)));
 			}
 
 			if (par1GuiButton.id == 200) {

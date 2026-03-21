@@ -7,14 +7,13 @@ import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import net.minecraft.client.gui.*;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class GuiSubworldEdit extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final GuiScreen parent;
 	private final IWaypointManager waypointManager;
 	private final ArrayList<String> knownSubworldNames;
-	private String originalSubworldName = "";
+	private final String originalSubworldName;
 	private String currentSubworldName = "";
 	private GuiTextField subworldNameField;
 	private boolean deleteClicked = false;
@@ -109,9 +108,9 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements GuiYesNoCallbac
 	}
 
 	private boolean isNameAcceptable() {
-		boolean acceptable = true;
+		boolean acceptable;
 		this.currentSubworldName = this.subworldNameField.getText();
-		acceptable = acceptable && this.currentSubworldName.length() > 0;
+		acceptable = !this.currentSubworldName.isEmpty();
 		return acceptable && (this.currentSubworldName.equals(this.originalSubworldName) || !this.knownSubworldNames.contains(this.currentSubworldName));
 	}
 }
