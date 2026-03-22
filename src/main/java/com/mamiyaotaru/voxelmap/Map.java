@@ -45,6 +45,7 @@ import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.List;
 
+@SuppressWarnings({"unused", "unchecked"})
 public class Map implements Runnable, IMap {
 	private final float[] lastLightBrightnessTable = new float[16];
 	private final Object coordinateLock = new Object();

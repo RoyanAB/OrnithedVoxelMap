@@ -57,6 +57,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+@SuppressWarnings({"unused", "unchecked"})
 public class ColorManager implements IColorManager {
 	private final MutableBlockPos dummyBlockPos = new MutableBlockPos(
 		BlockPos.ORIGIN.getX(), BlockPos.ORIGIN.getY(), BlockPos.ORIGIN.getZ()
@@ -75,7 +76,7 @@ public class ColorManager implements IColorManager {
 	private int[] blockColors = new int[16384];
 	private int[] blockColorsWithDefaultTint = new int[16384];
 	private final HashSet<Integer> biomeTintsAvailable = new HashSet<>();
-	private boolean optifineInstalled = false;
+	private boolean optifineInstalled;
 	private final HashMap<Integer, int[][]> blockTintTables = new HashMap<>();
 	private final HashSet<Integer> biomeTextureAvailable = new HashSet<>();
 	private final HashMap<String, Integer> blockBiomeSpecificColors = new HashMap<>();
@@ -632,10 +633,9 @@ public class ColorManager implements IColorManager {
 			EnumPlantType type = blockState.getValue(BlockDoublePlant.VARIANT);
 			switch (type) {
 				case FERN:
-					this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, ColorizerGrass.getGrassColor(0.7, 0.8) | 0xFF000000);
-					break;
 				case GRASS:
 					this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, ColorizerGrass.getGrassColor(0.7, 0.8) | 0xFF000000);
+					break;
 			}
 		} else if (block == BlockRepository.reeds) {
 			this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, ColorizerGrass.getGrassColor(0.7, 0.8) | 0xFF000000);
