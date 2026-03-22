@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class ReflectionUtils {
 	public static Object getPrivateFieldValueByType(Object o, Class<?> objectClasstype, Class<?> fieldClasstype) {
 		return getPrivateFieldValueByType(o, objectClasstype, fieldClasstype, 0);
@@ -24,13 +25,13 @@ public class ReflectionUtils {
 		int counter = 0;
 		Field[] fields = objectClass.getDeclaredFields();
 
-		for (int i = 0; i < fields.length; i++) {
-			if (fieldClasstype.equals(fields[i].getType())) {
+		for (Field field : fields) {
+			if (fieldClasstype.equals(field.getType())) {
 				if (counter == index) {
 					try {
-						fields[i].setAccessible(true);
-						return fields[i].get(o);
-					} catch (IllegalAccessException var9) {
+						field.setAccessible(true);
+						return field.get(o);
+					} catch (IllegalAccessException ignored) {
 					}
 				}
 
@@ -44,12 +45,12 @@ public class ReflectionUtils {
 	public static Object getFieldValueByName(Object o, String fieldName) {
 		Field[] fields = o.getClass().getFields();
 
-		for (int i = 0; i < fields.length; i++) {
-			if (fieldName.equals(fields[i].getName())) {
+		for (Field field : fields) {
+			if (fieldName.equals(field.getName())) {
 				try {
-					fields[i].setAccessible(true);
-					return fields[i].get(o);
-				} catch (IllegalAccessException var5) {
+					field.setAccessible(true);
+					return field.get(o);
+				} catch (IllegalAccessException ignored) {
 				}
 			}
 		}
@@ -66,10 +67,10 @@ public class ReflectionUtils {
 		) {
 			Field[] fields = objectClass.getDeclaredFields();
 
-			for (int i = 0; i < fields.length; i++) {
-				if (fieldClasstype.isAssignableFrom(fields[i].getType())) {
-					fields[i].setAccessible(true);
-					matches.add(fields[i]);
+			for (Field field : fields) {
+				if (fieldClasstype.isAssignableFrom(field.getType())) {
+					field.setAccessible(true);
+					matches.add(field);
 				}
 			}
 		}
@@ -91,11 +92,11 @@ public class ReflectionUtils {
 		int counter = 0;
 		Field[] fields = objectClass.getDeclaredFields();
 
-		for (int i = 0; i < fields.length; i++) {
-			if (fieldClasstype.equals(fields[i].getType())) {
+		for (Field field : fields) {
+			if (fieldClasstype.equals(field.getType())) {
 				if (counter == index) {
-					fields[i].setAccessible(true);
-					return fields[i];
+					field.setAccessible(true);
+					return field;
 				}
 
 				counter++;
@@ -113,9 +114,9 @@ public class ReflectionUtils {
 		Method[] methods = objectType.getDeclaredMethods();
 		int counter = 0;
 
-		for (int i = 0; i < methods.length; i++) {
-			if (returnType.equals(methods[i].getReturnType())) {
-				Class<?>[] methodParameterTypes = methods[i].getParameterTypes();
+		for (Method method : methods) {
+			if (returnType.equals(method.getReturnType())) {
+				Class<?>[] methodParameterTypes = method.getParameterTypes();
 				if (parameterTypes.length == methodParameterTypes.length) {
 					boolean match = true;
 
@@ -127,8 +128,8 @@ public class ReflectionUtils {
 					}
 
 					if (counter == index && match) {
-						methods[i].setAccessible(true);
-						return methods[i];
+						method.setAccessible(true);
+						return method;
 					}
 				}
 
