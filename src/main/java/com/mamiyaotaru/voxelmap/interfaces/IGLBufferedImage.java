@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.interfaces;
 
+@SuppressWarnings("unused")
 public interface IGLBufferedImage {
 	int getIndex();
 
@@ -13,9 +14,9 @@ public interface IGLBufferedImage {
 
 	void blank();
 
-	void setRGB(int var1, int var2, int var3);
+	void setRGB(int r, int g, int b);
 
-	void moveX(int var1);
+	void moveX(int offsetX);
 
-	void moveY(int var1);
+	void moveY(int offsetY);
 }

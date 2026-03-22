@@ -2,80 +2,81 @@ package com.mamiyaotaru.voxelmap.interfaces;
 
 import net.minecraft.block.state.IBlockState;
 
+@SuppressWarnings("unused")
 public interface IMapData {
 	int getWidth();
 
 	int getHeight();
 
-	int getHeight(int var1, int var2);
+	int getHeight(int imageX, int imageY);
 
-	IBlockState getBlockstate(int var1, int var2);
+	IBlockState getBlockstate(int imageX, int imageY);
 
-	int getBiomeTint(int var1, int var2);
+	int getBiomeTint(int imageX, int imageY);
 
-	int getLight(int var1, int var2);
+	int getLight(int imageX, int imageY);
 
-	int getOceanFloorHeight(int var1, int var2);
+	int getOceanFloorHeight(int imageX, int imageY);
 
-	IBlockState getOceanFloorBlockstate(int var1, int var2);
+	IBlockState getOceanFloorBlockstate(int imageX, int imageY);
 
-	int getOceanFloorBiomeTint(int var1, int var2);
+	int getOceanFloorBiomeTint(int imageX, int imageY);
 
-	int getOceanFloorLight(int var1, int var2);
+	int getOceanFloorLight(int imageX, int imageY);
 
-	int getTransparentHeight(int var1, int var2);
+	int getTransparentHeight(int imageX, int imageY);
 
-	IBlockState getTransparentBlockstate(int var1, int var2);
+	IBlockState getTransparentBlockstate(int imageX, int imageY2);
 
-	int getTransparentBiomeTint(int var1, int var2);
+	int getTransparentBiomeTint(int imageX, int imageY);
 
-	int getTransparentLight(int var1, int var2);
+	int getTransparentLight(int imageX, int imageY);
 
-	int getFoliageHeight(int var1, int var2);
+	int getFoliageHeight(int imageX, int imageY);
 
-	IBlockState getFoliageBlockstate(int var1, int var2);
+	IBlockState getFoliageBlockstate(int imageX, int imageY);
 
-	int getFoliageBiomeTint(int var1, int var2);
+	int getFoliageBiomeTint(int imageX, int imageY);
 
-	int getFoliageLight(int var1, int var2);
+	int getFoliageLight(int imageX, int imageY);
 
-	int getBiomeID(int var1, int var2);
+	int getBiomeID(int imageX, int imageY);
 
-	void setHeight(int var1, int var2, int var3);
+	void setHeight(int imageX, int imageY, int surfaceHeight);
 
-	void setBlockstate(int var1, int var2, IBlockState var3);
+	void setBlockstate(int imageX, int imageY, IBlockState blockState);
 
-	void setBiomeTint(int var1, int var2, int var3);
+	void setBiomeTint(int imageX, int imageY, int tint);
 
-	void setLight(int var1, int var2, int var3);
+	void setLight(int imageX, int imageY, int light);
 
-	void setOceanFloorHeight(int var1, int var2, int var3);
+	void setOceanFloorHeight(int imageX, int imageY, int seafloorHeight);
 
-	void setOceanFloorBlockstate(int var1, int var2, IBlockState var3);
+	void setOceanFloorBlockstate(int imageX, int imageY, IBlockState blockState);
 
-	void setOceanFloorBiomeTint(int var1, int var2, int var3);
+	void setOceanFloorBiomeTint(int imageX, int imageY, int tint);
 
-	void setOceanFloorLight(int var1, int var2, int var3);
+	void setOceanFloorLight(int imageX, int imageY, int seafloorLight);
 
-	void setTransparentHeight(int var1, int var2, int var3);
+	void setTransparentHeight(int imageX, int imageY, int transparentHeight);
 
-	void setTransparentBlockstate(int var1, int var2, IBlockState var3);
+	void setTransparentBlockstate(int imageX, int imageY, IBlockState blockState);
 
-	void setTransparentBiomeTint(int var1, int var2, int var3);
+	void setTransparentBiomeTint(int imageX, int imageY, int tint);
 
-	void setTransparentLight(int var1, int var2, int var3);
+	void setTransparentLight(int imageX, int imageY, int transparentLight);
 
-	void setFoliageHeight(int var1, int var2, int var3);
+	void setFoliageHeight(int imageX, int imageY, int foliageHeight);
 
-	void setFoliageBlockstate(int var1, int var2, IBlockState var3);
+	void setFoliageBlockstate(int imageX, int imageY, IBlockState blockState);
 
-	void setFoliageBiomeTint(int var1, int var2, int var3);
+	void setFoliageBiomeTint(int imageX, int imageY, int tint);
 
-	void setFoliageLight(int var1, int var2, int var3);
+	void setFoliageLight(int imageX, int imageY, int foliageLight);
 
-	void setBiomeID(int var1, int var2, int var3);
+	void setBiomeID(int imageX, int imageY, int biomeId);
 
-	void moveX(int var1);
+	void moveX(int offsetX);
 
-	void moveZ(int var1);
+	void moveZ(int offsetZ);
 }

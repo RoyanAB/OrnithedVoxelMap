@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+@SuppressWarnings("unused")
 public class GLShim {
 	public static final int GL_ALPHA_TEST = 3008;
 	public static final int GL_BLEND = 3042;
@@ -149,21 +150,19 @@ public class GLShim {
 	}
 
 	public static void glFogi(int pname, int param) {
-		switch (pname) {
-			case 2917:
-				FogMode fogMode = FogMode.EXP;
-				switch (param) {
-					case 2048:
-						fogMode = FogMode.EXP;
-						break;
-					case 2049:
-						fogMode = FogMode.EXP2;
-						break;
-					case 9729:
-						fogMode = FogMode.LINEAR;
-				}
+		if (pname == 2917) {
+			FogMode fogMode = FogMode.EXP;
+			switch (param) {
+				case 2048:
+					break;
+				case 2049:
+					fogMode = FogMode.EXP2;
+					break;
+				case 9729:
+					fogMode = FogMode.LINEAR;
+			}
 
-				GlStateManager.setFog(fogMode);
+			GlStateManager.setFog(fogMode);
 		}
 	}
 
@@ -236,8 +235,6 @@ public class GLShim {
 			case 1031:
 			default:
 				break;
-			case 1032:
-				cullFace = CullFace.FRONT_AND_BACK;
 		}
 
 		GlStateManager.cullFace(cullFace);
@@ -344,12 +341,10 @@ public class GLShim {
 	}
 
 	public static void glBindTexture(int target, int texture) {
-		switch (target) {
-			case 3553:
-				GlStateManager.bindTexture(texture);
-				break;
-			default:
-				GL11.glBindTexture(target, texture);
+		if (target == 3553) {
+			GlStateManager.bindTexture(texture);
+		} else {
+			GL11.glBindTexture(target, texture);
 		}
 	}
 

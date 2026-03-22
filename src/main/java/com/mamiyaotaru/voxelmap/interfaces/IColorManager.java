@@ -8,26 +8,27 @@ import net.minecraft.world.World;
 
 import java.awt.image.BufferedImage;
 
+@SuppressWarnings("unused")
 public interface IColorManager {
-	void onResourceManagerReload(IResourceManager var1);
+	void onResourceManagerReload(IResourceManager iResourceManager);
 
 	BufferedImage getColorPicker();
 
-	BufferedImage getBlockImage(IBlockState var1, ItemStack var2, World var3);
+	BufferedImage getBlockImage(IBlockState iBlockState, ItemStack itemStack, World world);
 
 	boolean checkForChanges();
 
-	int colorAdder(int var1, int var2);
+	int colorAdder(int color1, int color2);
 
-	int colorMultiplier(int var1, int var2);
+	int colorMultiplier(int color, int tint);
 
-	int getBlockColorWithDefaultTint(MutableBlockPos var1, int var2);
+	int getBlockColorWithDefaultTint(MutableBlockPos pos, int blockStateID);
 
-	int getBlockColor(MutableBlockPos var1, int var2, int var3);
+	int getBlockColor(MutableBlockPos pos, int blockStateID, int biomeID);
 
-	void setSkyColor(int var1);
+	void setSkyColor(int color);
 
 	int getAirColor();
 
-	int getBiomeTint(AbstractMapData var1, World var2, IBlockState var3, int var4, MutableBlockPos var5, MutableBlockPos var6, int var7, int var8);
+	int getBiomeTint(AbstractMapData abstractMapData, World world, IBlockState iBlockState, int blockStateID, MutableBlockPos pos1, MutableBlockPos pos2, int startX, int startZ);
 }

@@ -7,34 +7,44 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
+@SuppressWarnings("unused")
 public interface IPersistentMap extends IChangeObserver {
-	void newWorld(World var1);
+	void newWorld(World world);
 
-	void onTick(Minecraft var1);
+	void onTick(Minecraft mc);
 
 	ISettingsAndLightingChangeNotifier getSettingsAndLightingChangeNotifier();
 
-	void setLightMapArray(int[] var1);
+	void setLightMapArray(int[] lightMapArray);
 
-	void getAndStoreData(AbstractMapData var1, World var2, Chunk var3, MutableBlockPos var4, boolean var5, int var6, int var7, int var8, int var9);
+	void getAndStoreData(AbstractMapData mapData, World world, Chunk chunk, MutableBlockPos blockPos, boolean underground, int startX, int startZ, int imageX, int imageY);
 
 	int getPixelColor(
-		AbstractMapData var1, World var2, MutableBlockPos var3, MutableBlockPos var4, boolean var5, int var6, int var7, int var8, int var9, int var10
+		AbstractMapData mapData,
+		World world,
+		MutableBlockPos blockPos,
+		MutableBlockPos loopBlockPos,
+		boolean underground,
+		int multi,
+		int startX,
+		int startZ,
+		int imageX,
+		int imageY
 	);
 
-	CachedRegion[] getRegions(int var1, int var2, int var3, int var4);
+	CachedRegion[] getRegions(int left, int right, int top, int bottom);
 
-	boolean isRegionLoaded(int var1, int var2);
+	boolean isRegionLoaded(int x, int z);
 
-	boolean isGroundAt(int var1, int var2);
+	boolean isGroundAt(int x, int z);
 
-	int getHeightAt(int var1, int var2);
+	int getHeightAt(int x, int z);
 
 	void purgeCachedRegions();
 
 	void saveCachedRegions();
 
-	void renameSubworld(String var1, String var2);
+	void renameSubworld(String oloName, String newName);
 
 	PersistentMapSettingsManager getOptions();
 

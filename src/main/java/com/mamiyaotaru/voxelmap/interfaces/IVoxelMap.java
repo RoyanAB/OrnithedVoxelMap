@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.MapSettingsManager;
 import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMapSettingsManager;
 
+@SuppressWarnings("unused")
 public interface IVoxelMap {
 	MapSettingsManager getMapOptions();
 
@@ -23,15 +24,15 @@ public interface IVoxelMap {
 
 	IPersistentMap getPersistentMap();
 
-	void setPermissions(boolean var1, boolean var2, boolean var3, boolean var4);
+	void setPermissions(boolean b1, boolean b2, boolean b3, boolean b4);
 
-	void newSubWorldName(String var1, boolean var2);
+	void newSubWorldName(String name, boolean b);
 
-	void newSubWorldHash(String var1);
+	void newSubWorldHash(String hash);
 
 	ISettingsAndLightingChangeNotifier getSettingsAndLightingChangeNotifier();
 
 	String getWorldSeed();
 
-	void setWorldSeed(String var1);
+	void setWorldSeed(String seed);
 }

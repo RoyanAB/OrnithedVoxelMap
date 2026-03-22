@@ -10,7 +10,6 @@ import net.minecraft.client.gui.GuiYesNoCallback;
 import org.lwjgl.input.Keyboard;
 public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final GuiScreen parentScreen;
-	private final int maxMessageLength = 78;
 	protected String screenTitle = "Players";
 	protected boolean allClicked = false;
 	protected GuiTextField message;

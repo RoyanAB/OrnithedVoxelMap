@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
-	protected Dimension selectedDimension = null;
+	protected Dimension selectedDimension;
 	protected Waypoint waypoint;
 	IVoxelMap master;
 	IWaypointManager waypointManager;
@@ -29,7 +29,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 	private final IGuiWaypoints parentGui;
 	private PopupGuiButton doneButton;
 	private GuiSlotDimensions dimensionList;
-	private String tooltip = null;
+	private String tooltip;
 	private GuiTextField waypointName;
 	private GuiTextField waypointX;
 	private GuiTextField waypointZ;
@@ -42,7 +42,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 	private final float blue;
 	private final String suffix;
 	private final boolean enabled;
-	private boolean editing = false;
+	private boolean editing;
 
 	public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, IVoxelMap master, Waypoint par2Waypoint, boolean editing) {
 		this.master = master;

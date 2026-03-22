@@ -9,22 +9,23 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+@SuppressWarnings("unused")
 public interface IWaypointManager {
 	ArrayList<Waypoint> getWaypoints();
 
-	void deleteWaypoint(Waypoint var1);
+	void deleteWaypoint(Waypoint waypoint);
 
 	void saveWaypoints();
 
-	void addWaypoint(Waypoint var1);
+	void addWaypoint(Waypoint waypoint);
 
 	void check2dWaypoints();
 
 	void handleDeath();
 
-	void newWorld(World var1);
+	void newWorld(World world);
 
-	void setConnectedRealm(String var1);
+	void setConnectedRealm(String string);
 
 	String getCurrentWorldName();
 
@@ -34,33 +35,33 @@ public interface IWaypointManager {
 
 	boolean isMultiworld();
 
-	void setSubworldName(String var1, boolean var2);
+	void setSubworldName(String name, boolean b);
 
-	void setSubworldHash(String var1);
+	void setSubworldHash(String subworldHash);
 
-	void changeSubworldName(String var1, String var2);
+	void changeSubworldName(String string1, String string2);
 
-	void deleteSubworld(String var1);
+	void deleteSubworld(String name);
 
-	void setOldNorth(boolean var1);
+	void setOldNorth(boolean isOldNorth);
 
-	String getCurrentSubworldDescriptor(boolean var1);
+	String getCurrentSubworldDescriptor(boolean b);
 
-	void renderWaypoints(float var1);
+	void renderWaypoints(float partialTicks);
 
-	void onResourceManagerReload(IResourceManager var1);
+	void onResourceManagerReload(IResourceManager iResourceManager);
 
 	TextureAtlas getTextureAtlas();
 
 	TextureAtlas getTextureAtlasChooser();
 
-	void setHighlightedWaypoint(Waypoint var1, boolean var2);
+	void setHighlightedWaypoint(Waypoint waypoint, boolean b);
 
 	Waypoint getHighlightedWaypoint();
 
 	String getWorldSeed();
 
-	void setWorldSeed(String var1);
+	void setWorldSeed(String string);
 
 	BackgroundImageInfo getBackgroundImageInfo();
 }

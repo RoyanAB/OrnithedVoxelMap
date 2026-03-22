@@ -3,8 +3,9 @@ package com.mamiyaotaru.voxelmap.interfaces;
 import java.io.File;
 import java.io.PrintWriter;
 
+@SuppressWarnings("unused")
 public interface ISubSettingsManager extends ISettingsManager {
-	void loadSettings(File var1);
+	void loadSettings(File file);
 
-	void saveAll(PrintWriter var1);
+	void saveAll(PrintWriter printWriter);
 }

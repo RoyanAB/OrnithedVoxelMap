@@ -4,8 +4,9 @@ import com.mamiyaotaru.voxelmap.util.LayoutVariables;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 
+@SuppressWarnings("unused")
 public interface IRadar {
-	void onResourceManagerReload(IResourceManager var1);
+	void onResourceManagerReload(IResourceManager iResourceManager);
 
-	void OnTickInGame(Minecraft var1, LayoutVariables var2);
+	void OnTickInGame(Minecraft mc, LayoutVariables layoutVariables);
 }

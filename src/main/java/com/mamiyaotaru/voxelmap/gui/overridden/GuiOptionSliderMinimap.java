@@ -9,7 +9,7 @@ public class GuiOptionSliderMinimap extends GuiButton {
 	public float sliderValue;
 	public boolean dragging = false;
 	private final ISettingsManager options;
-	private EnumOptionsMinimap enumOptions = null;
+	private EnumOptionsMinimap enumOptions;
 
 	public GuiOptionSliderMinimap(int buttonId, int x, int y, EnumOptionsMinimap optionIn, float sliderValue, ISettingsManager options) {
 		super(buttonId, x, y, 150, 20, "");

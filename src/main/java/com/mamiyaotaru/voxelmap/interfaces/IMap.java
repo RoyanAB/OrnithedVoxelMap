@@ -3,20 +3,21 @@ package com.mamiyaotaru.voxelmap.interfaces;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
+@SuppressWarnings("unused")
 public interface IMap extends IChangeObserver {
-	void forceFullRender(boolean var1);
+	void forceFullRender(boolean b);
 
-	void drawMinimap(Minecraft var1);
+	void drawMinimap(Minecraft mc);
 
 	float getPercentX();
 
 	float getPercentY();
 
-	void newWorld(World var1);
+	void newWorld(World world);
 
-	void onTick(Minecraft var1, boolean var2);
+	void onTick(Minecraft mc, boolean b);
 
-	void onTickInGame(Minecraft var1);
+	void onTickInGame(Minecraft mc);
 
 	int[] getLightmapArray();
 

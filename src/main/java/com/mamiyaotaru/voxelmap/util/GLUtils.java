@@ -17,6 +17,7 @@ import org.lwjgl.opengl.GLContext;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
+@SuppressWarnings("unused")
 public class GLUtils {
 	public static TextureManager textureManager;
 	public static int fboID = 0;

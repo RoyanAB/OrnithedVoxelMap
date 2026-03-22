@@ -4,12 +4,13 @@ import com.mamiyaotaru.voxelmap.util.Dimension;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public interface IDimensionManager {
 	ArrayList<Dimension> getDimensions();
 
-	Dimension getDimensionByID(int var1);
+	Dimension getDimensionByID(int id);
 
-	void enteredDimension(int var1);
+	void enteredDimension(int id);
 
 	void populateDimensions();
 }

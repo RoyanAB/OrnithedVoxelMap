@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+@SuppressWarnings("unused")
 public class Share {
 	public static final ReentrantLock updateCloudsLock = new ReentrantLock();
 
