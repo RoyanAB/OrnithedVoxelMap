@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.mamiyaotaru.voxelmap.interfaces.IPersistentMap;
 import com.mamiyaotaru.voxelmap.interfaces.ISettingsAndLightingChangeListener;
 import com.mamiyaotaru.voxelmap.interfaces.ISettingsAndLightingChangeNotifier;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -288,7 +289,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 					this.empty = false;
 					this.dataUpdated = true;
 				} else {
-					System.out.println("failed to load data from " + cachedRegionFile.getPath());
+					VoxelMapMod.LOGGER.info("failed to load data from {}", cachedRegionFile.getPath());
 				}
 
 				if (version < 2) {
@@ -296,18 +297,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 				}
 			}
 		} catch (Exception e) {
-			System.err
-				.println(
-					"Failed to load region file for "
-						+ this.x
-						+ ","
-						+ this.z
-						+ " in "
-						+ this.worldNamePathPart
-						+ "/"
-						+ this.subworldNamePathPart
-						+ this.dimensionNamePathPart
-				);
+			VoxelMapMod.LOGGER.error("Failed to load region file for {},{} in {}/{}{}", this.x, this.z, this.worldNamePathPart, this.subworldNamePathPart, this.dimensionNamePathPart);
 			e.printStackTrace();
 		}
 	}
@@ -370,34 +360,10 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 								zos.close();
 								fos.close();
 							} else {
-								System.err
-									.println(
-										"Data array wrong size: "
-											+ byteArray.length
-											+ "for "
-											+ CachedRegion.this.x
-											+ ","
-											+ CachedRegion.this.z
-											+ " in "
-											+ CachedRegion.this.worldNamePathPart
-											+ "/"
-											+ CachedRegion.this.subworldNamePathPart
-											+ CachedRegion.this.dimensionNamePathPart
-									);
+								VoxelMapMod.LOGGER.error("Data array wrong size: {}for {},{} in {}/{}{}", byteArray.length, CachedRegion.this.x, CachedRegion.this.z, CachedRegion.this.worldNamePathPart, CachedRegion.this.subworldNamePathPart, CachedRegion.this.dimensionNamePathPart);
 							}
 						} catch (IOException e) {
-							System.err
-								.println(
-									"Failed to save region file for "
-										+ CachedRegion.this.x
-										+ ","
-										+ CachedRegion.this.z
-										+ " in "
-										+ CachedRegion.this.worldNamePathPart
-										+ "/"
-										+ CachedRegion.this.subworldNamePathPart
-										+ CachedRegion.this.dimensionNamePathPart
-								);
+							VoxelMapMod.LOGGER.error("Failed to save region file for {},{} in {}/{}{}", CachedRegion.this.x, CachedRegion.this.z, CachedRegion.this.worldNamePathPart, CachedRegion.this.subworldNamePathPart, CachedRegion.this.dimensionNamePathPart);
 							e.printStackTrace();
 						} finally {
 							CachedRegion.this.threadLock.unlock();
@@ -639,7 +605,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 					CachedRegion.this.compressData();
 				}
 			} catch (Exception e) {
-				System.out.println("Exception loading chunk: " + e.getLocalizedMessage());
+				VoxelMapMod.LOGGER.info("Exception loading chunk: {}", e.getLocalizedMessage());
 				e.printStackTrace();
 			} finally {
 				CachedRegion.this.threadLock.unlock();

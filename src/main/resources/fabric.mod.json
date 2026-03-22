@@ -16,6 +16,9 @@
   "entrypoints": {
     "init": [
       "com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod"
+    ],
+    "modmenu": [
+      "com.mamiyaotaru.voxelmap.ornithe.compat.modmenu.ModMenuApiImpl"
     ]
   },
   "mixins": [

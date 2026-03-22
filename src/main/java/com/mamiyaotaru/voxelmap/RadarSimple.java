@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap;
 
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.*;
@@ -68,7 +69,7 @@ public class RadarSimple implements IRadar {
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
-			System.err.println("Failed getting mobs " + e.getLocalizedMessage());
+			VoxelMapMod.LOGGER.error("Failed getting mobs {}", e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 	}
@@ -158,7 +159,7 @@ public class RadarSimple implements IRadar {
 					}
 				}
 			} catch (Exception e) {
-				System.err.println(e.getLocalizedMessage());
+				VoxelMapMod.LOGGER.error(e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 		}
@@ -286,7 +287,7 @@ public class RadarSimple implements IRadar {
 						GLUtils.drawPost();
 					}
 				} catch (Exception localException) {
-					System.err.println("Error rendering mob icon! " + localException.getLocalizedMessage() + " contact type " + contact.type);
+					VoxelMapMod.LOGGER.error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type);
 				} finally {
 					GLShim.glPopMatrix();
 				}

@@ -9,10 +9,10 @@
   "client": [
     "EntityPlayerSPMixin",
     "EntityRendererMixin",
-    "NetHandlerPlayClientMixin",
     "MinecraftMixin",
-    "RenderGlobalMixin",
-    "RenderMixin"
+    "NetHandlerPlayClientMixin",
+    "RenderAccessor",
+    "RenderGlobalMixin"
   ],
   "server": [
   ],

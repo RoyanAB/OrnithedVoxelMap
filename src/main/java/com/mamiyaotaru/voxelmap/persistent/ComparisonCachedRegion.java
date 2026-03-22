@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap.persistent;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mamiyaotaru.voxelmap.interfaces.IPersistentMap;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -136,7 +137,7 @@ public class ComparisonCachedRegion {
 					this.empty = false;
 					this.loaded = true;
 				} else {
-					System.out.println("failed to load data from " + cachedRegionFile.getPath());
+					VoxelMapMod.LOGGER.info("failed to load data from {}", cachedRegionFile.getPath());
 				}
 
 				sc.close();
@@ -144,18 +145,7 @@ public class ComparisonCachedRegion {
 				fis.close();
 			}
 		} catch (IOException e) {
-			System.err
-				.println(
-					"Failed to load region file for "
-						+ this.x
-						+ ","
-						+ this.z
-						+ " in "
-						+ this.worldNamePathPart
-						+ "/"
-						+ this.subworldNamePathPart
-						+ this.dimensionNamePathPart
-				);
+			VoxelMapMod.LOGGER.error("Failed to load region file for {},{} in {}/{}{}", this.x, this.z, this.worldNamePathPart, this.subworldNamePathPart, this.dimensionNamePathPart);
 			e.printStackTrace();
 		}
 	}

@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -33,7 +34,7 @@ public class BiomeRepository {
 						try {
 							color = Integer.decode(curLine[1]);
 						} catch (NumberFormatException ex) {
-							System.out.println("Error decoding integer string for biome colors; " + curLine[1]);
+							VoxelMapMod.LOGGER.info("Error decoding integer string for biome colors; {}", curLine[1]);
 							color = 0;
 						}
 
@@ -45,7 +46,7 @@ public class BiomeRepository {
 
 				br.close();
 			} catch (Exception e) {
-				System.err.println("biome load error: " + e.getLocalizedMessage());
+				VoxelMapMod.LOGGER.error("biome load error: {}", e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 		}
@@ -64,7 +65,7 @@ public class BiomeRepository {
 					try {
 						color = Integer.decode(curLine[1]);
 					} catch (NumberFormatException ex) {
-						System.out.println("Error decoding integer string for biome colors; " + curLine[1]);
+						VoxelMapMod.LOGGER.info("Error decoding integer string for biome colors; {}", curLine[1]);
 						color = 0;
 					}
 
@@ -78,7 +79,7 @@ public class BiomeRepository {
 			br.close();
 			is.close();
 		} catch (IOException e) {
-			System.out.println("Error loading biome color config file from litemod!");
+			VoxelMapMod.LOGGER.info("Error loading biome color config file!");
 			e.printStackTrace();
 		}
 	}
@@ -110,7 +111,7 @@ public class BiomeRepository {
 
 				out.close();
 			} catch (Exception e) {
-				System.err.println("biome save error: " + e.getLocalizedMessage());
+				VoxelMapMod.LOGGER.error("biome save error: {}", e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 		}
@@ -134,7 +135,7 @@ public class BiomeRepository {
 					dirty = true;
 				}
 			} else {
-				System.out.println("non biome");
+				VoxelMapMod.LOGGER.info("non biome");
 				color = 0;
 			}
 

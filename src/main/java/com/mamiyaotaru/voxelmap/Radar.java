@@ -2,6 +2,8 @@ package com.mamiyaotaru.voxelmap;
 
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
+import com.mamiyaotaru.voxelmap.ornithe.mixins.RenderAccessor;
 import com.mamiyaotaru.voxelmap.textures.FontRendererWithAtlas;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.StitcherException;
@@ -37,7 +39,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.src.VoxelMapProtectedFieldsHelper;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -253,7 +254,7 @@ public class Radar implements IRadar {
 						EnumMobs.values()[t], EnumMobs.values()[t].resourceLocation, EnumMobs.values()[t].secondaryResourceLocation
 					);
 					if (image == null) {
-						System.err.println("Failed getting mob " + t);
+						VoxelMapMod.LOGGER.error("Failed getting mob {}", t);
 						image = new BufferedImage(2, 2, 6);
 					}
 
@@ -363,7 +364,7 @@ public class Radar implements IRadar {
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
-			System.err.println("Failed getting mobs " + e.getLocalizedMessage());
+			VoxelMapMod.LOGGER.error("Failed getting mobs {}", e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 	}
@@ -1194,7 +1195,7 @@ public class Radar implements IRadar {
 					}
 				}
 			} catch (Exception e) {
-				System.err.println(e.getLocalizedMessage());
+				VoxelMapMod.LOGGER.error(e.getLocalizedMessage());
 				e.printStackTrace();
 			}
 		}
@@ -1203,7 +1204,7 @@ public class Radar implements IRadar {
 			try {
 				this.textureAtlas.stitchNew();
 			} catch (StitcherException ex) {
-				System.err.println("Stitcher exception!  Resetting mobs texture atlas.");
+				VoxelMapMod.LOGGER.error("Stitcher exception!  Resetting mobs texture atlas.");
 				this.loadTexturePackIcons();
 			}
 		}
@@ -1323,7 +1324,7 @@ public class Radar implements IRadar {
 
 	private void tryAutoIcon(Contact contact) {
 		Render<? extends Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-		ResourceLocation resourceLocation = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity);
+		ResourceLocation resourceLocation = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity);
 		String entityName = contact.entity.getClass().getName();
 		String resourceLocationString = resourceLocation != null ? resourceLocation.toString() : "";
 		String nameMinusSize = entityName + resourceLocationString;
@@ -1742,7 +1743,7 @@ public class Radar implements IRadar {
 
 		ResourceLocation resourceLocation;
 		Render<? extends Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-		resourceLocation = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity);
+		resourceLocation = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity);
 		String originalResourceLocationString = resourceLocation != null ? resourceLocation.toString() : "";
 		resourceLocation = this.getResourceLocationForEntity(resourceLocation, contact.entity);
 		ResourceLocation resourceLocationSecondary = null;
@@ -2131,7 +2132,7 @@ public class Radar implements IRadar {
 		}
 
 		if (icon0 == null || icon1 == null) {
-			System.out.println("can't get texture for custom armor type: " + helmet.getClass());
+			VoxelMapMod.LOGGER.info("can't get texture for custom armor type: {}", helmet.getClass());
 			this.textureAtlas.registerFailedIcon("armor " + helmet.getTranslationKey() + " 0");
 		}
 
@@ -2186,7 +2187,7 @@ public class Radar implements IRadar {
 			return EnumMobs.MAGMA;
 		} else if (entityClass.equals(EntityOcelot.class)) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("ocelot.png") ? EnumMobs.OCELOT : EnumMobs.CAT;
 		} else if (entityClass.equals(EntityParrot.class)) {
 			return EnumMobs.PARROT;
@@ -2208,7 +2209,7 @@ public class Radar implements IRadar {
 			return EnumMobs.SILVERFISH;
 		} else if (entityClass.equals(EntitySkeleton.class) || entityClass.equals(EntityWitherSkeleton.class) || entityClass.equals(EntityStray.class)) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("wither_skeleton.png") ? EnumMobs.SKELETONWITHER : EnumMobs.SKELETON;
 		} else if (entityClass.equals(EntitySlime.class)) {
 			return EnumMobs.SLIME;
@@ -2230,7 +2231,7 @@ public class Radar implements IRadar {
 			return EnumMobs.WITHER;
 		} else if (entityClass.equals(EntityWolf.class)) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("wolf_tame.png") ? EnumMobs.WOLFTAME : (path.endsWith("wolf_angry.png") ? EnumMobs.WOLFANGRY : EnumMobs.WOLF);
 		} else if (entityClass.equals(EntityZombie.class) || entityClass.equals(EntityHusk.class)) {
 			return EnumMobs.ZOMBIE;
@@ -2278,7 +2279,7 @@ public class Radar implements IRadar {
 			return EnumMobs.MAGMA;
 		} else if (entity instanceof EntityOcelot) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("ocelot.png") ? EnumMobs.OCELOT : EnumMobs.CAT;
 		} else if (entity instanceof EntityParrot) {
 			return EnumMobs.PARROT;
@@ -2320,7 +2321,7 @@ public class Radar implements IRadar {
 			return EnumMobs.WITHER;
 		} else if (entity instanceof EntityWolf) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("wolf_tame.png") ? EnumMobs.WOLFTAME : (path.endsWith("wolf_angry.png") ? EnumMobs.WOLFANGRY : EnumMobs.WOLF);
 		} else if (entity instanceof EntityZombieVillager) {
 			return EnumMobs.ZOMBIEVILLAGER;
@@ -2439,15 +2440,15 @@ public class Radar implements IRadar {
 						|| contact.type == EnumMobs.VEXCHARGING) {
 						if (contact.type == EnumMobs.GHAST || contact.type == EnumMobs.GHASTATTACKING) {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-							String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity).getPath();
+							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("ghast_fire.png") ? EnumMobs.GHASTATTACKING : EnumMobs.GHAST;
 						} else if (contact.type == EnumMobs.WITHER || contact.type == EnumMobs.WITHERINVULNERABLE) {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-							String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity).getPath();
+							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("wither_invulnerable.png") ? EnumMobs.WITHERINVULNERABLE : EnumMobs.WITHER;
 						} else if (contact.type == EnumMobs.VEX || contact.type == EnumMobs.VEXCHARGING) {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-							String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity).getPath();
+							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("vex_charging.png") ? EnumMobs.VEXCHARGING : EnumMobs.VEX;
 						}
 
@@ -2563,7 +2564,7 @@ public class Radar implements IRadar {
 						this.write(contact.name, x * scaleFactor - m, (y + 3) * scaleFactor, 16777215);
 					}
 				} catch (Exception localException) {
-					System.err.println("Error rendering mob icon! " + localException.getLocalizedMessage() + " contact type " + contact.type);
+					VoxelMapMod.LOGGER.error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type);
 				} finally {
 					GLShim.glPopMatrix();
 				}

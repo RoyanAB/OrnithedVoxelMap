@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.gui.GuiAddWaypoint;
 import com.mamiyaotaru.voxelmap.gui.GuiWaypoints;
 import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
 import com.mamiyaotaru.voxelmap.interfaces.*;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.persistent.GuiPersistentMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
@@ -157,7 +158,7 @@ public class Map implements Runnable, IMap {
 		try {
 			NetworkUtils.enumerateInterfaces();
 		} catch (SocketException e) {
-			System.err.println("could not get network interface addresses");
+			VoxelMapMod.LOGGER.error("could not get network interface addresses");
 			e.printStackTrace();
 		}
 
@@ -168,7 +169,7 @@ public class Map implements Runnable, IMap {
 		java.util.Map<String, Integer> categoryOrder = (java.util.Map<String, Integer>) ReflectionUtils.getPrivateFieldValueByType(
 			null, KeyBinding.class, java.util.Map.class, 1
 		);
-		System.out.println("CATEGORY ORDER IS " + categoryOrder.size());
+		VoxelMapMod.LOGGER.info("CATEGORY ORDER IS {}", categoryOrder.size());
 		Integer categoryPlace = categoryOrder.get("controls.minimap.title");
 		if (categoryPlace == null) {
 			int currentSize = categoryOrder.size();
@@ -839,11 +840,11 @@ public class Map implements Runnable, IMap {
 			UUID playerUUID = this.game.player.getUniqueID();
 			Object guiNewChat = this.game.ingameGUI.getChatGUI();
 			if (guiNewChat == null) {
-				System.out.println("failed to get guiNewChat");
+				VoxelMapMod.LOGGER.info("failed to get guiNewChat");
 			} else {
 				Object chatListObj = ReflectionUtils.getPrivateFieldValueByType(guiNewChat, GuiNewChat.class, List.class, 1);
 				if (chatListObj == null) {
-					System.out.println("could not get chatlist");
+					VoxelMapMod.LOGGER.info("could not get chatlist");
 				} else {
 					List<ChatLine> chatList = (List<ChatLine>) chatListObj;
 					boolean killRadar = false;
@@ -2152,7 +2153,7 @@ public class Map implements Runnable, IMap {
 				gfx.dispose();
 				this.mapImageInt = GLUtils.tex(mapImagex);
 			} catch (Exception f) {
-				System.err.println("Error loading texture pack's map image: " + f.getLocalizedMessage());
+				VoxelMapMod.LOGGER.error("Error loading texture pack's map image: {}", f.getLocalizedMessage());
 			}
 		}
 	}

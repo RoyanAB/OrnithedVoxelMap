@@ -11,11 +11,12 @@ import org.apache.logging.log4j.Logger;
 
 public class VoxelMapMod implements ModInitializer {
 	public static final String MOD_ID = "voxelmap";
-	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 	public static String MOD_VERSION = "unknown";
 	public static String MOD_NAME = "unknown";
+
 	public static VoxelMap voxelMap;
 	public static TickHandler tickHandler;
+	public static Logger LOGGER;
 
 	public static void postInit() {
 		voxelMap = new VoxelMap();
@@ -29,7 +30,7 @@ public class VoxelMapMod implements ModInitializer {
 	}
 
 	public static void onShutDown() {
-		System.out.print("Saving all world maps");
+		LOGGER.info("Saving all world maps");
 		voxelMap.getPersistentMap().saveCachedRegions();
 		voxelMap.getMapOptions().saveAll();
 		BiomeRepository.saveBiomeColors();
@@ -39,15 +40,11 @@ public class VoxelMapMod implements ModInitializer {
 			ThreadManager.executorService.getQueue().size() + ThreadManager.executorService.getActiveCount() > 0
 				&& System.currentTimeMillis() - shutdownTime < 10000L
 		) {
-			System.out.print(".");
-
 			try {
 				Thread.sleep(200L);
 			} catch (InterruptedException var4) {
 			}
 		}
-
-		System.out.println();
 	}
 
 	@Override
@@ -55,6 +52,7 @@ public class VoxelMapMod implements ModInitializer {
 		ModMetadata metadata = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow(RuntimeException::new).getMetadata();
 		MOD_NAME = metadata.getName();
 		MOD_VERSION = metadata.getVersion().getFriendlyString();
+		LOGGER = LogManager.getLogger(MOD_NAME);
 	}
 
 	public void newWorldName(String worldName) {

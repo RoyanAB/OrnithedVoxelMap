@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
@@ -122,7 +123,7 @@ public class ImageUtils {
 				}
 			}
 		} else if (!GLUtils.fboEnabled) {
-			System.err.println("Resource Pack too big for minimap");
+			VoxelMapMod.LOGGER.error("Resource Pack too big for minimap");
 			image = new BufferedImage(8, 8, 6);
 		} else {
 			while (size > 2147483647L) {
@@ -216,7 +217,7 @@ public class ImageUtils {
 			g2.dispose();
 			return temp;
 		} catch (Exception e) {
-			System.err.println("Failed getting mob: " + path + " - " + e.getLocalizedMessage());
+			VoxelMapMod.LOGGER.error("Failed getting mob: {} - {}", path, e.getLocalizedMessage());
 			e.printStackTrace();
 			return null;
 		}
@@ -280,7 +281,7 @@ public class ImageUtils {
 			is.close();
 			return loadImage(mobSkin, x, y, w, h, imageWidth, imageHeight);
 		} catch (Exception e) {
-			System.err.println("Failed getting mob: " + resourceLocation.toString() + " - " + e.getLocalizedMessage());
+			VoxelMapMod.LOGGER.error("Failed getting mob: {} - {}", resourceLocation.toString(), e.getLocalizedMessage());
 			return null;
 		}
 	}

@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap.util;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.block.Block;
@@ -168,14 +169,14 @@ public class BlockRepository {
 				try {
 					parseLine(sCurrentLine, blockIDs);
 				} catch (Exception ex) {
-					System.out.println("Error parsing blockID storage line: " + sCurrentLine);
+					VoxelMapMod.LOGGER.info("Error parsing blockID storage line: {}", sCurrentLine);
 				}
 			}
 
 			br.close();
 			is.close();
 		} catch (IOException e) {
-			System.out.println("Error loading old block IDs config file from litemod!");
+			VoxelMapMod.LOGGER.info("Error loading old block IDs config file!");
 			e.printStackTrace();
 		}
 	}

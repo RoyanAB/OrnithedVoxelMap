@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap.gui;
 
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiSlotMinimap;
 import com.mamiyaotaru.voxelmap.interfaces.IDimensionManager;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.util.Dimension;
 import com.mamiyaotaru.voxelmap.util.GLShim;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
@@ -50,23 +51,7 @@ class GuiSlotDimensions extends GuiSlotMinimap {
 				return;
 			}
 
-			System.out
-				.println(
-					"mousex: "
-						+ this.mouseX
-						+ ", leftEdge: "
-						+ leftEdge
-						+ ", width: "
-						+ width
-						+ ", iw: "
-						+ iconWidth
-						+ ", pad: "
-						+ padding
-						+ ", le: "
-						+ (leftEdge + width - iconWidth - padding)
-						+ ", re: "
-						+ (leftEdge + width)
-				);
+			VoxelMapMod.LOGGER.info("mousex: {}, leftEdge: {}, width: {}, iw: {}, pad: {}, le: {}, re: {}", this.mouseX, leftEdge, width, iconWidth, padding, leftEdge + width - iconWidth - padding, leftEdge + width);
 		}
 	}
 

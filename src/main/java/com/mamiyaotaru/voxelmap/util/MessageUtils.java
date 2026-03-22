@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 
@@ -12,7 +13,7 @@ public class MessageUtils {
 
 	public static void printDebug(String line) {
 		if (debug) {
-			System.out.println(line);
+			VoxelMapMod.LOGGER.info(line);
 		}
 	}
 }

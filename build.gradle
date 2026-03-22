@@ -25,6 +25,8 @@ dependencies {
 	mappings ploceus.mcpMappings('stable', '1.12', '39')
 
 	ploceus.dependOsl(project.osl_version)
+
+	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 }
 
 processResources {

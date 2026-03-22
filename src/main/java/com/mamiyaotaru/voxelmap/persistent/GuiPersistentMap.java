@@ -9,6 +9,7 @@ import com.mamiyaotaru.voxelmap.interfaces.AbstractMapData;
 import com.mamiyaotaru.voxelmap.interfaces.IPersistentMap;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.*;
@@ -1288,7 +1289,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 				break;
 			default:
-				System.out.println("unimplemented command");
+				VoxelMapMod.LOGGER.info("unimplemented command");
 		}
 	}
 

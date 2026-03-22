@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap;
 import com.google.common.collect.Lists;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.ornithe.mixins.BuiltInModResourcePackAccessor;
 import com.mamiyaotaru.voxelmap.textures.IIconCreator;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
@@ -269,13 +270,13 @@ public class WaypointManager implements IWaypointManager {
 				boolean isOnLAN;
 				isOnLAN = serverData.isOnLAN();
 				if (isOnLAN) {
-					System.out.println("LAN server detected!");
+					VoxelMapMod.LOGGER.info("LAN server detected!");
 					serverName = serverData.serverName;
 				} else {
 					serverName = serverData.serverIP;
 				}
 			} else if (!this.latestRealmsID.isEmpty()) {
-				System.out.println("REALMS server detected!");
+				VoxelMapMod.LOGGER.info("REALMS server detected!");
 				serverName = this.latestRealmsID;
 			} else {
 				NetHandlerPlayClient netHandler = this.game.getConnection();
@@ -284,7 +285,7 @@ public class WaypointManager implements IWaypointManager {
 				serverName = socketAddress.getHostString() + ":" + socketAddress.getPort();
 			}
 		} catch (Exception e) {
-			System.err.println("error getting ServerData");
+			VoxelMapMod.LOGGER.error("error getting ServerData");
 			e.printStackTrace();
 		}
 
@@ -425,7 +426,7 @@ public class WaypointManager implements IWaypointManager {
 				}
 
 				if (!name.equals(this.currentSubWorldName)) {
-					System.out.println("New world name: " + TextUtils.scrubCodes(name));
+					VoxelMapMod.LOGGER.info("New world name: {}", TextUtils.scrubCodes(name));
 				}
 
 				this.lastNewWorldNameTime = System.currentTimeMillis();
@@ -512,7 +513,7 @@ public class WaypointManager implements IWaypointManager {
 				);
 				boolean success = oldCachedRegionFileDir.renameTo(newCachedRegionFileDir);
 				if (!success) {
-					System.out.println("Failed renaming " + oldCachedRegionFileDir.getPath() + " to " + newCachedRegionFileDir.getPath());
+					VoxelMapMod.LOGGER.info("Failed renaming {} to {}", oldCachedRegionFileDir.getPath(), newCachedRegionFileDir.getPath());
 				}
 			}
 
@@ -564,7 +565,7 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public void setWorldSeed(String newSeed) {
-		System.out.println("waypoint manager gets new world seed: " + newSeed);
+		VoxelMapMod.LOGGER.info("waypoint manager gets new world seed: {}", newSeed);
 		String worldName = "all";
 		if (!this.knownSubworldNames.isEmpty()) {
 			worldName = this.getCurrentSubworldDescriptor(false);
@@ -852,7 +853,7 @@ public class WaypointManager implements IWaypointManager {
 				return true;
 			} catch (Exception local) {
 				MessageUtils.chatInfo("§EError Loading Waypoints");
-				System.err.println("waypoint load error: " + local.getLocalizedMessage());
+				VoxelMapMod.LOGGER.error("waypoint load error: {}", local.getLocalizedMessage());
 				return false;
 			}
 		} else {
@@ -966,7 +967,7 @@ public class WaypointManager implements IWaypointManager {
 			return true;
 		} catch (Exception local) {
 			MessageUtils.chatInfo("§EError Loading Waypoints");
-			System.err.println("waypoint load error: " + local.getLocalizedMessage());
+			VoxelMapMod.LOGGER.error("waypoint load error: {}", local.getLocalizedMessage());
 			return false;
 		}
 	}
@@ -1028,7 +1029,7 @@ public class WaypointManager implements IWaypointManager {
 			}
 		} catch (Exception e) {
 			MessageUtils.chatInfo("§EError Loading Old Rei Waypoints");
-			System.err.println("waypoint load error: " + e.getLocalizedMessage());
+			VoxelMapMod.LOGGER.error("waypoint load error: {}", e.getLocalizedMessage());
 		}
 	}
 
@@ -1069,7 +1070,7 @@ public class WaypointManager implements IWaypointManager {
 			}
 
 			this.old2dWayPts.removeAll(updatedPts);
-			System.out.println("remaining old 2d waypoints: " + this.old2dWayPts.size());
+			VoxelMapMod.LOGGER.info("remaining old 2d waypoints: {}", this.old2dWayPts.size());
 		}
 	}
 

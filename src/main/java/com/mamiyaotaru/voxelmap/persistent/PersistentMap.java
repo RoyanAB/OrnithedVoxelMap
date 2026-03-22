@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap.persistent;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
 import com.mamiyaotaru.voxelmap.interfaces.*;
+import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
@@ -110,9 +111,9 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 			newCacheDir.getParentFile().mkdirs();
 			boolean success = oldCacheDir.renameTo(newCacheDir);
 			if (!success) {
-				System.out.println("Failed moving Voxelmap cache files.  Please move " + oldCacheDir.getPath() + " to " + newCacheDir.getPath());
+				VoxelMapMod.LOGGER.info("Failed moving Voxelmap cache files.  Please move {} to {}", oldCacheDir.getPath(), newCacheDir.getPath());
 			} else {
-				System.out.println("Moved Voxelmap cache files from " + oldCacheDir.getPath() + " to " + newCacheDir.getPath());
+				VoxelMapMod.LOGGER.info("Moved Voxelmap cache files from {} to {}", oldCacheDir.getPath(), newCacheDir.getPath());
 			}
 		}
 
