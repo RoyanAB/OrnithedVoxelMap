@@ -1,0 +1,51 @@
+package com.mamiyaotaru.voxelmap.util;
+
+import net.minecraft.client.renderer.texture.TextureUtil;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.image.BufferedImage;
+
+@SuppressWarnings("unused")
+public class BackgroundImageInfo {
+	public final int glid;
+	public final int left;
+	public final int top;
+	public final int width;
+	public final int height;
+	public final float scale;
+	final BufferedImage image;
+	private final int right;
+	private final int bottom;
+
+	public BackgroundImageInfo(BufferedImage image, int left, int top, float scale) {
+		this(image, left, top, (int) (image.getWidth() * scale), (int) (image.getHeight() * scale));
+	}
+
+	public BackgroundImageInfo(BufferedImage image, int left, int top, int width, int height) {
+		this.image = image;
+		this.glid = GL11.glGenTextures();
+		TextureUtil.uploadTextureImage(this.glid, image);
+		this.left = left;
+		this.top = top;
+		this.right = left + width;
+		this.bottom = top + height;
+		this.width = width;
+		this.height = height;
+		this.scale = (float) width / image.getWidth();
+	}
+
+	public boolean isInRange(int x, int z) {
+		return x >= this.left && x < this.right && z >= this.top && z < this.bottom;
+	}
+
+	public boolean isGroundAt(int x, int z) {
+		int imageX = (int) ((x - this.left) / this.scale);
+		int imageY = (int) ((z - this.top) / this.scale);
+		if (imageX >= 0 && imageX < this.image.getWidth() && imageY >= 0 && imageY < this.image.getHeight()) {
+			int color = this.image.getRGB(imageX, imageY);
+			return (color >> 24 & 0xFF) > 0;
+		} else {
+			return false;
+		}
+	}
+}

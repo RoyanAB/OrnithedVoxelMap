@@ -1,0 +1,202 @@
+Aether:0
+Alpine:9284804
+Alps:13421772
+Alps Forest:8034682
+Arctic:14540253
+Autumn Woods:15899665
+Bamboo Forest:10739795
+Bayou:9154411
+Beach:16440917
+Birch Forest:3175492
+Birch Forest Hills:2055986
+Birch Forest Hills M:2055986
+Birch Forest M:3175492
+Bog:14193503
+Boneyard:15657658
+Boreal Forest:10467185
+Brushland:13222271
+Canyon:11836528
+Canyon Ravine:9337689
+Chaparral:12638301
+Cherry Blossom Grove:16289679
+Cold Beach:16445632
+Cold Taiga:3233098
+Cold Taiga Hills:2375478
+Cold Taiga M:3233098
+Coniferous Forest:5410656
+Coral Reef:18285
+Corrupted Sands:7691854
+Crag:5209457
+Dark Forest:13073
+Dark Forest Center:8704
+Dead Forest:12362085
+Dead Swamp:9154376
+Deciduous Forest:12695369
+Deep Mushroom Forest:6697762
+Deep Ocean:48
+Dense Forest:8246897
+Dense Twilight Forest:21794
+Desert:16421912
+Desert M:16421912
+DesertHills:13786898
+Dry River:0
+Elysian Fields:13041492
+Elysian Fields M:13041492
+Elysian Forest:7651110
+Elysian Forest M:7651110
+Enchanted Forest:1135974
+Eucalyptus Forest:8704360
+Extreme Hills:6316128
+Extreme Hills Edge:7501978
+Extreme Hills M:6316128
+Extreme Hills+:5271632
+Extreme Hills+ M:5271632
+Extreme Jungle:2900485
+Fen:12240001
+Fire Swamp:4334362
+Firefly Forest:26163
+Flower Field:4044093
+Flower Forest:6976549
+Forest:353825
+ForestHills:2250012
+Forested Hills:0
+Forested Island:6471532
+Frost Forest:11261628
+FrozenOcean:9474208
+FrozenRiver:10526975
+Fungal Forest:5146675
+Fungal Forest M:5146675
+Fungi Forest:15792496
+Garden:7656308
+Glacier:11582425
+Grassland:8379261
+Gravel Beach:16440917
+Green Hills:6866036
+Green Swamplands:6866036
+Grove:5341009
+Heathland:13550967
+Hell:16711680
+Highland:8170854
+Highlands Center:3359778
+Ice Mountains:10526880
+Ice Plains:16777215
+Ice Plains Spikes:13828095
+Ice Wasteland:8233141
+Jade Cliffs:9096298
+Jungle:5470985
+Jungle M:5470985
+JungleEdge:6458135
+JungleEdge M:6458135
+JungleHills:2900485
+Kelp Forest:27468
+Land of Lakes:6725742
+Land of Lakes Marsh:6725742
+Lavender Fields:11035852
+Lush Desert:9087277
+Lush Redwoods:4900696
+Lush River:0
+Lush Swamp:5746228
+Mangrove:7251289
+Maple Woods:6988649
+Marsh:6725742
+Meadow:6533741
+Meadow Forest:5543515
+Mega Spruce Taiga:5858897
+Mega Taiga:5858897
+Mega Taiga Hills:4542270
+Mesa:14238997
+Mesa (Bryce):14238997
+Mesa Plateau:13274213
+Mesa Plateau F:11573093
+Mesa Plateau F M:11573093
+Mesa Plateau M:13274213
+Mini Jungle:4315427
+Moor:6394725
+Mountain:8430421
+Mountain Taiga:747097
+Mountainous Desert:16421912
+Mushroom Forest:2254370
+MushroomIsland:16711935
+MushroomIslandShore:10486015
+Mystic Grove:6934491
+Oak Savanna:4482594
+Oasis:7712283
+Ocean:112
+Ominous Woods:4145489
+Orchard:14024557
+Origin Valley:10341485
+Outback:10843716
+Phantasmagoric Inferno:14247446
+Pine Forest:4627582
+Plains:9286496
+Polar Chasm:11091006
+Prairie:13165952
+Quagmire:5257771
+Rainforest:1368687
+Red Rock Mountains:12874287
+Redwood Forest:7187004
+River:255
+Rocky Steppe:8814438
+Roofed Forest:4215066
+Roofed Forest M:4215066
+Sacred Springs:39259
+Savanna:12431967
+Savanna M:12431967
+Savanna Plateau:10984804
+Savanna Plateau M:10984804
+Scrubland:11445290
+Seasonal Forest:12502092
+Seasonal Forest Clearing:13620065
+Shield:6586168
+Shrubland:8168286
+Silkglades:13420973
+Sky:8421631
+Sludgepit:7627817
+Snow Forest:6006413
+Snowy Coniferous Forest:16777215
+Snowy Forest:13434879
+Snowy Gravel Beach:16440917
+Snowy Rainforest:3375735
+Spectral Garden:15657658
+Spruce Woods:6396257
+Steppe:13413215
+Stone Beach:10658436
+Submerged Swamp:3231025
+Submerged Swamp M:3231025
+Subterranean Savannah:11974999
+Subterranean Savannah M:11974999
+Sunflower Plains:9286496
+Swampland:522674
+Swampland M:522674
+Taiga:747097
+Taiga M:747097
+TaigaHills:1456435
+Temperate Rainforest:12311907
+The End:8421631
+Thicket:7248193
+Thornlands:2241314
+Tropical Rainforest:8970560
+Tropical Shrubland:10913552
+Tropics:2211330
+Tundra:11371606
+Twilight Clearing:3447604
+Twilight Forest:21760
+Twilight Glacier:7829435
+Twilight Highlands:5596740
+Twilight Lake:255
+Twilight Stream:3298231
+Twilight Swamp:3359778
+Ulterior Outback:12695144
+Ulterior Outback M:12695144
+Undergarden:15657658
+Undergound Jungle:5491255
+Undergound Jungle M:5491255
+Visceral Heap:11091006
+Volcanic Desert:10926926
+Volcanic Desert M:10926926
+Volcano:6645093
+Wasteland:5919808
+Wetland:5215831
+Woodland:8694061
+Woodlands:8762686
+Xeric Shrubland:14863781

@@ -1,0 +1,85 @@
+package com.mamiyaotaru.voxelmap.gui;
+
+import com.mamiyaotaru.voxelmap.MapSettingsManager;
+import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
+import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionButtonMinimap;
+import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionSliderMinimap;
+import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
+import com.mamiyaotaru.voxelmap.util.I18nUtils;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+
+import java.util.Objects;
+
+@SuppressWarnings("unused")
+public class GuiWaypointsOptions extends GuiScreenMinimap {
+	private static final EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.DEATHPOINTS};
+	private final GuiScreen parent;
+	private final MapSettingsManager options;
+	protected String screenTitle = "Waypoint Options";
+
+	public GuiWaypointsOptions(GuiScreen parent, MapSettingsManager options) {
+		this.parent = parent;
+		this.options = options;
+	}
+
+	public void initGui() {
+		int optionIndex = 0;
+		this.screenTitle = I18nUtils.getString("options.minimap.waypoints.title");
+
+		for (EnumOptionsMinimap option : relevantOptions) {
+			if (option.isFloat()) {
+				float distance = this.options.getOptionFloatValue(option);
+				if (distance < 0.0F) {
+					distance = 10001.0F;
+				}
+
+				distance = (distance - 50.0F) / 9951.0F;
+				this.getButtonList()
+					.add(
+						new GuiOptionSliderMinimap(
+							option.returnEnumOrdinal(),
+							this.getWidth() / 2 - 155 + optionIndex % 2 * 160,
+							this.getHeight() / 6 + 24 * (optionIndex >> 1),
+							option,
+							distance,
+							this.options
+						)
+					);
+			} else {
+				GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
+					option.returnEnumOrdinal(),
+					this.getWidth() / 2 - 155 + optionIndex % 2 * 160,
+					this.getHeight() / 6 + 24 * (optionIndex >> 1),
+					option,
+					this.options.getKeyText(option)
+				);
+				this.getButtonList().add(button);
+			}
+
+			optionIndex++;
+		}
+
+		this.getButtonList().add(new GuiButton(200, this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, I18nUtils.getString("gui.done")));
+	}
+
+	protected void actionPerformed(GuiButton par1GuiButton) {
+		if (par1GuiButton.enabled) {
+			if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
+				this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions(), 1);
+				par1GuiButton.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id)));
+			}
+
+			if (par1GuiButton.id == 200) {
+				this.getMinecraft().displayGuiScreen(this.parent);
+			}
+		}
+	}
+
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawMap();
+		this.drawDefaultBackground();
+		this.drawCenteredString(this.fontRenderer, this.screenTitle, this.getWidth() / 2, 20, 16777215);
+		super.drawScreen(mouseX, mouseY, partialTicks);
+	}
+}
