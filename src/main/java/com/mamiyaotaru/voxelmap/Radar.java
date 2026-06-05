@@ -52,8 +52,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 public class Radar implements IRadar {
 	public static final int UNKNOWN = EnumMobs.UNKNOWN.ordinal();
 	private final IVoxelMap master;

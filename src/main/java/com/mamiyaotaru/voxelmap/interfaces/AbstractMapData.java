@@ -261,7 +261,7 @@ public abstract class AbstractMapData implements IMapData {
 
 		public void morphologicallyErode(boolean horizontalBias) {
 			float labelWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(this.name) + 8;
-			float multi = AbstractMapData.this.width / 32;
+			float multi = AbstractMapData.this.width / 32F;
 			float shellWidth = 2.0F;
 			float labelPadding = labelWidth / 16.0F * multi / shellWidth;
 			int layer = 0;

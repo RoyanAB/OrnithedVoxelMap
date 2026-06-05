@@ -45,8 +45,6 @@ import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.List;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings({"unused", "unchecked"})
 public class Map implements Runnable, IMap {
 	private final float[] lastLightBrightnessTable = new float[16];
@@ -373,7 +371,7 @@ public class Map implements Runnable, IMap {
 		}
 
 		if (this.game.currentScreen == null && this.options.keyBindMobToggle.isPressed()) {
-			this.master.getRadarOptions().setOptionValue(EnumOptionsMinimap.SHOWRADAR, 0);
+			this.master.getRadarOptions().setOptionValue(EnumOptionsMinimap.SHOWRADAR);
 			this.options.saveAll();
 		}
 

@@ -50,7 +50,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 			int var6 = (colorCodeIndex >> 3 & 1) * 85;
 			int red = (colorCodeIndex >> 2 & 1) * 170 + var6;
 			int green = (colorCodeIndex >> 1 & 1) * 170 + var6;
-			int blue = (colorCodeIndex >> 0 & 1) * 170 + var6;
+			int blue = (colorCodeIndex & 1) * 170 + var6;
 			if (colorCodeIndex == 6) {
 				red += 85;
 			}
@@ -122,7 +122,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 			while (thisCharacterWidth >= 0 && onlyBlankPixels) {
 				int pixelX = characterX * characterWidth + thisCharacterWidth;
 
-				for (int characterPixelYPos = 0; characterPixelYPos < characterHeight && onlyBlankPixels; characterPixelYPos++) {
+				for (int characterPixelYPos = 0; characterPixelYPos < characterHeight; characterPixelYPos++) {
 					int pixelY = (characterY * characterWidth + characterPixelYPos) * sheetWidth;
 					if ((sheetImageData[pixelX + pixelY] >> 24 & 0xFF) != 0) {
 						onlyBlankPixels = false;
@@ -159,7 +159,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 		float fontScaleY = (this.fontIcon.height - 2) / 128.0F;
 
 		float charXPosInSheet = charIndex % 16 * 8 * fontScaleX + this.fontIcon.originX + 1.0F;
-		float charYPosInSheet = charIndex / 16 * 8 * fontScaleY + this.fontIcon.originY + 1.0F;
+		float charYPosInSheet = charIndex / 16F * 8 * fontScaleY + this.fontIcon.originY + 1.0F;
 
 		float shadowOffset = shadow ? 1.0F : 0.0F;
 		float charWidth = this.charWidthArray[charIndex] - 0.01F;
@@ -276,10 +276,10 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 						BufferBuilder vertexBuffer = tessellator.getBuffer();
 						GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 						vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
-						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
-						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
-						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
+						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2F, 0.0).endVertex();
+						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2F, 0.0).endVertex();
+						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2F - 1.0F, 0.0).endVertex();
+						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2F - 1.0F, 0.0).endVertex();
 						tessellator.draw();
 						GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 					}

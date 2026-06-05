@@ -188,8 +188,8 @@ public class RadarSettingsManager implements ISubSettingsManager {
 		}
 	}
 
-	public String getOptionListValue(EnumOptionsMinimap par1EnumOptions) {
-		if (Objects.requireNonNull(par1EnumOptions) == EnumOptionsMinimap.RADARMODE) {
+	public String getOptionListValue(EnumOptionsMinimap enumOptionsMinimap) {
+		if (Objects.requireNonNull(enumOptionsMinimap) == EnumOptionsMinimap.RADARMODE) {
 			if (this.radarMode == 2) {
 				return I18nUtils.getString("options.minimap.radar.radarmode.full");
 			}
@@ -197,7 +197,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
 			return I18nUtils.getString("options.minimap.radar.radarmode.simple");
 		}
 		throw new IllegalArgumentException(
-			"Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a list value applicable to minimap)"
+			"Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName() + ". (possibly not a list value applicable to minimap)"
 		);
 	}
 
@@ -205,7 +205,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
 	public void setOptionFloatValue(EnumOptionsMinimap idFloat, float sliderValue) {
 	}
 
-	public void setOptionValue(EnumOptionsMinimap par1EnumOptions, int i) {
+	public void setOptionValue(EnumOptionsMinimap par1EnumOptions) {
 		switch (par1EnumOptions) {
 			case SHOWRADAR:
 				this.showRadar = !this.showRadar;

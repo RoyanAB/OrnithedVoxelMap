@@ -8,7 +8,9 @@ import net.minecraft.world.chunk.Chunk;
 public class MapChunk {
 	private final int x;
 	private final int z;
+
 	private Chunk chunk;
+
 	private boolean isChanged;
 	private boolean isLoaded;
 

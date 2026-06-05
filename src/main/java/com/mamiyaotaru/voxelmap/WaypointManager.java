@@ -35,32 +35,38 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class WaypointManager implements IWaypointManager {
+	public final IVoxelMap master;
+	public final TextureAtlas textureAtlas;
+	public final TextureAtlas textureAtlasChooser;
+	private final Object waypointLock = new Object();
+
 	public MapSettingsManager options;
-	IVoxelMap master;
-	TextureAtlas textureAtlas;
-	TextureAtlas textureAtlasChooser;
-	private Minecraft game;
-	private boolean loaded = false;
-	private boolean needSave = false;
+	private Waypoint highlightedWaypoint;
+
 	private ArrayList<Waypoint> wayPts = new ArrayList<>();
 	private ArrayList<Waypoint> old2dWayPts = new ArrayList<>();
-	private Waypoint highlightedWaypoint;
+	private final TreeSet<String> knownSubworldNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+	private final HashSet<String> oldNorthWorldNames = new HashSet<>();
+	private final HashMap<String, String> worldSeeds = new HashMap<>();
+
+
 	private String worldName = "";
 	private String latestRealmsID = "";
 	private String currentSubWorldName = "";
 	private String currentSubworldDescriptor = "";
 	private String currentSubworldDescriptorNoCodes = "";
+
+	private Minecraft game;
+	private boolean loaded = false;
+	private boolean needSave = false;
 	private boolean multiworld = false;
 	private boolean gotAutoSubworldName = false;
-	private float currentDimension = 0.5F;
-	private final TreeSet<String> knownSubworldNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-	private final HashSet<String> oldNorthWorldNames = new HashSet<>();
-	private final HashMap<String, String> worldSeeds = new HashMap<>();
+
 	private BackgroundImageInfo backgroundImageInfo;
 	private WaypointContainer waypointContainer;
-	private File settingsFile;
+	private float currentDimension = 0.5F;
 	private Long lastNewWorldNameTime = 0L;
-	private final Object waypointLock = new Object();
+	private File settingsFile;
 
 	public WaypointManager(IVoxelMap master) {
 		this.master = master;
@@ -319,8 +325,7 @@ public class WaypointManager implements IWaypointManager {
 						if (pt.name.length() > 15) {
 							num = Integer.parseInt(pt.name.substring(15));
 						}
-					} catch (Exception e) {
-						num = 0;
+					} catch (Exception ignored) {
 					}
 
 					pt.red = pt.red - (pt.red - 0.5F) / 8.0F;

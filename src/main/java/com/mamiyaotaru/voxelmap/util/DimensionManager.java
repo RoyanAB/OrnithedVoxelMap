@@ -6,25 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 @SuppressWarnings("unused")
 public class DimensionManager implements IDimensionManager {
-	private static Method providersGetDimensionMethod;
-
-	static {
-		try {
-			Class<?> worldProviderClass = Class.forName("net.minecraft.world.WorldProvider");
-			Class<?>[] argClasses = new Class[0];
-			providersGetDimensionMethod = worldProviderClass.getMethod("getDimension", argClasses);
-		} catch (ClassNotFoundException | NoSuchMethodException e) {
-			providersGetDimensionMethod = null;
-		}
-	}
-
 	public ArrayList<Dimension> dimensions;
 	IVoxelMap master;
 
@@ -34,18 +20,7 @@ public class DimensionManager implements IDimensionManager {
 	}
 
 	public static int getDimensionIDfromProvider(WorldProvider provider) {
-		int id;
-		if (providersGetDimensionMethod != null) {
-			try {
-				id = (Integer) providersGetDimensionMethod.invoke(provider);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				id = provider.getDimensionType().getId();
-			}
-		} else {
-			id = provider.getDimensionType().getId();
-		}
-
-		return id;
+		return provider.getDimensionType().getId();
 	}
 
 	@Override

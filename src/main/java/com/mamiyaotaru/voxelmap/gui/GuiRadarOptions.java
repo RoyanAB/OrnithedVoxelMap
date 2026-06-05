@@ -35,8 +35,6 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		EnumOptionsMinimap.SHOWFACING
 	};
 
-	private static EnumOptionsMinimap[] relevantOptions;
-
 	private final GuiScreen parent;
 	private final RadarSettingsManager options;
 	protected String screenTitle = "Radar Options";
@@ -50,6 +48,8 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		this.getButtonList().clear();
 		int optionIndex = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.radar.title");
+
+		EnumOptionsMinimap[] relevantOptions;
 		if (this.options.radarMode == 2) {
 			relevantOptions = relevantOptionsFull;
 		} else {
@@ -106,7 +106,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 	protected void actionPerformed(GuiButton buttonClicked) {
 		if (buttonClicked.enabled) {
 			if (buttonClicked.id < 100 && buttonClicked instanceof GuiOptionButtonMinimap) {
-				this.options.setOptionValue(((GuiOptionButtonMinimap) buttonClicked).returnEnumOptions(), 1);
+				this.options.setOptionValue(((GuiOptionButtonMinimap) buttonClicked).returnEnumOptions());
 				if (((GuiOptionButtonMinimap) buttonClicked).returnEnumOptions().equals(EnumOptionsMinimap.RADARMODE)) {
 					this.initGui();
 					return;

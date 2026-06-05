@@ -26,8 +26,6 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Map;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings("unused")
 public class ImageUtils {
 	public static void saveImage(String name, int glid, int maxMipmapLevel, int width, int height) {
@@ -258,8 +256,8 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage eraseArea(BufferedImage image, int x, int y, int w, int h, int imageWidth, int imageHeight) {
-		float scaleX = image.getWidth() / imageWidth;
-		float scaleY = image.getHeight() / imageHeight;
+		float scaleX = (float) (image.getWidth() / imageWidth);
+		float scaleY = (float) (image.getHeight() / imageHeight);
 		x = (int) (x * scaleX);
 		y = (int) (y * scaleY);
 		w = (int) (w * scaleX);
@@ -299,7 +297,7 @@ public class ImageUtils {
 			mobSkin = temp;
 		}
 
-		float scale = mobSkin.getWidth(null) / imageWidth;
+		float scale = (float) (mobSkin.getWidth(null) / imageWidth);
 		x = (int) (x * scale);
 		y = (int) (y * scale);
 		w = (int) (w * scale);
@@ -408,10 +406,10 @@ public class ImageUtils {
 					if (newColor != -420) {
 						if (solid) {
 							if (armor
-								&& !(t <= imageWidth / 2 - armorOutlineFraction)
-								&& !(t >= imageWidth / 2 + armorOutlineFraction - 1.0F)
-								&& !(s <= imageHeight / 2 - armorOutlineFraction)
-								&& !(s >= imageHeight / 2 + armorOutlineFraction - 1.0F)) {
+								&& !(t <= imageWidth / 2F - armorOutlineFraction)
+								&& !(t >= imageWidth / 2F + armorOutlineFraction - 1.0F)
+								&& !(s <= imageHeight / 2F - armorOutlineFraction)
+								&& !(s >= imageHeight / 2F + armorOutlineFraction - 1.0F)) {
 								newColor = 0;
 							} else {
 								newColor = -16777216;
@@ -419,7 +417,7 @@ public class ImageUtils {
 						} else {
 							int red = newColor >> 16 & 0xFF;
 							int green = newColor >> 8 & 0xFF;
-							int blue = newColor >> 0 & 0xFF;
+							int blue = newColor & 0xFF;
 							newColor = (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
 						}
 
@@ -497,8 +495,10 @@ public class ImageUtils {
 		int right = image.getWidth();
 		int top = -1;
 		int bottom = image.getHeight();
+
 		boolean foundColor = false;
-		int color = 0;
+
+		int color;
 
 		while (!foundColor && left < right - 1) {
 			left++;
@@ -560,7 +560,9 @@ public class ImageUtils {
 		int right = width;
 		int top = -1;
 		int bottom = height;
+
 		boolean foundColor = false;
+
 		int color;
 
 		while (!foundColor && left < width / 2 - 1 && top < height / 2 - 1) {

@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+@SuppressWarnings("unused")
 public class GLShim {
 	public static final int
 		GL11_GL_ALPHA_TEST = 0xBC0,
@@ -61,7 +62,7 @@ public class GLShim {
 		GL12_GL_UNSIGNED_INT_8_8_8_8_REV = 0x8367;
 
 	public static final int
-		GL14_GL_GENERATE_MIPMAP   = 0x8191,
+		GL14_GL_GENERATE_MIPMAP = 0x8191,
 		GL14_GL_DEPTH_COMPONENT24 = 0x81A6;
 
 	public static void glEnable(int attrib) {

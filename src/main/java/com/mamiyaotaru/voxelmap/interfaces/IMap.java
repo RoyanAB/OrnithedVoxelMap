@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 
 @SuppressWarnings("unused")
 public interface IMap extends IChangeObserver {
-	void forceFullRender(boolean b);
+	void forceFullRender(boolean forceFullRender);
 
 	void drawMinimap(Minecraft mc);
 
@@ -15,7 +15,7 @@ public interface IMap extends IChangeObserver {
 
 	void newWorld(World world);
 
-	void onTick(Minecraft mc, boolean b);
+	void onTick(Minecraft mc, boolean clock);
 
 	void onTickInGame(Minecraft mc);
 

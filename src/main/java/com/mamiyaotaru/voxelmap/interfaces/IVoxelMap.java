@@ -24,9 +24,9 @@ public interface IVoxelMap {
 
 	IPersistentMap getPersistentMap();
 
-	void setPermissions(boolean b1, boolean b2, boolean b3, boolean b4);
+	void setPermissions(boolean hasFullRadarPermission, boolean hasPlayersOnRadarPermission, boolean hasMobsOnRadarPermission, boolean hasCavemodePermission);
 
-	void newSubWorldName(String name, boolean b);
+	void newSubWorldName(String name, boolean fromServer);
 
 	void newSubWorldHash(String hash);
 

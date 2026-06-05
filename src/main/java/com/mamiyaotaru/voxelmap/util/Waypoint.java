@@ -14,12 +14,15 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	public String imageSuffix;
 	public String world;
 	public TreeSet<Integer> dimensions;
+
 	public int x;
 	public int z;
 	public int y;
+
 	public boolean enabled;
 	public boolean inWorld = true;
 	public boolean inDimension = true;
+
 	public float red;
 	public float green;
 	public float blue;
@@ -79,10 +82,10 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	}
 
 	public double getDistanceSqToEntity(Entity entity) {
-		double var2 = this.getX() + 0.5 - entity.posX;
-		double var4 = this.getY() + 0.5 - entity.posY;
-		double var6 = this.getZ() + 0.5 - entity.posZ;
-		return var2 * var2 + var4 * var4 + var6 * var6;
+		double deltaX = this.getX() + 0.5 - entity.posX;
+		double deltaY = this.getY() + 0.5 - entity.posY;
+		double deltaZ = this.getZ() + 0.5 - entity.posZ;
+		return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 	}
 
 	@Override

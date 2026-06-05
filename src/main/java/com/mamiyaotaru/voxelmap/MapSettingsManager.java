@@ -436,8 +436,8 @@ public class MapSettingsManager implements ISettingsManager {
 		this.somethingChanged = true;
 	}
 
-	public void setOptionValue(EnumOptionsMinimap par1EnumOptions, int i) {
-		switch (par1EnumOptions) {
+	public void setOptionValue(EnumOptionsMinimap enumOptionsMinimap, int i) {
+		switch (enumOptionsMinimap) {
 			case COORDS:
 				this.coords = !this.coords;
 				break;
@@ -525,7 +525,7 @@ public class MapSettingsManager implements ISettingsManager {
 				}
 				break;
 			default:
-				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName());
+				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName());
 		}
 
 		this.somethingChanged = true;

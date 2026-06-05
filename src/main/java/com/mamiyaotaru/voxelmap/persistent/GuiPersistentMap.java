@@ -37,8 +37,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.TreeSet;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings("unused")
 public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private static int playerGLID = 0;
@@ -712,8 +710,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			cursorX = mouseDirectX;
 			cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
 		} else {
-			cursorX = Display.getWidth() / 2;
-			cursorY = Display.getHeight() - Display.getHeight() / 2 - this.top * this.guiToDirectMouse;
+			cursorX = Display.getWidth() / 2F;
+			cursorY = Display.getHeight() - Display.getHeight() / 2F - this.top * this.guiToDirectMouse;
 		}
 
 		float cursorCoordZ;
@@ -839,7 +837,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 						int nameWidth = this.chkLen(label.name);
 						float x = label.x * biomeScaleX / this.scScale;
 						float z = label.z * biomeScaleY / this.scScale;
-						this.write(label.name, x - nameWidth / 2, this.top + z - 3.0F, 16777215);
+						this.write(label.name, x - nameWidth / 2F, this.top + z - 3.0F, 16777215);
 					}
 				}
 
@@ -1165,8 +1163,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	public void popupAction(Popup popup, int action) {
 		int mouseDirectX = popup.clickedDirectX;
 		int mouseDirectY = popup.clickedDirectY;
+
 		float cursorX = mouseDirectX;
 		float cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
+
 		float cursorCoordX;
 		float cursorCoordZ;
 		if (this.oldNorth) {

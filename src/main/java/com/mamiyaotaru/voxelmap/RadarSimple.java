@@ -22,20 +22,20 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 public class RadarSimple implements IRadar {
-	public MapSettingsManager minimapOptions;
-	public RadarSettingsManager options;
-	UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
-	private Minecraft game;
-	private LayoutVariables layoutVariables;
+	public final MapSettingsManager minimapOptions;
+	public final RadarSettingsManager options;
 	private final TextureAtlas textureAtlas;
-	private final boolean enabled = true;
-	private boolean completedLoading = false;
+	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
+
 	private int timer = 500;
 	private float direction = 0.0F;
+	private Minecraft game;
+	private LayoutVariables layoutVariables;
 	private final ArrayList<Contact> contacts = new ArrayList<>(40);
+
+	private boolean completedLoading = false;
+	private final boolean enabled = true;
 
 	public RadarSimple(IVoxelMap master) {
 		this.minimapOptions = master.getMapOptions();

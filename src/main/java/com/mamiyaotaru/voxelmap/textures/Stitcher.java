@@ -68,7 +68,7 @@ public class Stitcher {
 
 			for (int stitcherHolderIndex = 1; stitcherHolderIndex < stitcherHoldersArrayLength && allSameSize; stitcherHolderIndex++) {
 				holder = stitchHoldersArray[stitcherHolderIndex];
-				allSameSize = allSameSize && holder.width == iconWidth && holder.height == iconHeight;
+				allSameSize = holder.width == iconWidth && holder.height == iconHeight;
 			}
 
 			if (allSameSize) {

@@ -117,9 +117,9 @@ public class BlockModel {
 				if (faceImageWidth == faceImageUVHeight && faceImageHeight == faceImageUVWidth) {
 					BufferedImage tmp = new BufferedImage(faceImageWidth, faceImageHeight, 6);
 					AffineTransform transform = new AffineTransform();
-					transform.translate(faceImage.getHeight() / 2, faceImage.getWidth() / 2);
+					transform.translate(faceImage.getHeight() / 2F, faceImage.getWidth() / 2F);
 					transform.rotate(Math.PI / 2);
-					transform.translate(-faceImage.getWidth() / 2, -faceImage.getHeight() / 2);
+					transform.translate(-faceImage.getWidth() / 2F, -faceImage.getHeight() / 2F);
 					AffineTransformOp op = new AffineTransformOp(transform, 1);
 					faceImage = op.filter(faceImage, tmp);
 				} else {

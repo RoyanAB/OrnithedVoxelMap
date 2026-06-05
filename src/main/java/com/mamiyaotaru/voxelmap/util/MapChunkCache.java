@@ -11,11 +11,14 @@ public class MapChunkCache {
 	private final int height;
 	private final MapChunk[] mapChunks;
 	private final IChangeObserver changeObserver;
+
 	private Chunk lastCenterChunk;
+
 	private int left = 0;
 	private int right = 0;
 	private int top = 0;
 	private int bottom = 0;
+
 	private boolean loaded = false;
 
 	public MapChunkCache(int width, int height, IChangeObserver changeObserver) {

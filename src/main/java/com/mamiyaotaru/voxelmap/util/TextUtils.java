@@ -1,22 +1,30 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings("unused")
 public class TextUtils {
+	@NotNull
+	@Contract(pure = true)
 	public static String scrubCodes(String string) {
 		return string.replaceAll("(§.)", "");
 	}
 
+	@NotNull
 	public static String scrubName(String input) {
 		input = input.replace(",", "~comma~");
 		return input.replace(":", "~colon~");
 	}
 
+	@NotNull
 	public static String scrubNameRegex(String input) {
 		input = input.replace(",", "﹐");
 		input = input.replace("[", "⟦");
 		return input.replace("]", "⟧");
 	}
 
+	@NotNull
 	public static String scrubNameFile(String input) {
 		input = input.replace("<", "~less~");
 		input = input.replace(">", "~greater~");
@@ -29,6 +37,7 @@ public class TextUtils {
 		return input.replace("*", "~star~");
 	}
 
+	@NotNull
 	public static String descrubName(String input) {
 		input = input.replace("~less~", "<");
 		input = input.replace("~greater~", ">");
@@ -46,7 +55,8 @@ public class TextUtils {
 		return input.replace("⟧", "]");
 	}
 
-	public static String titleize(String input) {
+	@NotNull
+	public static String titleize(@NotNull String input) {
 		StringBuilder output = new StringBuilder(input.length());
 		boolean lastCharacterWasWhitespace = true;
 

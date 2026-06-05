@@ -11,8 +11,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings("unused")
 public class Popup {
 	public int clickedX;

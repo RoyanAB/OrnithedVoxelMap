@@ -6,8 +6,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings("unused")
 public class PopupGuiButton extends GuiButton {
 	IPopupGuiScreen parentScreen;

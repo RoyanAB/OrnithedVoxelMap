@@ -5,15 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
 
 @SuppressWarnings("unused")
 public abstract class GuiSlotMinimap {
@@ -154,11 +151,11 @@ public abstract class GuiSlotMinimap {
 	public void actionPerformed(GuiButton button) {
 		if (button.enabled) {
 			if (button.id == this.scrollUpButtonID) {
-				this.amountScrolled = this.amountScrolled - this.slotHeight * 2 / 3;
+				this.amountScrolled = this.amountScrolled - this.slotHeight * 2F / 3F;
 				this.initialClickY = -2.0F;
 				this.bindAmountScrolled();
 			} else if (button.id == this.scrollDownButtonID) {
-				this.amountScrolled = this.amountScrolled + this.slotHeight * 2 / 3;
+				this.amountScrolled = this.amountScrolled + this.slotHeight * 2F / 3F;
 				this.initialClickY = -2.0F;
 				this.bindAmountScrolled();
 			}
@@ -338,7 +335,7 @@ public abstract class GuiSlotMinimap {
 				else
 					mouseRoll = 1;
 
-				this.amountScrolled = this.amountScrolled + mouseRoll * this.slotHeight / 2;
+				this.amountScrolled = this.amountScrolled + mouseRoll * this.slotHeight / 2F;
 			}
 		}
 	}

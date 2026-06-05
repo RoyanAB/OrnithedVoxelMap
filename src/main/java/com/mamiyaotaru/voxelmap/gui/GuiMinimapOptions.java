@@ -14,7 +14,18 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class GuiMinimapOptions extends GuiScreenMinimap {
-	private static EnumOptionsMinimap[] relevantOptions;
+	EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{
+		EnumOptionsMinimap.COORDS,
+		EnumOptionsMinimap.HIDE,
+		EnumOptionsMinimap.LOCATION,
+		EnumOptionsMinimap.SIZE,
+		EnumOptionsMinimap.SQUARE,
+		EnumOptionsMinimap.ROTATES,
+		EnumOptionsMinimap.BEACONS,
+		EnumOptionsMinimap.CAVEMODE
+	};
+
+
 	private final GuiScreen parent;
 	private final IVoxelMap master;
 	private final MapSettingsManager options;
@@ -27,17 +38,6 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 	}
 
 	public void initGui() {
-		relevantOptions = new EnumOptionsMinimap[]{
-			EnumOptionsMinimap.COORDS,
-			EnumOptionsMinimap.HIDE,
-			EnumOptionsMinimap.LOCATION,
-			EnumOptionsMinimap.SIZE,
-			EnumOptionsMinimap.SQUARE,
-			EnumOptionsMinimap.ROTATES,
-			EnumOptionsMinimap.BEACONS,
-			EnumOptionsMinimap.CAVEMODE
-		};
-
 		int optionIndex = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.title");
 

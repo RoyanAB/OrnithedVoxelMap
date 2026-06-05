@@ -52,14 +52,14 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 			return -1;
 		}
 
-		double distance1sq = (region1.getX() * 256 + region1.getWidth() / 2 - PersistentMap.this.options.mapX)
-			* (region1.getX() * 256 + region1.getWidth() / 2 - PersistentMap.this.options.mapX)
-			+ (region1.getZ() * 256 + region1.getWidth() / 2 - PersistentMap.this.options.mapZ)
-			* (region1.getZ() * 256 + region1.getWidth() / 2 - PersistentMap.this.options.mapZ);
-		double distance2sq = (region2.getX() * 256 + region2.getWidth() / 2 - PersistentMap.this.options.mapX)
-			* (region2.getX() * 256 + region2.getWidth() / 2 - PersistentMap.this.options.mapX)
-			+ (region2.getZ() * 256 + region2.getWidth() / 2 - PersistentMap.this.options.mapZ)
-			* (region2.getZ() * 256 + region2.getWidth() / 2 - PersistentMap.this.options.mapZ);
+		double distance1sq = (region1.getX() * 256 + region1.getWidth() / 2F - PersistentMap.this.options.mapX)
+			* (region1.getX() * 256 + region1.getWidth() / 2F - PersistentMap.this.options.mapX)
+			+ (region1.getZ() * 256 + region1.getWidth() / 2F - PersistentMap.this.options.mapZ)
+			* (region1.getZ() * 256 + region1.getWidth() / 2F - PersistentMap.this.options.mapZ);
+		double distance2sq = (region2.getX() * 256 + region2.getWidth() / 2F - PersistentMap.this.options.mapX)
+			* (region2.getX() * 256 + region2.getWidth() / 2F - PersistentMap.this.options.mapX)
+			+ (region2.getZ() * 256 + region2.getWidth() / 2F - PersistentMap.this.options.mapZ)
+			* (region2.getZ() * 256 + region2.getWidth() / 2F - PersistentMap.this.options.mapZ);
 		return Double.compare(distance1sq, distance2sq);
 	};
 	Comparator<PersistentMap.RegionCoordinates> distanceSorter = (coordinates1, coordinates2) -> {
@@ -531,7 +531,6 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 					seafloorHeight = mapData.getOceanFloorHeight(imageX, imageY);
 					blockPos.setXYZ(mcX, seafloorHeight - 1, mcZ);
 					blockState = mapData.getOceanFloorBlockstate(imageX, imageY);
-					seafloorColor = 0;
 					if (blockState != null && blockState != BlockRepository.air.getDefaultState()) {
 						blockStateID = BlockRepository.getStateId(blockState);
 						if (this.mapOptions.biomes) {
@@ -771,7 +770,7 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 				int alpha = color24 >> 24 & 0xFF;
 				int r = color24 >> 16 & 0xFF;
 				int g = color24 >> 8 & 0xFF;
-				int b = color24 >> 0 & 0xFF;
+				int b = color24 & 0xFF;
 				if (sc > 0.0) {
 					r += (int) (sc * (255 - r));
 					g += (int) (sc * (255 - g));

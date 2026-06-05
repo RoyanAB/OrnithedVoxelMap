@@ -21,8 +21,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings("unused")
 public class WaypointContainer {
 	private final String TARGETFLAG = "*&^TARget%$^";

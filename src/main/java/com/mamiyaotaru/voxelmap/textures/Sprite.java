@@ -34,12 +34,12 @@ public class Sprite {
 	public void initSprite(int sheetWidth, int sheetHeight, int originX, int originY) {
 		this.originX = originX;
 		this.originY = originY;
-		float var6 = 0.01F / sheetWidth;
-		float var7 = 0.01F / sheetHeight;
-		this.minU = originX / (float) sheetWidth + var6;
-		this.maxU = (originX + this.width) / (float) sheetWidth - var6;
-		this.minV = (float) originY / sheetHeight + var7;
-		this.maxV = (float) (originY + this.height) / sheetHeight - var7;
+		float uOffset = 0.01F / sheetWidth;
+		float vOffset = 0.01F / sheetHeight;
+		this.minU = originX / (float) sheetWidth + uOffset;
+		this.maxU = (originX + this.width) / (float) sheetWidth - uOffset;
+		this.minV = (float) originY / sheetHeight + vOffset;
+		this.maxV = (float) (originY + this.height) / sheetHeight - vOffset;
 	}
 
 	public void copyFrom(Sprite sourceSprite) {

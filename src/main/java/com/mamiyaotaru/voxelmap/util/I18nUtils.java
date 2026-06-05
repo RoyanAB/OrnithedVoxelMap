@@ -13,12 +13,7 @@ public class I18nUtils {
 	}
 
 	public static Collator getLocaleAwareCollator() {
-		String mcLocale = "en_US";
-
-		try {
-			mcLocale = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
-		} catch (NullPointerException ignored) {
-		}
+		String mcLocale = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
 
 		String[] bits = mcLocale.split("_");
 		Locale locale = new Locale(bits[0], bits.length > 1 ? bits[1] : "");

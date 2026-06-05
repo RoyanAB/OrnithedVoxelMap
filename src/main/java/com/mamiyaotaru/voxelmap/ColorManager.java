@@ -57,40 +57,43 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.*;
-
 @SuppressWarnings({"unused", "unchecked"})
 public class ColorManager implements IColorManager {
 	private final MutableBlockPos dummyBlockPos = new MutableBlockPos(
 		BlockPos.ORIGIN.getX(), BlockPos.ORIGIN.getY(), BlockPos.ORIGIN.getZ()
 	);
+
 	private final ColorManager.ColorResolver pineColorResolver = (biome, blockPos) -> ColorizerFoliage.getFoliageColorPine();
 	private final ColorManager.ColorResolver birchColorResolver = (biome, blockPos) -> ColorizerFoliage.getFoliageColorBirch();
 	private final ColorManager.ColorResolver grassColorResolver = (biome, blockPos) -> biome.getGrassColorAtPos(blockPos);
 	private final ColorManager.ColorResolver leavesColorResolver = (biome, blockPos) -> biome.getFoliageColorAtPos(blockPos);
 	private final ColorManager.ColorResolver waterColorResolver = (biome, blockPos) -> biome.getWaterColor();
-	Minecraft game;
+
+	private final Minecraft game;
 	private final IVoxelMap master;
-	private boolean resourcePacksChanged = false;
-	private BufferedImage terrainBuff = null;
-	private BufferedImage colorPicker;
-	private int sizeOfBiomeArray = 0;
-	private int[] blockColors = new int[16384];
-	private int[] blockColorsWithDefaultTint = new int[16384];
 	private final HashSet<Integer> biomeTintsAvailable = new HashSet<>();
-	private boolean optifineInstalled;
 	private final HashMap<Integer, int[][]> blockTintTables = new HashMap<>();
 	private final HashSet<Integer> biomeTextureAvailable = new HashSet<>();
 	private final HashMap<String, Integer> blockBiomeSpecificColors = new HashMap<>();
+
+	private BufferedImage terrainBuff;
+	private BufferedImage colorPicker;
+	private int sizeOfBiomeArray;
+
+	private int[] blockColors = new int[16384];
+	private int[] blockColorsWithDefaultTint = new int[16384];
+
 	private float failedToLoadX = 0.0F;
 	private float failedToLoadY = 0.0F;
 	private String renderPassThreeBlendMode;
+
+	private boolean resourcePacksChanged = false;
+	private boolean optifineInstalled = false;
 	private boolean loaded = false;
 
 	public ColorManager(IVoxelMap master) {
 		this.master = master;
 		this.game = Minecraft.getMinecraft();
-		this.optifineInstalled = false;
 		Field ofProfiler = null;
 
 		try {
@@ -1413,7 +1416,7 @@ public class ColorManager implements IColorManager {
 		}
 
 		for (int t = 0; t < this.sizeOfBiomeArray; t++) {
-			if (Biome.getBiome(t) != null && Biome.getBiome(t).getBiomeName().toLowerCase().replace(" ", "").equalsIgnoreCase(name)) {
+			if (Biome.getBiome(t) != null && Objects.requireNonNull(Biome.getBiome(t)).getBiomeName().toLowerCase().replace(" ", "").equalsIgnoreCase(name)) {
 				return t;
 			}
 		}
