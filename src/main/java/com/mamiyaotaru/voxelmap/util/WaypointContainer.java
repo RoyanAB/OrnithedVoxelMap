@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.chunk.Chunk;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -133,7 +134,7 @@ public class WaypointContainer {
 		float g = par1EntityWaypoint.green;
 
 		for (int width = 0; width < 4; width++) {
-			vertexBuffer.begin(5, DefaultVertexFormats.POSITION_COLOR);
+			vertexBuffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 			double d6 = 0.1 + width * 0.2;
 			d6 *= topWidthFactor;
 			double d7 = 0.1 + width * 0.2;
@@ -229,7 +230,7 @@ public class WaypointContainer {
 
 		GLUtils.disp(textureAtlas.getGlTextureId());
 		GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(-width, -width, 0.0).tex(icon.getMinU(), icon.getMinV()).color(r, g, b, fade).endVertex();
 		vertexBuffer.pos(-width, width, 0.0).tex(icon.getMinU(), icon.getMaxV()).color(r, g, b, fade).endVertex();
 		vertexBuffer.pos(width, width, 0.0).tex(icon.getMaxU(), icon.getMaxV()).color(r, g, b, fade).endVertex();
@@ -237,7 +238,7 @@ public class WaypointContainer {
 		tessellator.draw();
 		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		GLShim.glDepthMask(false);
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(-width, -width, 0.0).tex(icon.getMinU(), icon.getMinV()).color(r, g, b, 0.3F * fade).endVertex();
 		vertexBuffer.pos(-width, width, 0.0).tex(icon.getMinU(), icon.getMaxV()).color(r, g, b, 0.3F * fade).endVertex();
 		vertexBuffer.pos(width, width, 0.0).tex(icon.getMaxU(), icon.getMaxV()).color(r, g, b, 0.3F * fade).endVertex();
@@ -257,14 +258,14 @@ public class WaypointContainer {
 
 			GLShim.glEnable(GLShim.GL11_GL_POLYGON_OFFSET_FILL);
 			GLShim.glPolygonOffset(1.0F, 3.0F);
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 			vertexBuffer.pos(-halfStringWidth - 2, -2 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.6F * fade).endVertex();
 			vertexBuffer.pos(-halfStringWidth - 2, 9 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.6F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 2, 9 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.6F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 2, -2 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.6F * fade).endVertex();
 			tessellator.draw();
 			GLShim.glPolygonOffset(1.0F, 1.0F);
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 			vertexBuffer.pos(-halfStringWidth - 1, -1 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			vertexBuffer.pos(-halfStringWidth - 1, 8 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 1, 8 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
@@ -273,14 +274,14 @@ public class WaypointContainer {
 			GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 			GLShim.glDepthMask(false);
 			GLShim.glPolygonOffset(1.0F, 3.0F);
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 			vertexBuffer.pos(-halfStringWidth - 2, -2 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.15F * fade).endVertex();
 			vertexBuffer.pos(-halfStringWidth - 2, 9 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.15F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 2, 9 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.15F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 2, -2 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.15F * fade).endVertex();
 			tessellator.draw();
 			GLShim.glPolygonOffset(1.0F, 5.0F);
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 			vertexBuffer.pos(-halfStringWidth - 1, -1 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			vertexBuffer.pos(-halfStringWidth - 1, 8 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 1, 8 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();

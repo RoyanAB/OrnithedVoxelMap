@@ -164,7 +164,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 		float shadowOffset = shadow ? 1.0F : 0.0F;
 		float charWidth = this.charWidthArray[charIndex] - 0.01F;
 
-		GL11.glBegin(5);
+		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 		GL11.glTexCoord2f(charXPosInSheet / sheetWidth, charYPosInSheet / sheetHeight);
 		GL11.glVertex3f(this.posX + shadowOffset, this.posY, 0.0F);
 		GL11.glTexCoord2f(charXPosInSheet / sheetWidth, (charYPosInSheet + 7.99F * fontScaleY) / sheetHeight);
@@ -275,7 +275,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 						Tessellator tessellator = Tessellator.getInstance();
 						BufferBuilder vertexBuffer = tessellator.getBuffer();
 						GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
-						vertexBuffer.begin(7, DefaultVertexFormats.POSITION);
+						vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
 						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
 						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
@@ -288,7 +288,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 						Tessellator tessellator = Tessellator.getInstance();
 						BufferBuilder vertexBuffer = tessellator.getBuffer();
 						GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
-						vertexBuffer.begin(7, DefaultVertexFormats.POSITION);
+						vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 						int l = this.underlineStyle ? -1 : 0;
 						vertexBuffer.pos(this.posX + l, this.posY + this.FONT_HEIGHT, 0.0).endVertex();
 						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT, 0.0).endVertex();

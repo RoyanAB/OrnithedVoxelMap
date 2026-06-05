@@ -32,35 +32,35 @@ public class GLUtils {
 	private static int previousFBOID = 0;
 
 	public static void setupFBO() {
-		previousFBOID = GL11.glGetInteger(36006);
+		previousFBOID = GL11.glGetInteger(EXTFramebufferObject.GL_FRAMEBUFFER_BINDING_EXT);
 		fboID = EXTFramebufferObject.glGenFramebuffersEXT();
 		fboTextureID = GL11.glGenTextures();
 		int width = fboSize;
 		int height = fboSize;
-		EXTFramebufferObject.glBindFramebufferEXT(36160, fboID);
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fboID);
 		ByteBuffer byteBuffer = BufferUtils.createByteBuffer(4 * width * height);
 		GL11.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, fboTextureID);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, 10496);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, 10496);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, 9729);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, 9729);
-		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, width, height, 0, GLShim.GL11_GL_RGBA, 5120, byteBuffer);
-		EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064, GLShim.GL11_GL_TEXTURE_2D, fboTextureID, 0);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL11_GL_CLAMP);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL11_GL_CLAMP);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
+		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, width, height, 0, GLShim.GL11_GL_RGBA, GLShim.GL11_GL_BYTE, byteBuffer);
+		EXTFramebufferObject.glFramebufferTexture2DEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT, GLShim.GL11_GL_TEXTURE_2D, fboTextureID, 0);
 		int depthRenderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
-		EXTFramebufferObject.glBindRenderbufferEXT(36161, depthRenderBufferID);
-		EXTFramebufferObject.glRenderbufferStorageEXT(36161, 33190, fboSize, fboSize);
-		EXTFramebufferObject.glFramebufferRenderbufferEXT(36160, 36096, 36161, depthRenderBufferID);
-		EXTFramebufferObject.glBindRenderbufferEXT(36161, 0);
-		EXTFramebufferObject.glBindFramebufferEXT(36160, previousFBOID);
+		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, depthRenderBufferID);
+		EXTFramebufferObject.glRenderbufferStorageEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, GLShim.GL14_GL_DEPTH_COMPONENT24, fboSize, fboSize);
+		EXTFramebufferObject.glFramebufferRenderbufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, EXTFramebufferObject.GL_RENDERBUFFER_EXT, depthRenderBufferID);
+		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, 0);
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, previousFBOID);
 	}
 
 	public static void bindFrameBuffer() {
-		previousFBOID = GL11.glGetInteger(36006);
-		EXTFramebufferObject.glBindFramebufferEXT(36160, fboID);
+		previousFBOID = GL11.glGetInteger(EXTFramebufferObject.GL_FRAMEBUFFER_BINDING_EXT);
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fboID);
 	}
 
 	public static void unbindFrameBuffer() {
-		EXTFramebufferObject.glBindFramebufferEXT(36160, previousFBOID);
+		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, previousFBOID);
 	}
 
 	public static void setMap(int x, int y) {
@@ -106,11 +106,11 @@ public class GLUtils {
 	}
 
 	public static void drawPre() {
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 	}
 
 	public static void drawPre(VertexFormat vertexFormat) {
-		vertexBuffer.begin(7, vertexFormat);
+		vertexBuffer.begin(GL11.GL_QUADS, vertexFormat);
 	}
 
 	public static void drawPost() {

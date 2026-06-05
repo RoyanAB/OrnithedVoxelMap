@@ -61,7 +61,8 @@ public class GLShim {
 		GL12_GL_UNSIGNED_INT_8_8_8_8_REV = 0x8367;
 
 	public static final int
-		GL14_GL_GENERATE_MIPMAP = 0x8191;
+		GL14_GL_GENERATE_MIPMAP   = 0x8191,
+		GL14_GL_DEPTH_COMPONENT24 = 0x81A6;
 
 	public static void glEnable(int attrib) {
 		GL11.glEnable(attrib);

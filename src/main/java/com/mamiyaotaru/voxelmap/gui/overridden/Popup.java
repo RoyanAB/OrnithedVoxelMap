@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
@@ -99,7 +100,7 @@ public class Popup {
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		float spriteSize = 32.0F;
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(this.x, this.y + this.h, 0.0).tex(this.x / spriteSize, this.y / spriteSize).color(64, 64, 64, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0)
 			.tex((this.x + this.w) / spriteSize, this.y / spriteSize)
@@ -118,25 +119,25 @@ public class Popup {
 		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 
 		byte fadeWidth = 4;
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x, this.y + fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		tessellator.draw();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h - fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x, this.y + this.h - fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		tessellator.draw();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + fadeWidth, this.y + this.h, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + fadeWidth, this.y, 0.0).color(0, 0, 0, 0).endVertex();
 		tessellator.draw();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x + this.w - fadeWidth, this.y, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w - fadeWidth, this.y + this.h, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();

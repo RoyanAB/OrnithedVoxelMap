@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.text.Collator;
@@ -119,7 +120,7 @@ public class GuiSlotWaypoints extends GuiSlotMinimap {
 	public void drawTexturedModalRect(int xCoord, int yCoord, Sprite textureSprite, int widthIn, int heightIn) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexbuffer = tessellator.getBuffer();
-		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+		vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		vertexbuffer.pos(xCoord, yCoord + heightIn, 1.0).tex(textureSprite.getMinU(), textureSprite.getMaxV()).endVertex();
 		vertexbuffer.pos(xCoord + widthIn, yCoord + heightIn, 1.0).tex(textureSprite.getMaxU(), textureSprite.getMaxV()).endVertex();
 		vertexbuffer.pos(xCoord + widthIn, yCoord, 1.0).tex(textureSprite.getMaxU(), textureSprite.getMinV()).endVertex();
