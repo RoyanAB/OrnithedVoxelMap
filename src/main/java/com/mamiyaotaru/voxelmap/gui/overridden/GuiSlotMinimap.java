@@ -177,7 +177,7 @@ public abstract class GuiSlotMinimap {
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
 		if (this.showSlotBG) {
 			this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			float f = 32.0F;
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(this.left, this.bottom, 0.0)

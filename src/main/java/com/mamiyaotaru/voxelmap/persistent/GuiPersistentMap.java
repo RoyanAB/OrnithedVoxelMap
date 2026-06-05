@@ -1001,7 +1001,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
 		this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(0.0, endY, 0.0).tex(0.0, endY / 32.0F).color(64, 64, 64, endAlpha).endVertex();
 		vertexBuffer.pos(this.getWidth(), endY, 0.0)

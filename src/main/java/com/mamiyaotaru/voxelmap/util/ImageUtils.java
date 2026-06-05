@@ -155,7 +155,7 @@ public class ImageUtils {
 				for (int startY = 0; startY + fboWidth < imageHeight; startY += fboHeight) {
 					GLUtils.disp(glid);
 					GLShim.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-					GLShim.glClear(16640);
+					GLShim.glClear(GLShim.GL11_GL_COLOR_BUFFER_BIT | GLShim.GL11_GL_DEPTH_BUFFER_BIT);
 					GLUtils.drawPre();
 					GLUtils.ldrawthree(0.0, fboHeight, 1.0, (float) startX / imageWidth, (float) startY / imageHeight);
 					GLUtils.ldrawthree(fboWidth, fboHeight, 1.0, ((float) startX + fboWidth) / imageWidth, (float) startY / imageHeight);

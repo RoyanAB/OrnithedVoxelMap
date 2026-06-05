@@ -282,7 +282,7 @@ public class ColorManager implements IColorManager {
 		GLShim.glEnable(GLShim.GL11_GL_NORMALIZE);
 		GLShim.glDisable(GLShim.GL11_GL_CULL_FACE);
 		GLShim.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-		GLShim.glClear(16640);
+		GLShim.glClear(GLShim.GL11_GL_COLOR_BUFFER_BIT | GLShim.GL11_GL_DEPTH_BUFFER_BIT);
 		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 		GLShim.glPushMatrix();
 		GLShim.glTranslatef((float) width / 2 - size / 2.0F + transX, (float) height / 2 - size / 2.0F + transY, 0.0F + transZ);
