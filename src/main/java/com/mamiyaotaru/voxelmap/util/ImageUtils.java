@@ -33,8 +33,8 @@ public class ImageUtils {
 	public static void saveImage(String name, int glid, int maxMipmapLevel, int width, int height) {
 		Logger logger = LogManager.getLogger();
 		GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, glid);
-		GL11.glPixelStorei(3333, 1);
-		GL11.glPixelStorei(3317, 1);
+		GL11.glPixelStorei(GLShim.GL11_GL_PACK_ALIGNMENT, 1);
+		GL11.glPixelStorei(GLShim.GL11_GL_UNPACK_ALIGNMENT, 1);
 
 		for (int mipmapLevel = 0; mipmapLevel <= maxMipmapLevel; mipmapLevel++) {
 			File file = new File(name + "_" + mipmapLevel + ".png");
@@ -43,7 +43,7 @@ public class ImageUtils {
 			int numPixels = destWidth * destHeight;
 			IntBuffer pixelBuffer = BufferUtils.createIntBuffer(numPixels);
 			int[] pixelArray = new int[numPixels];
-			GL11.glGetTexImage(GLShim.GL11_GL_TEXTURE_2D, mipmapLevel, 32993, 33639, pixelBuffer);
+			GL11.glGetTexImage(GLShim.GL11_GL_TEXTURE_2D, mipmapLevel, GLShim.GL12_GL_BGRA, GLShim.GL12_GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);
 			pixelBuffer.get(pixelArray);
 			BufferedImage bufferedImage = new BufferedImage(destWidth, destHeight, 2);
 			bufferedImage.setRGB(0, 0, destWidth, destHeight, pixelArray, 0, destWidth);

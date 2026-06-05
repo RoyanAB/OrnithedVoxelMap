@@ -65,7 +65,6 @@ public class GLShim {
 		GL14_GL_DEPTH_COMPONENT24 = 0x81A6;
 
 	public static void glEnable(int attrib) {
-		GL11.glEnable(attrib);
 		switch (attrib) {
 			case GL11_GL_CULL_FACE:
 				GlStateManager.enableCull();
