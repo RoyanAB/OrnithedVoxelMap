@@ -43,7 +43,7 @@ public class ImageUtils {
 			int numPixels = destWidth * destHeight;
 			IntBuffer pixelBuffer = BufferUtils.createIntBuffer(numPixels);
 			int[] pixelArray = new int[numPixels];
-			GL11.glGetTexImage(3553, mipmapLevel, 32993, 33639, pixelBuffer);
+			GL11.glGetTexImage(GLShim.GL11_GL_TEXTURE_2D, mipmapLevel, 32993, 33639, pixelBuffer);
 			pixelBuffer.get(pixelArray);
 			BufferedImage bufferedImage = new BufferedImage(destWidth, destHeight, 2);
 			bufferedImage.setRGB(0, 0, destWidth, destHeight, pixelArray, 0, destWidth);

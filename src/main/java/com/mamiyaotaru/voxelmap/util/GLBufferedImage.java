@@ -49,12 +49,12 @@ public class GLBufferedImage extends BufferedImage implements IGLBufferedImage {
 		}
 
 		((Buffer) this.buffer).position(0).limit(this.bytes.length);
-		GL11.glBindTexture(3553, this.index);
-		GL11.glTexParameteri(3553, 10241, 9728);
-		GL11.glTexParameteri(3553, 10240, 9728);
-		GL11.glTexParameteri(3553, 10242, 33071);
-		GL11.glTexParameteri(3553, 10243, 33071);
-		GL11.glTexImage2D(3553, 0, 6408, this.getWidth(), this.getHeight(), 0, 6408, 32821, this.buffer);
+		GL11.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.index);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10241, 9728);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10240, 9728);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10242, 33071);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10243, 33071);
+		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, 6408, this.getWidth(), this.getHeight(), 0, 6408, 32821, this.buffer);
 	}
 
 	@Override
