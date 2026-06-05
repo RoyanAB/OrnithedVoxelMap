@@ -40,11 +40,11 @@ public class GLUtils {
 		EXTFramebufferObject.glBindFramebufferEXT(36160, fboID);
 		ByteBuffer byteBuffer = BufferUtils.createByteBuffer(4 * width * height);
 		GL11.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, fboTextureID);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10242, 10496);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10243, 10496);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10241, 9729);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10240, 9729);
-		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, 6408, width, height, 0, 6408, 5120, byteBuffer);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, 10496);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, 10496);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, 9729);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, 9729);
+		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, width, height, 0, GLShim.GL11_GL_RGBA, 5120, byteBuffer);
 		EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064, GLShim.GL11_GL_TEXTURE_2D, fboTextureID, 0);
 		int depthRenderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
 		EXTFramebufferObject.glBindRenderbufferEXT(36161, depthRenderBufferID);

@@ -94,15 +94,15 @@ public class CompressibleGLBufferedImage implements IGLBufferedImage {
 
 		((Buffer) buffer).position(0).limit(this.bytes.length);
 		GL11.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.index);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10241, 9728);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10240, 9728);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10242, 33071);
-		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 10243, 33071);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL12_GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL12_GL_CLAMP_TO_EDGE);
 		if (GLUtils.openGL14Enabled) {
 			GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, 33169, 1);
 		}
 
-		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, 6408, this.getWidth(), this.getHeight(), 0, 6408, 32821, buffer);
+		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, this.getWidth(), this.getHeight(), 0, GLShim.GL11_GL_RGBA, 32821, buffer);
 		this.compress();
 	}
 

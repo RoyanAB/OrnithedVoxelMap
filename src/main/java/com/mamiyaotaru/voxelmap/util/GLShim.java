@@ -64,6 +64,7 @@ public class GLShim {
 		GL14_GL_GENERATE_MIPMAP = 0x8191;
 
 	public static void glEnable(int attrib) {
+		GL11.glEnable(attrib);
 		switch (attrib) {
 			case GL11_GL_CULL_FACE:
 				GlStateManager.enableCull();
