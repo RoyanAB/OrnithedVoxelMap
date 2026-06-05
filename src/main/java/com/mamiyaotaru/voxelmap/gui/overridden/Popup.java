@@ -94,7 +94,7 @@ public class Popup {
 	public void drawPopup(int mouseX, int mouseY) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
-		GLShim.glDisable(GL_DEPTH_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -111,11 +111,11 @@ public class Popup {
 			.endVertex();
 		vertexBuffer.pos(this.x, this.y, 0.0).tex(this.x / spriteSize, (this.y + this.h) / spriteSize).color(64, 64, 64, 255).endVertex();
 		tessellator.draw();
-		GLShim.glEnable(GL_BLEND);
-		GLShim.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		GLShim.glDisable(GL_ALPHA_TEST);
-		GLShim.glShadeModel(GL_SMOOTH);
-		GLShim.glDisable(GL_TEXTURE_2D);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
+		GLShim.glDisable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glShadeModel(GLShim.GL11_GL_SMOOTH);
+		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 
 		byte fadeWidth = 4;
 		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
@@ -143,10 +143,10 @@ public class Popup {
 		vertexBuffer.pos(this.x + this.w, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		tessellator.draw();
 
-		GLShim.glEnable(GL_TEXTURE_2D);
-		GLShim.glShadeModel(GL_FLAT);
-		GLShim.glEnable(GL_ALPHA_TEST);
-		GLShim.glDisable(GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glShadeModel(GLShim.GL11_GL_FLAT);
+		GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_BLEND);
 
 		for (int t = 0; t < this.entries.length; t++) {
 			int color = !this.entries[t].enabled

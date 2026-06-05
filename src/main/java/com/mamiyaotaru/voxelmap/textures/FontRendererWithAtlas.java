@@ -19,10 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.GL_ALPHA_TEST;
-import static com.mamiyaotaru.voxelmap.util.GLShim.GL_TEXTURE_2D;
-
-
 @SuppressWarnings("unused")
 public class FontRendererWithAtlas extends FontRenderer implements IResourceManagerReloadListener {
 	private final int[] charWidthArray = new int[256];
@@ -191,7 +187,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 	}
 
 	public int drawString(String text, float x, float y, int color, boolean shadow) {
-		GLShim.glEnable(GL_ALPHA_TEST);
+		GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
 		this.resetStyles();
 		int posX;
 		if (shadow) {
@@ -278,20 +274,20 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 					if (this.strikethroughStyle) {
 						Tessellator tessellator = Tessellator.getInstance();
 						BufferBuilder vertexBuffer = tessellator.getBuffer();
-						GLShim.glDisable(GL_TEXTURE_2D);
+						GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 						vertexBuffer.begin(7, DefaultVertexFormats.POSITION);
 						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
 						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2, 0.0).endVertex();
 						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
 						vertexBuffer.pos(this.posX, this.posY + this.FONT_HEIGHT / 2 - 1.0F, 0.0).endVertex();
 						tessellator.draw();
-						GLShim.glEnable(GL_TEXTURE_2D);
+						GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 					}
 
 					if (this.underlineStyle) {
 						Tessellator tessellator = Tessellator.getInstance();
 						BufferBuilder vertexBuffer = tessellator.getBuffer();
-						GLShim.glDisable(GL_TEXTURE_2D);
+						GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 						vertexBuffer.begin(7, DefaultVertexFormats.POSITION);
 						int l = this.underlineStyle ? -1 : 0;
 						vertexBuffer.pos(this.posX + l, this.posY + this.FONT_HEIGHT, 0.0).endVertex();
@@ -299,7 +295,7 @@ public class FontRendererWithAtlas extends FontRenderer implements IResourceMana
 						vertexBuffer.pos(this.posX + widthOfRenderedChar, this.posY + this.FONT_HEIGHT - 1.0F, 0.0).endVertex();
 						vertexBuffer.pos(this.posX + l, this.posY + this.FONT_HEIGHT - 1.0F, 0.0).endVertex();
 						tessellator.draw();
-						GLShim.glEnable(GL_TEXTURE_2D);
+						GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 					}
 
 					this.posX += (int) widthOfRenderedChar;

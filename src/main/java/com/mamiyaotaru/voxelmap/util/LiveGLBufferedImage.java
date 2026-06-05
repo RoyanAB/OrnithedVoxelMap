@@ -46,19 +46,19 @@ public class LiveGLBufferedImage extends GLBufferedImage {
 			}
 		}
 
-		GLShim.glBindTexture(GL_TEXTURE_2D, this.index);
-		GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.index);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL12_GL_CLAMP_TO_EDGE);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL12_GL_CLAMP_TO_EDGE);
 		if (GLUtils.openGL14Enabled) {
-			GLShim.glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, 1);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL14_GL_GENERATE_MIPMAP, 1);
 		}
 
-		GLShim.glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		GLShim.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-		GLShim.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-		GLShim.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.getWidth(), this.getHeight(), 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, this.buffer);
+		GLShim.glPixelStorei(GLShim.GL11_GL_UNPACK_ROW_LENGTH, 0);
+		GLShim.glPixelStorei(GLShim.GL11_GL_UNPACK_SKIP_PIXELS, 0);
+		GLShim.glPixelStorei(GLShim.GL11_GL_UNPACK_SKIP_ROWS, 0);
+		GLShim.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, this.getWidth(), this.getHeight(), 0, GLShim.GL11_GL_RGBA, GLShim.GL12_GL_UNSIGNED_INT_8_8_8_8, this.buffer);
 	}
 
 	@Override

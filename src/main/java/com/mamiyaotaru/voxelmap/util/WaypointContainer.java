@@ -57,7 +57,7 @@ public class WaypointContainer {
 		double renderPosX = cameraEntity.lastTickPosX + (cameraEntity.posX - cameraEntity.lastTickPosX) * partialTicks;
 		double renderPosY = cameraEntity.lastTickPosY + (cameraEntity.posY - cameraEntity.lastTickPosY) * partialTicks;
 		double renderPosZ = cameraEntity.lastTickPosZ + (cameraEntity.posZ - cameraEntity.lastTickPosZ) * partialTicks;
-		GLShim.glEnable(GL_CULL_FACE);
+		GLShim.glEnable(GLShim.GL11_GL_CULL_FACE);
 
 		for (Waypoint pt : this.wayPts) {
 			if (pt.isActive() || pt == this.highlightedWaypoint) {
@@ -118,12 +118,12 @@ public class WaypointContainer {
 	private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ) {
 		Tessellator tesselator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tesselator.getBuffer();
-		GLShim.glDisable(GL_TEXTURE_2D);
-		GLShim.glDisable(GL_LIGHTING);
-		GLShim.glDisable(GL_FOG);
+		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glDisable(GLShim.GL11_GL_LIGHTING);
+		GLShim.glDisable(GLShim.GL11_GL_FOG);
 		GLShim.glDepthMask(false);
-		GLShim.glEnable(GL_BLEND);
-		GLShim.glBlendFunc(GL_SRC_ALPHA, 1);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, 1);
 		int height = 256;
 		float brightness = 0.06F;
 		double topWidthFactor = 1.05;
@@ -167,15 +167,15 @@ public class WaypointContainer {
 			tesselator.draw();
 		}
 
-		GLShim.glDisable(GL_BLEND);
-		GLShim.glEnable(GL_FOG);
-		GLShim.glEnable(GL_LIGHTING);
-		GLShim.glEnable(GL_TEXTURE_2D);
+		GLShim.glDisable(GLShim.GL11_GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_FOG);
+		GLShim.glEnable(GLShim.GL11_GL_LIGHTING);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 		GLShim.glDepthMask(true);
 	}
 
 	private void renderLabel(Waypoint pt, double distance, boolean isPointedAt, String name, double x, double y, double z) {
-		GLShim.glAlphaFunc(GL_GREATER, 0.1F);
+		GLShim.glAlphaFunc(GLShim.GL11_GL_GREATER, 0.1F);
 		boolean target = name.equals(TARGETFLAG);
 		if (target) {
 			if (pt.red != 2.0F && pt.green != 0.0F && pt.blue != 0.0F) {
@@ -202,10 +202,10 @@ public class WaypointContainer {
 		GLShim.glRotatef(-this.mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
 		GLShim.glRotatef(this.mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
 		GLShim.glScalef(-var14, -var14, var14);
-		GLShim.glDisable(GL_LIGHTING);
-		GLShim.glDisable(GL_FOG);
-		GLShim.glEnable(GL_BLEND);
-		GLShim.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GLShim.glDisable(GLShim.GL11_GL_LIGHTING);
+		GLShim.glDisable(GLShim.GL11_GL_FOG);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
 		float fade = distance > 5.0 ? 1.0F : (float) distance / 5.0F;
@@ -214,7 +214,7 @@ public class WaypointContainer {
 			GLShim.glDepthMask(true);
 		}
 
-		GLShim.glEnable(GL_TEXTURE_2D);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 		double width = 10.0;
 		float r = target ? 1.0F : pt.red;
 		float g = target ? 0.0F : pt.green;
@@ -228,14 +228,14 @@ public class WaypointContainer {
 		}
 
 		GLUtils.disp(textureAtlas.getGlTextureId());
-		GLShim.glEnable(GL_DEPTH_TEST);
+		GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(-width, -width, 0.0).tex(icon.getMinU(), icon.getMinV()).color(r, g, b, fade).endVertex();
 		vertexBuffer.pos(-width, width, 0.0).tex(icon.getMinU(), icon.getMaxV()).color(r, g, b, fade).endVertex();
 		vertexBuffer.pos(width, width, 0.0).tex(icon.getMaxU(), icon.getMaxV()).color(r, g, b, fade).endVertex();
 		vertexBuffer.pos(width, -width, 0.0).tex(icon.getMaxU(), icon.getMinV()).color(r, g, b, fade).endVertex();
 		tessellator.draw();
-		GLShim.glDisable(GL_DEPTH_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		GLShim.glDepthMask(false);
 		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(-width, -width, 0.0).tex(icon.getMinU(), icon.getMinV()).color(r, g, b, 0.3F * fade).endVertex();
@@ -244,18 +244,18 @@ public class WaypointContainer {
 		vertexBuffer.pos(width, -width, 0.0).tex(icon.getMaxU(), icon.getMinV()).color(r, g, b, 0.3F * fade).endVertex();
 		tessellator.draw();
 		GLShim.glDepthMask(false);
-		GLShim.glDisable(GL_DEPTH_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		byte elevateBy = -18;
 		FontRenderer fontRenderer = this.mc.getRenderManager().getFontRenderer();
 		if (isPointedAt && fontRenderer != null) {
-			GLShim.glDisable(GL_TEXTURE_2D);
+			GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 			int halfStringWidth = fontRenderer.getStringWidth(name) / 2;
-			GLShim.glEnable(GL_DEPTH_TEST);
+			GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 			if (distance < maxDistance) {
 				GLShim.glDepthMask(true);
 			}
 
-			GLShim.glEnable(GL_POLYGON_OFFSET_FILL);
+			GLShim.glEnable(GLShim.GL11_GL_POLYGON_OFFSET_FILL);
 			GLShim.glPolygonOffset(1.0F, 3.0F);
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
 			vertexBuffer.pos(-halfStringWidth - 2, -2 + elevateBy, 0.0).color(pt.red, pt.green, pt.blue, 0.6F * fade).endVertex();
@@ -270,7 +270,7 @@ public class WaypointContainer {
 			vertexBuffer.pos(halfStringWidth + 1, 8 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 1, -1 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			tessellator.draw();
-			GLShim.glDisable(GL_DEPTH_TEST);
+			GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 			GLShim.glDepthMask(false);
 			GLShim.glPolygonOffset(1.0F, 3.0F);
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
@@ -286,20 +286,20 @@ public class WaypointContainer {
 			vertexBuffer.pos(halfStringWidth + 1, 8 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			vertexBuffer.pos(halfStringWidth + 1, -1 + elevateBy, 0.0).color(0.0F, 0.0F, 0.0F, 0.15F * fade).endVertex();
 			tessellator.draw();
-			GLShim.glDisable(GL_POLYGON_OFFSET_FILL);
-			GLShim.glEnable(GL_TEXTURE_2D);
+			GLShim.glDisable(GLShim.GL11_GL_POLYGON_OFFSET_FILL);
+			GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 			int textColor = (int) (255.0F * fade) << 24 | 13421772;
 			fontRenderer.drawString(name, -fontRenderer.getStringWidth(name) / 2, elevateBy, textColor);
-			GLShim.glEnable(GL_DEPTH_TEST);
+			GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 			int var34 = (int) (255.0F * fade) << 24 | 16777215;
 			fontRenderer.drawString(name, -fontRenderer.getStringWidth(name) / 2, elevateBy, var34);
 		}
 
-		GLShim.glEnable(GL_DEPTH_TEST);
+		GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 		GLShim.glDepthMask(true);
-		GLShim.glEnable(GL_FOG);
-		GLShim.glEnable(GL_LIGHTING);
-		GLShim.glDisable(GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_FOG);
+		GLShim.glEnable(GLShim.GL11_GL_LIGHTING);
+		GLShim.glDisable(GLShim.GL11_GL_BLEND);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GLShim.glPopMatrix();
 	}

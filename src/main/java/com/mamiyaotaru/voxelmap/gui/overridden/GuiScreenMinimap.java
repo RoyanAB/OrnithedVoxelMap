@@ -10,15 +10,13 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.util.List;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.GL_DEPTH_BUFFER_BIT;
-
 @SuppressWarnings("unused")
 public class GuiScreenMinimap extends GuiScreen {
 	public void drawMap() {
 		if (this.mc.world != null && this.mc.player != null) {
 			if (!VoxelMap.instance.getMapOptions().showUnderMenus) {
 				VoxelMap.instance.getMap().drawMinimap(this.mc);
-				GLShim.glClear(GL_DEPTH_BUFFER_BIT);
+				GLShim.glClear(GLShim.GL11_GL_DEPTH_BUFFER_BIT);
 			}
 		}
 	}

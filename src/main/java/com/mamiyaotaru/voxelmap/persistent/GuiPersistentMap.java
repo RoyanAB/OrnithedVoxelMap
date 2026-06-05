@@ -683,20 +683,20 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				GLUtils.disp(glid);
 				if (this.mapOptions.filtering) {
 					if (GLUtils.openGL14Enabled) {
-						GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 					} else {
-						GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 					}
 
-					GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				} else {
 					if (GLUtils.openGL14Enabled) {
-						GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 					} else {
-						GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
 					}
 
-					GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
 				}
 
 				this.drawTexturedModalRect(
@@ -725,7 +725,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 		}
 
-		GLShim.glEnable(GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
 		if (this.options.showWaypoints) {
 			for (Waypoint pt : this.waypointManager.getWaypoints()) {
 				this.drawWaypoint(pt, cursorCoordX, cursorCoordZ, null, null, null, null);
@@ -746,8 +746,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GLUtils.disp(playerGLID);
-		GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 		float playerX = (float) GameVariableAccessShim.xCoordDouble();
 		float playerZ = (float) GameVariableAccessShim.zCoordDouble();
 		if (this.oldNorth) {
@@ -831,7 +831,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				int minimumSize = (int) (20.0F * this.scScale / biomeScaleX);
 				minimumSize *= minimumSize;
 				ArrayList<AbstractMapData.BiomeLabel> labels = this.biomeMapData.getBiomeLabels();
-				GLShim.glDisable(GL_DEPTH_TEST);
+				GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 
 				for (AbstractMapData.BiomeLabel label : labels) {
 					if (label.segmentSize > minimumSize) {
@@ -842,7 +842,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					}
 				}
 
-				GLShim.glEnable(GL_DEPTH_TEST);
+				GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 			}
 		}
 
@@ -933,8 +933,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 
 				GLShim.glColor4f(r, g, b, !pt.enabled && !target && !hover ? 0.3F : 1.0F);
-				GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				GLShim.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				if (this.oldNorth) {
 					GLShim.glPushMatrix();
 					GLShim.glTranslatef(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);

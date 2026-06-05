@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.mamiyaotaru.voxelmap.util.GLShim.GL_TEXTURE_2D;
-
 @SuppressWarnings("unused")
 public class TextureAtlas extends AbstractTexture {
 	private static final Logger logger = LogManager.getLogger();
@@ -139,7 +137,7 @@ public class TextureAtlas extends AbstractTexture {
 		this.stitcher.doStitchNew();
 
 		if (oldWidth == this.stitcher.getCurrentImageWidth() && oldHeight == this.stitcher.getCurrentImageHeight()) {
-			GLShim.glBindTexture(GL_TEXTURE_2D, this.glTextureId);
+			GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.glTextureId);
 		} else {
 			logger.info("Resized to: {}x{} {}-atlas", new Object[]{this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight(), this.basePath});
 			TextureUtil.allocateTextureImpl(this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
@@ -269,7 +267,7 @@ public class TextureAtlas extends AbstractTexture {
 					icon.bufferedImageToIntData(bufferedImage);
 
 					try {
-						GLShim.glBindTexture(GL_TEXTURE_2D, this.glTextureId);
+						GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.glTextureId);
 						TextureUtil.uploadTextureMipmap(
 							new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
 						);

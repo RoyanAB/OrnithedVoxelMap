@@ -171,8 +171,8 @@ public abstract class GuiSlotMinimap {
 		int scrollBarLeft = this.getScrollBarX();
 		int scrollBarRight = scrollBarLeft + 6;
 		this.bindAmountScrolled();
-		GLShim.glDisable(GL_LIGHTING);
-		GLShim.glDisable(GL_FOG);
+		GLShim.glDisable(GLShim.GL11_GL_LIGHTING);
+		GLShim.glDisable(GLShim.GL11_GL_FOG);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
 		if (this.showSlotBG) {
@@ -206,18 +206,18 @@ public abstract class GuiSlotMinimap {
 		}
 
 		this.drawSelectionBox(leftEdge, topOfListYPos, mouseX, mouseY, partialTicks);
-		GLShim.glDisable(GL_DEPTH_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		byte topBottomFadeHeight = 4;
 		if (this.showTopBottomBG) {
 			this.overlayBackground(0, this.top, 255, 255);
 			this.overlayBackground(this.bottom, this.height, 255, 255);
 		}
 
-		GLShim.glEnable(GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
 		OpenGlHelper.glBlendFunc(770, 771, 0, 1);
-		GLShim.glDisable(GL_ALPHA_TEST);
-		GLShim.glShadeModel(GL_SMOOTH);
-		GLShim.glDisable(GL_TEXTURE_2D);
+		GLShim.glDisable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glShadeModel(GLShim.GL11_GL_SMOOTH);
+		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 		if (this.showTopBottomBG) {
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(this.left, this.top + topBottomFadeHeight, 0.0).tex(0.0, 1.0).color(0, 0, 0, 0).endVertex();
@@ -263,10 +263,10 @@ public abstract class GuiSlotMinimap {
 		}
 
 		this.renderDecorations(mouseX, mouseY);
-		GLShim.glEnable(GL_TEXTURE_2D);
-		GLShim.glShadeModel(GL_FLAT);
-		GLShim.glEnable(GL_ALPHA_TEST);
-		GLShim.glDisable(GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glShadeModel(GLShim.GL11_GL_FLAT);
+		GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_BLEND);
 	}
 
 	public void handleMouseInput() {
@@ -399,7 +399,7 @@ public abstract class GuiSlotMinimap {
 					int i1 = this.left + (this.width / 2 - this.getListWidth() / 2);
 					int j1 = this.left + this.width / 2 + this.getListWidth() / 2;
 					GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-					GLShim.glDisable(GL_TEXTURE_2D);
+					GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 					vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 					vertexBuffer.pos(i1, slotYPos + topFudge + 2, 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
 					vertexBuffer.pos(j1, slotYPos + topFudge + 2, 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
@@ -410,7 +410,7 @@ public abstract class GuiSlotMinimap {
 					vertexBuffer.pos(j1 - 1, slotYPos - 1, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
 					vertexBuffer.pos(i1 + 1, slotYPos - 1, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
 					tessellator.draw();
-					GLShim.glEnable(GL_TEXTURE_2D);
+					GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 				}
 
 				this.drawSlot(slotIndexIterator, leftEdge, slotYPos, topFudge, mouseX, mouseY, partialTicks);
