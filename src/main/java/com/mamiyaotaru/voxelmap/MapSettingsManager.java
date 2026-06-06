@@ -315,8 +315,8 @@ public class MapSettingsManager implements ISettingsManager {
 		}
 	}
 
-	public boolean getOptionBooleanValue(EnumOptionsMinimap par1EnumOptions) {
-		switch (par1EnumOptions) {
+	public boolean getOptionBooleanValue(EnumOptionsMinimap enumOptionsMinimap) {
+		switch (enumOptionsMinimap) {
 			case COORDS:
 				return this.coords;
 			case HIDE:
@@ -347,7 +347,7 @@ public class MapSettingsManager implements ISettingsManager {
 				return this.slimeChunks;
 			default:
 				throw new IllegalArgumentException(
-					"Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean applicable to minimap)"
+					"Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName() + ". (possibly not a boolean applicable to minimap)"
 				);
 		}
 	}

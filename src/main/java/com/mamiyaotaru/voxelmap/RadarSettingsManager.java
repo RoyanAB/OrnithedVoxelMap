@@ -152,18 +152,21 @@ public class RadarSettingsManager implements ISubSettingsManager {
 	}
 
 	@Override
-	public String getKeyText(EnumOptionsMinimap par1EnumOptions) {
-		String s = I18nUtils.getString(par1EnumOptions.getName()) + ": ";
-		if (par1EnumOptions.isBoolean()) {
-			boolean flag = this.getOptionBooleanValue(par1EnumOptions);
+	public String getKeyText(EnumOptionsMinimap enumOptionsMinimap) {
+		String s = I18nUtils.getString(enumOptionsMinimap.getName()) + ": ";
+		if (enumOptionsMinimap.isBoolean()) {
+			boolean flag = this.getOptionBooleanValue(enumOptionsMinimap);
 			return flag ? s + I18nUtils.getString("options.on") : s + I18nUtils.getString("options.off");
+		} else if (enumOptionsMinimap.isList()) {
+			String state = this.getOptionListValue(enumOptionsMinimap);
+			return s + state;
 		} else {
 			return s;
 		}
 	}
 
-	public boolean getOptionBooleanValue(EnumOptionsMinimap par1EnumOptions) {
-		switch (par1EnumOptions) {
+	public boolean getOptionBooleanValue(EnumOptionsMinimap enumOptionsMinimap) {
+		switch (enumOptionsMinimap) {
 			case SHOWRADAR:
 				return this.showRadar;
 			case SHOWHOSTILES:
@@ -187,7 +190,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
 			case SHOWFACING:
 				return this.showFacing;
 			default:
-				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean)");
+				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName() + ". (possibly not a boolean)");
 		}
 	}
 
@@ -208,8 +211,8 @@ public class RadarSettingsManager implements ISubSettingsManager {
 	public void setOptionFloatValue(EnumOptionsMinimap idFloat, float sliderValue) {
 	}
 
-	public void setOptionValue(EnumOptionsMinimap par1EnumOptions) {
-		switch (par1EnumOptions) {
+	public void setOptionValue(EnumOptionsMinimap enumOptionsMinimap) {
+		switch (enumOptionsMinimap) {
 			case SHOWRADAR:
 				this.showRadar = !this.showRadar;
 				break;
@@ -251,7 +254,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
 				}
 				break;
 			default:
-				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName());
+				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName());
 		}
 
 		this.somethingChanged = true;
