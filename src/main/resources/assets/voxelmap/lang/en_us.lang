@@ -150,4 +150,7 @@ worldmap.multiworld.newworld=New World
 worldmap.multiworld.foundworld1=Detected world
 worldmap.multiworld.foundworld2=If this is not correct, select your current world in the Multiworld screen.
 worldmap.multiworld.unknownsubworld=Unknown world!  Please select your current world in the Multiworld screen.
+worldmap.subworld.deleteconfirm=Are you sure you want to remove this subworld?
+worldmap.subworld.edit=Edit Subworld
+worldmap.subworld.name=Subworld Name
 options.worldmap.multiworld.auto=Open Automatically
