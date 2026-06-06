@@ -106,7 +106,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 	protected void actionPerformed(GuiButton par1GuiButton) {
 		if (par1GuiButton.enabled) {
 			if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
-				this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions(), 1);
+				this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions());
 				par1GuiButton.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(par1GuiButton.id)));
 
 				for (Object buttonObj : this.getButtonList()) {

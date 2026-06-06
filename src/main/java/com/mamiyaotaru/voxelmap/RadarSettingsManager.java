@@ -16,7 +16,6 @@ import java.util.Objects;
 
 public class RadarSettingsManager implements ISubSettingsManager {
 	public Minecraft game;
-	public int radarMode = 2;
 	public boolean showRadar = true;
 	public boolean showHostiles = true;
 	public boolean showPlayers = true;
@@ -33,6 +32,10 @@ public class RadarSettingsManager implements ISubSettingsManager {
 	public Boolean radarMobsAllowed = true;
 	float fontScale = 1.0F;
 	private boolean somethingChanged;
+
+	public final static int SIMPLE = 1;
+	public final static int FULL = 2;
+	public int radarMode = FULL;
 
 	public RadarSettingsManager() {
 		this.game = Minecraft.getMinecraft();
@@ -190,7 +193,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
 
 	public String getOptionListValue(EnumOptionsMinimap enumOptionsMinimap) {
 		if (Objects.requireNonNull(enumOptionsMinimap) == EnumOptionsMinimap.RADARMODE) {
-			if (this.radarMode == 2) {
+			if (this.radarMode == FULL) {
 				return I18nUtils.getString("options.minimap.radar.radarmode.full");
 			}
 
@@ -241,10 +244,10 @@ public class RadarSettingsManager implements ISubSettingsManager {
 				this.showFacing = !this.showFacing;
 				break;
 			case RADARMODE:
-				if (this.radarMode == 2) {
-					this.radarMode = 1;
+				if (this.radarMode == FULL) {
+					this.radarMode = SIMPLE;
 				} else {
-					this.radarMode = 2;
+					this.radarMode = FULL;
 				}
 				break;
 			default:

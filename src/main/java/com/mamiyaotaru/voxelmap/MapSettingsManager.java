@@ -32,18 +32,8 @@ public class MapSettingsManager implements ISettingsManager {
 	public int deathpoints = 1;
 	public int maxWaypointDisplayDistance = 1000;
 	public int zoom = 2;
-	public int sizeModifier = 0;
-	public int mapCorner = 1;
 	public Boolean cavesAllowed = true;
 	public int sort = 1;
-	public KeyBinding keyBindZoom = new KeyBinding("key.minimap.zoom", 44, "controls.minimap.title");
-	public KeyBinding keyBindFullscreen = new KeyBinding("key.minimap.togglefullscreen", 45, "controls.minimap.title");
-	public KeyBinding keyBindMenu = new KeyBinding("key.minimap.voxelmapmenu", 50, "controls.minimap.title");
-	public KeyBinding keyBindWaypointMenu = new KeyBinding("key.minimap.waypointmenu", 0, "controls.minimap.title");
-	public KeyBinding keyBindWaypoint = new KeyBinding("key.minimap.waypointhotkey", 49, "controls.minimap.title");
-	public KeyBinding keyBindMobToggle = new KeyBinding("key.minimap.togglemobs", 0, "controls.minimap.title");
-	public KeyBinding keyBindWaypointToggle = new KeyBinding("key.minimap.toggleingamewaypoints", 0, "controls.minimap.title");
-	public KeyBinding[] keyBindings;
 	public Minecraft game;
 	protected boolean coords = true;
 	protected boolean showCaves = true;
@@ -60,6 +50,35 @@ public class MapSettingsManager implements ISettingsManager {
 	private boolean preToggleSigns = true;
 	private boolean somethingChanged;
 	private final ArrayList<ISubSettingsManager> subSettingsManagers = new ArrayList<>();
+
+	public final KeyBinding keyBindZoom = new KeyBinding("key.minimap.zoom", 44, "controls.minimap.title");
+	public final KeyBinding keyBindFullscreen = new KeyBinding("key.minimap.togglefullscreen", 45, "controls.minimap.title");
+	public final KeyBinding keyBindMenu = new KeyBinding("key.minimap.voxelmapmenu", 50, "controls.minimap.title");
+	public final KeyBinding keyBindWaypointMenu = new KeyBinding("key.minimap.waypointmenu", 0, "controls.minimap.title");
+	public final KeyBinding keyBindWaypoint = new KeyBinding("key.minimap.waypointhotkey", 49, "controls.minimap.title");
+	public final KeyBinding keyBindMobToggle = new KeyBinding("key.minimap.togglemobs", 0, "controls.minimap.title");
+	public final KeyBinding keyBindWaypointToggle = new KeyBinding("key.minimap.toggleingamewaypoints", 0, "controls.minimap.title");
+	public KeyBinding[] keyBindings;
+
+	public final int TOP_LEFT = 0;
+	public final int TOP_RIGHT = 1;
+	public final int BOTTOM_RIGHT = 2;
+	public final int BOTTOM_LEFT = 3;
+	public int mapCorner = TOP_RIGHT;
+
+	public final int SMALL = -1;
+	public final int MEDIUM = 0;
+	public final int LARGE = 1;
+	public final int XL = 2;
+	public final int XXL = 3;
+	public final int XXXL = 4;
+	public int sizeModifier = MEDIUM;
+
+	public final int OFF = 0;
+	public final int SOLID = 1;
+	public final int TRANSPARENT = 2;
+	public final int MOST_RECENT = 1;
+	public final int ALL = 2;
 
 	public MapSettingsManager() {
 		instance = this;
@@ -266,33 +285,33 @@ public class MapSettingsManager implements ISettingsManager {
 	}
 
 	@Override
-	public String getKeyText(EnumOptionsMinimap par1EnumOptions) {
-		String s = I18nUtils.getString(par1EnumOptions.getName()) + ": ";
-		if (par1EnumOptions.isFloat()) {
-			float f = this.getOptionFloatValue(par1EnumOptions);
-			if (par1EnumOptions == EnumOptionsMinimap.ZOOM) {
+	public String getKeyText(EnumOptionsMinimap enumOptionsMinimap) {
+		String s = I18nUtils.getString(enumOptionsMinimap.getName()) + ": ";
+		if (enumOptionsMinimap.isFloat()) {
+			float f = this.getOptionFloatValue(enumOptionsMinimap);
+			if (enumOptionsMinimap == EnumOptionsMinimap.ZOOM) {
 				return s + (int) f;
-			} else if (par1EnumOptions == EnumOptionsMinimap.WAYPOINTDISTANCE) {
+			} else if (enumOptionsMinimap == EnumOptionsMinimap.WAYPOINTDISTANCE) {
 				return f < 0.0F ? s + I18nUtils.getString("options.minimap.waypoints.infinite") : s + (int) f;
 			} else {
 				return f == 0.0F ? s + I18nUtils.getString("options.off") : s + (int) f + "%";
 			}
-		} else if (par1EnumOptions.isBoolean()) {
-			boolean flag = this.getOptionBooleanValue(par1EnumOptions);
+		} else if (enumOptionsMinimap.isBoolean()) {
+			boolean flag = this.getOptionBooleanValue(enumOptionsMinimap);
 			return flag ? s + I18nUtils.getString("options.on") : s + I18nUtils.getString("options.off");
-		} else if (par1EnumOptions.isList()) {
-			String state = this.getOptionListValue(par1EnumOptions);
+		} else if (enumOptionsMinimap.isList()) {
+			String state = this.getOptionListValue(enumOptionsMinimap);
 			return s + state;
 		} else {
 			return s;
 		}
 	}
 
-	public float getOptionFloatValue(EnumOptionsMinimap par1EnumOptions) {
-		if (par1EnumOptions == EnumOptionsMinimap.ZOOM) {
+	public float getOptionFloatValue(EnumOptionsMinimap enumOptionsMinimap) {
+		if (enumOptionsMinimap == EnumOptionsMinimap.ZOOM) {
 			return this.zoom;
 		} else {
-			return par1EnumOptions == EnumOptionsMinimap.WAYPOINTDISTANCE ? this.maxWaypointDisplayDistance : 0.0F;
+			return enumOptionsMinimap == EnumOptionsMinimap.WAYPOINTDISTANCE ? this.maxWaypointDisplayDistance : 0.0F;
 		}
 	}
 
@@ -333,8 +352,8 @@ public class MapSettingsManager implements ISettingsManager {
 		}
 	}
 
-	public String getOptionListValue(EnumOptionsMinimap par1EnumOptions) {
-		switch (par1EnumOptions) {
+	public String getOptionListValue(EnumOptionsMinimap enumOptionsMinimap) {
+		switch (enumOptionsMinimap) {
 			case TERRAIN:
 				if (this.slopemap && this.heightmap) {
 					return I18nUtils.getString("options.minimap.terrain.both");
@@ -360,56 +379,56 @@ public class MapSettingsManager implements ISettingsManager {
 					return I18nUtils.getString("options.off");
 				}
 			case LOCATION:
-				if (this.mapCorner == 0) {
+				if (this.mapCorner == TOP_LEFT) {
 					return I18nUtils.getString("options.minimap.location.topleft");
-				} else if (this.mapCorner == 1) {
+				} else if (this.mapCorner == TOP_RIGHT) {
 					return I18nUtils.getString("options.minimap.location.topright");
-				} else if (this.mapCorner == 2) {
+				} else if (this.mapCorner == BOTTOM_RIGHT) {
 					return I18nUtils.getString("options.minimap.location.bottomright");
 				} else {
-					if (this.mapCorner == 3) {
+					if (this.mapCorner == BOTTOM_LEFT) {
 						return I18nUtils.getString("options.minimap.location.bottomleft");
 					}
 
 					return "Error";
 				}
 			case SIZE:
-				if (this.sizeModifier == -1) {
+				if (this.sizeModifier == SMALL) {
 					return I18nUtils.getString("options.minimap.size.small");
-				} else if (this.sizeModifier == 0) {
+				} else if (this.sizeModifier == MEDIUM) {
 					return I18nUtils.getString("options.minimap.size.medium");
-				} else if (this.sizeModifier == 1) {
+				} else if (this.sizeModifier == LARGE) {
 					return I18nUtils.getString("options.minimap.size.large");
-				} else if (this.sizeModifier == 2) {
+				} else if (this.sizeModifier == XL) {
 					return I18nUtils.getString("options.minimap.size.xl");
-				} else if (this.sizeModifier == 3) {
+				} else if (this.sizeModifier == XXL) {
 					return I18nUtils.getString("options.minimap.size.xxl");
 				} else {
-					if (this.sizeModifier == 4) {
+					if (this.sizeModifier == XXXL) {
 						return I18nUtils.getString("options.minimap.size.xxxl");
 					}
 
 					return "error";
 				}
 			case BIOMEOVERLAY:
-				if (this.biomeOverlay == 0) {
+				if (this.biomeOverlay == OFF) {
 					return I18nUtils.getString("options.off");
-				} else if (this.biomeOverlay == 1) {
+				} else if (this.biomeOverlay == SOLID) {
 					return I18nUtils.getString("options.minimap.biomeoverlay.solid");
 				} else {
-					if (this.biomeOverlay == 2) {
+					if (this.biomeOverlay == TRANSPARENT) {
 						return I18nUtils.getString("options.minimap.biomeoverlay.transparent");
 					}
 
 					return "error";
 				}
 			case DEATHPOINTS:
-				if (this.deathpoints == 0) {
+				if (this.deathpoints == OFF) {
 					return I18nUtils.getString("options.off");
-				} else if (this.deathpoints == 1) {
+				} else if (this.deathpoints == MOST_RECENT) {
 					return I18nUtils.getString("options.minimap.waypoints.deathpoints.mostrecent");
 				} else {
-					if (this.deathpoints == 2) {
+					if (this.deathpoints == ALL) {
 						return I18nUtils.getString("options.minimap.waypoints.deathpoints.all");
 					}
 
@@ -417,15 +436,15 @@ public class MapSettingsManager implements ISettingsManager {
 				}
 			default:
 				throw new IllegalArgumentException(
-					"Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a list value applicable to minimap)"
+					"Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName() + ". (possibly not a list value applicable to minimap)"
 				);
 		}
 	}
 
 	@Override
-	public void setOptionFloatValue(EnumOptionsMinimap par1EnumOptions, float par2) {
-		if (par1EnumOptions == EnumOptionsMinimap.WAYPOINTDISTANCE) {
-			float distance = par2 * 9951.0F + 50.0F;
+	public void setOptionFloatValue(EnumOptionsMinimap enumOptionsMinimap, float value) {
+		if (enumOptionsMinimap == EnumOptionsMinimap.WAYPOINTDISTANCE) {
+			float distance = value * 9951.0F + 50.0F;
 			if (distance > 10000.0F) {
 				distance = -1.0F;
 			}
@@ -436,7 +455,7 @@ public class MapSettingsManager implements ISettingsManager {
 		this.somethingChanged = true;
 	}
 
-	public void setOptionValue(EnumOptionsMinimap enumOptionsMinimap, int i) {
+	public void setOptionValue(EnumOptionsMinimap enumOptionsMinimap) {
 		switch (enumOptionsMinimap) {
 			case COORDS:
 				this.coords = !this.coords;
@@ -514,13 +533,13 @@ public class MapSettingsManager implements ISettingsManager {
 				break;
 			case BIOMEOVERLAY:
 				this.biomeOverlay++;
-				if (this.biomeOverlay > 2) {
+				if (this.biomeOverlay > TRANSPARENT) {
 					this.biomeOverlay = 0;
 				}
 				break;
 			case DEATHPOINTS:
 				this.deathpoints++;
-				if (this.deathpoints > 2) {
+				if (this.deathpoints > ALL) {
 					this.deathpoints = 0;
 				}
 				break;

@@ -2,7 +2,6 @@ package com.mamiyaotaru.voxelmap;
 
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
-import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.ornithe.mixins.RenderAccessor;
 import com.mamiyaotaru.voxelmap.textures.FontRendererWithAtlas;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
@@ -55,33 +54,37 @@ import java.util.*;
 public class Radar implements IRadar {
 	public static final int UNKNOWN = EnumMobs.UNKNOWN.ordinal();
 	private final IVoxelMap master;
+	public final RadarSettingsManager options;
 	private final FontRendererWithAtlas fontRenderer;
-	public HashMap<String, Integer> mpContactsSkinGetTries = new HashMap<>();
-	public HashMap<String, Integer> contactsSkinGetTries = new HashMap<>();
-	UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
-	private Minecraft game;
+	public MapSettingsManager minimapOptions;
+
 	private final TextureAtlas textureAtlas;
-	private final boolean enabled = true;
 	private final ArrayList<Contact> contacts = new ArrayList<>(40);
 	private final BufferedImage[][] mobImages = new BufferedImage[EnumMobs.values().length - 3][2];
-	private boolean newMobs = false;
-	private final boolean[] builtInCustom = new boolean[EnumMobs.values().length];
-	private boolean completedLoading = false;
-	private int timer = 500;
-	private float direction = 0.0F;
 	private final BufferedImage[][] armorImages = new BufferedImage[8][2];
 	private final String[] armorNames = new String[]{"cloth", "clothOverlay", "clothOuter", "clothOverlayOuter", "chain", "iron", "gold", "diamond"};
-	public MapSettingsManager minimapOptions;
-	private Sprite[] clothIcons = new Sprite[]{null, null};
-	public RadarSettingsManager options;
+	private final boolean[] builtInCustom = new boolean[EnumMobs.values().length];
+
+	private Minecraft game;
+	private int timer = 500;
+	private float direction = 0.0F;
 	private LayoutVariables layoutVariables;
+	private java.util.Map<String, ?> mapProperties;
+	private Sprite[] clothIcons = new Sprite[]{null, null};
+
+	public HashMap<String, Integer> mpContactsSkinGetTries = new HashMap<>();
+	public HashMap<String, Integer> contactsSkinGetTries = new HashMap<>();
+
+	private boolean newMobs = false;
+	private boolean completedLoading = false;
 	private boolean randomobsOptifine;
+	private boolean randomobsOptifineNew = false;
+	private boolean lastOutlines = true;
+
 	private Class<?> randomMobsClass;
 	private Class<?> randomMobsPropertiesClass;
 	private Method getRandomobPropertiesMethod;
 	private Method getMobTextureMethod;
-	private boolean randomobsOptifineNew = false;
-	private java.util.Map<String, ?> mapProperties;
 	private Object randomEntity;
 	private Class<?> randomEntityClass;
 	private Method setEntityMethod;
@@ -92,7 +95,9 @@ public class Radar implements IRadar {
 	private Field modelDataField;
 	private Method getEntityMethod;
 	private Class<?> modelScaleRendererClass;
-	private boolean lastOutlines = true;
+
+	private final boolean enabled = true;
+	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 
 	public Radar(IVoxelMap master) {
 		this.master = master;
@@ -194,14 +199,13 @@ public class Radar implements IRadar {
 					int intendedSize = 8;
 					String fullPath;
 					InputStream is = null;
-					if (is == null) {
-						fullPath = "textures/icons/" + EnumMobs.values()[t].classPath + ".png";
 
-						try {
-							is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-						} catch (IOException ignored) {
+					fullPath = "textures/icons/" + EnumMobs.values()[t].classPath + ".png";
 
-						}
+					try {
+						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
+					} catch (IOException ignored) {
+
 					}
 
 					if (is == null) {
@@ -254,7 +258,7 @@ public class Radar implements IRadar {
 						EnumMobs.values()[t], EnumMobs.values()[t].resourceLocation, EnumMobs.values()[t].secondaryResourceLocation
 					);
 					if (image == null) {
-						VoxelMapMod.LOGGER.error("Failed getting mob {}", t);
+						VoxelConstants.getLogger().error("Failed getting mob {}", t);
 						image = new BufferedImage(2, 2, 6);
 					}
 
@@ -324,24 +328,30 @@ public class Radar implements IRadar {
 
 			BufferedImage sheepFur = ImageUtils.loadImage(new ResourceLocation("textures/entity/sheep/sheep_fur.png"), 6, 6, 6, 6);
 			float scale = sheepFur.getWidth() / 6.0F;
+
 			BufferedImage sheepFur1 = ImageUtils.scaleImage(sheepFur, 4.0F / scale * 1.0625F);
 			sheepFur1 = ImageUtils.eraseArea(sheepFur1, 2, 2, sheepFur1.getWidth() - 4, sheepFur1.getHeight() - 4, sheepFur1.getWidth(), sheepFur1.getHeight());
 			sheepFur1 = ImageUtils.fillOutline(ImageUtils.pad(sheepFur1), this.options.outlines, true, 25, -10);
 			sheepFur1 = ImageUtils.fillOutline(ImageUtils.pad(sheepFur1), this.options.outlines, true, 27, -10);
+
 			BufferedImage sheepFur0 = ImageUtils.scaleImage(sheepFur, 2.0F / scale * 1.0625F);
 			sheepFur0 = ImageUtils.eraseArea(sheepFur0, 1, 1, sheepFur0.getWidth() - 2, sheepFur0.getHeight() - 2, sheepFur0.getWidth(), sheepFur0.getHeight());
 			sheepFur0 = ImageUtils.fillOutline(ImageUtils.pad(sheepFur0), this.options.outlines, true, 13, -10);
 			sheepFur0 = ImageUtils.fillOutline(ImageUtils.pad(sheepFur0), this.options.outlines, true, 11, -10);
 			this.textureAtlas.registerIconForBufferedImage("sheepfur1", sheepFur1);
 			this.textureAtlas.registerIconForBufferedImage("sheepfur0", sheepFur0);
+
 			BufferedImage crown = ImageUtils.loadImage(new ResourceLocation("voxelmap", "images/radar/crown.png"), 0, 0, 16, 16, 16, 16);
 			BufferedImage crown1 = ImageUtils.fillOutline(crown, this.options.outlines, true, 16, -10);
 			BufferedImage crown0 = ImageUtils.fillOutline(ImageUtils.scaleImage(crown, 0.5F), this.options.outlines, true, 8, -10);
+
 			this.textureAtlas.registerIconForBufferedImage("crown1", crown1);
 			this.textureAtlas.registerIconForBufferedImage("crown0", crown0);
+
 			BufferedImage glow = ImageUtils.loadImage(new ResourceLocation("voxelmap", "images/radar/glow.png"), 0, 0, 16, 16, 16, 16);
 			glow = ImageUtils.fillOutline(glow, this.options.outlines, true, 16, -10);
 			this.textureAtlas.registerIconForBufferedImage("glow", glow);
+
 			ResourceLocation fontResourceLocation = new ResourceLocation("textures/font/ascii.png");
 			BufferedImage fontImage = ImageUtils.loadImage(fontResourceLocation, 0, 0, 128, 128, 128, 128);
 			if (fontImage.getWidth() > 1024 || fontImage.getHeight() > 1024) {
@@ -364,8 +374,7 @@ public class Radar implements IRadar {
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
-			VoxelMapMod.LOGGER.error("Failed getting mobs {}", e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed getting mobs {} {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -401,21 +410,7 @@ public class Radar implements IRadar {
 				image = ImageUtils.loadImage(new ResourceLocation("voxelmap", "images/radar/tame.png"), 0, 0, 16, 16, 16, 16);
 				break;
 			case BAT:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12, 64, 64), ImageUtils.loadImage(mobImage, 25, 1, 3, 4), 0.0F, 0.0F, 8, 12),
-						ImageUtils.flipHorizontal(ImageUtils.loadImage(mobImage, 25, 1, 3, 4)),
-						5.0F,
-						0.0F,
-						8,
-						12
-					),
-					ImageUtils.loadImage(mobImage, 6, 6, 6, 6),
-					1.0F,
-					3.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12, 64, 64), ImageUtils.loadImage(mobImage, 25, 1, 3, 4), 0.0F, 0.0F, 8, 12), ImageUtils.flipHorizontal(ImageUtils.loadImage(mobImage, 25, 1, 3, 4)), 5.0F, 0.0F, 8, 12), ImageUtils.loadImage(mobImage, 6, 6, 6, 6), 1.0F, 3.0F, 8, 12);
 				break;
 			case BLAZE:
 			case CREEPER:
@@ -423,129 +418,29 @@ public class Radar implements IRadar {
 				break;
 			case CAT:
 			case OCELOT:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(ImageUtils.blankImage(mobImage, 5, 5), ImageUtils.loadImage(mobImage, 5, 5, 5, 4), 0.0F, 1.0F, 5, 5),
-							ImageUtils.loadImage(mobImage, 2, 26, 3, 2),
-							1.0F,
-							3.0F,
-							5,
-							5
-						),
-						ImageUtils.loadImage(mobImage, 2, 12, 1, 1),
-						1.0F,
-						0.0F,
-						5,
-						5
-					),
-					ImageUtils.loadImage(mobImage, 8, 12, 1, 1),
-					3.0F,
-					0.0F,
-					5,
-					5
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 5, 5), ImageUtils.loadImage(mobImage, 5, 5, 5, 4), 0.0F, 1.0F, 5, 5), ImageUtils.loadImage(mobImage, 2, 26, 3, 2), 1.0F, 3.0F, 5, 5), ImageUtils.loadImage(mobImage, 2, 12, 1, 1), 1.0F, 0.0F, 5, 5), ImageUtils.loadImage(mobImage, 8, 12, 1, 1), 3.0F, 0.0F, 5, 5);
 				break;
 			case CAVESPIDER:
 			case SPIDER:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 8), ImageUtils.loadImage(mobImage, 6, 6, 6, 6), 1.0F, 1.0F, 8, 8),
-					ImageUtils.loadImage(mobImage, 40, 12, 8, 8),
-					0.0F,
-					0.0F,
-					8,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 8), ImageUtils.loadImage(mobImage, 6, 6, 6, 6), 1.0F, 1.0F, 8, 8), ImageUtils.loadImage(mobImage, 40, 12, 8, 8), 0.0F, 0.0F, 8, 8);
 				break;
 			case CHICKEN:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.loadImage(mobImage, 2, 3, 6, 6), ImageUtils.loadImage(mobImage, 16, 2, 4, 2), 1.0F, 2.0F, 6, 6),
-					ImageUtils.loadImage(mobImage, 16, 6, 2, 2),
-					2.0F,
-					4.0F,
-					6,
-					6
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.loadImage(mobImage, 2, 3, 6, 6), ImageUtils.loadImage(mobImage, 16, 2, 4, 2), 1.0F, 2.0F, 6, 6), ImageUtils.loadImage(mobImage, 16, 6, 2, 2), 2.0F, 4.0F, 6, 6);
 				break;
 			case COW:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(ImageUtils.blankImage(mobImage, 10, 10), ImageUtils.loadImage(mobImage, 6, 6, 8, 8), 1.0F, 1.0F, 10, 10),
-						ImageUtils.loadImage(mobImage, 23, 1, 1, 3),
-						0.0F,
-						0.0F,
-						10,
-						10
-					),
-					ImageUtils.loadImage(mobImage, 23, 1, 1, 3),
-					9.0F,
-					0.0F,
-					10,
-					10
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 10, 10), ImageUtils.loadImage(mobImage, 6, 6, 8, 8), 1.0F, 1.0F, 10, 10), ImageUtils.loadImage(mobImage, 23, 1, 1, 3), 0.0F, 0.0F, 10, 10), ImageUtils.loadImage(mobImage, 23, 1, 1, 3), 9.0F, 0.0F, 10, 10);
 				break;
 			case ENDERDRAGON:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.addImages(
-									ImageUtils.blankImage(mobImage, 16, 20, 256, 256), ImageUtils.loadImage(mobImage, 128, 46, 16, 16, 256, 256), 0.0F, 4.0F, 16, 16
-								),
-								ImageUtils.loadImage(mobImage, 192, 60, 12, 5, 256, 256),
-								2.0F,
-								11.0F,
-								16,
-								16
-							),
-							ImageUtils.loadImage(mobImage, 192, 81, 12, 4, 256, 256),
-							2.0F,
-							16.0F,
-							16,
-							16
-						),
-						ImageUtils.loadImage(mobImage, 6, 6, 2, 4, 256, 256),
-						3.0F,
-						0.0F,
-						16,
-						16
-					),
-					ImageUtils.flipHorizontal(ImageUtils.loadImage(mobImage, 6, 6, 2, 4, 256, 256)),
-					11.0F,
-					0.0F,
-					16,
-					16
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 16, 20, 256, 256), ImageUtils.loadImage(mobImage, 128, 46, 16, 16, 256, 256), 0.0F, 4.0F, 16, 16), ImageUtils.loadImage(mobImage, 192, 60, 12, 5, 256, 256), 2.0F, 11.0F, 16, 16), ImageUtils.loadImage(mobImage, 192, 81, 12, 4, 256, 256), 2.0F, 16.0F, 16, 16), ImageUtils.loadImage(mobImage, 6, 6, 2, 4, 256, 256), 3.0F, 0.0F, 16, 16), ImageUtils.flipHorizontal(ImageUtils.loadImage(mobImage, 6, 6, 2, 4, 256, 256)), 11.0F, 0.0F, 16, 16);
 				break;
 			case ENDERMAN:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 8, 24, 8, 8), 0.0F, 0.0F, 8, 8),
-						ImageUtils.loadImage(mobImage, 8, 8, 8, 8),
-						0.0F,
-						0.0F,
-						8,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 8, 12, 8, 1),
-					0.0F,
-					4.0F,
-					8,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 8, 24, 8, 8), 0.0F, 0.0F, 8, 8), ImageUtils.loadImage(mobImage, 8, 8, 8, 8), 0.0F, 0.0F, 8, 8), ImageUtils.loadImage(mobImage, 8, 12, 8, 1), 0.0F, 4.0F, 8, 8);
 				break;
 			case ENDERMITE:
 				image = ImageUtils.loadImage(mobImage, 2, 2, 4, 3);
 				break;
 			case EVOKER:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12),
-					ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64),
-					3.0F,
-					8.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64), 3.0F, 8.0F, 8, 12);
 				break;
 			case GHAST:
 			case GHASTATTACKING:
@@ -558,124 +453,22 @@ public class Radar implements IRadar {
 				image = ImageUtils.addImages(ImageUtils.loadImage(mobImage, 16, 16, 12, 12), ImageUtils.loadImage(mobImage, 9, 1, 2, 2), 5.0F, 5.5F, 12, 12);
 				break;
 			case HORSE:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.addImages(
-									ImageUtils.addImages(
-										ImageUtils.addImages(
-											ImageUtils.blankImage(mobImage, 16, 24, 128, 128), ImageUtils.loadImage(mobImage, 58, 4, 4, 15, 128, 128), 0.0F, 5.0F, 16, 24
-										),
-										ImageUtils.loadImage(mobImage, 0, 20, 8, 13, 128, 128),
-										3.0F,
-										9.0F,
-										16,
-										24
-									),
-									ImageUtils.loadImage(mobImage, 0, 7, 7, 5, 128, 128),
-									3.0F,
-									7.0F,
-									16,
-									24
-								),
-								ImageUtils.loadImage(mobImage, 24, 24, 6, 3, 128, 128),
-								10.0F,
-								7.0F,
-								16,
-								24
-							),
-							ImageUtils.loadImage(mobImage, 24, 32, 5, 2, 128, 128),
-							10.0F,
-							10.0F,
-							16,
-							24
-						),
-						ImageUtils.loadImage(mobImage, 0, 1, 1, 3, 128, 128),
-						4.0F,
-						4.0F,
-						16,
-						24
-					),
-					ImageUtils.loadImage(mobImage, 0, 13, 1, 7, 128, 128),
-					4.0F,
-					0.0F,
-					16,
-					24
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 16, 24, 128, 128), ImageUtils.loadImage(mobImage, 58, 4, 4, 15, 128, 128), 0.0F, 5.0F, 16, 24), ImageUtils.loadImage(mobImage, 0, 20, 8, 13, 128, 128), 3.0F, 9.0F, 16, 24), ImageUtils.loadImage(mobImage, 0, 7, 7, 5, 128, 128), 3.0F, 7.0F, 16, 24), ImageUtils.loadImage(mobImage, 24, 24, 6, 3, 128, 128), 10.0F, 7.0F, 16, 24), ImageUtils.loadImage(mobImage, 24, 32, 5, 2, 128, 128), 10.0F, 10.0F, 16, 24), ImageUtils.loadImage(mobImage, 0, 1, 1, 3, 128, 128), 4.0F, 4.0F, 16, 24), ImageUtils.loadImage(mobImage, 0, 13, 1, 7, 128, 128), 4.0F, 0.0F, 16, 24);
 				break;
 			case ILLUSIONER:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12),
-					ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64),
-					3.0F,
-					8.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64), 3.0F, 8.0F, 8, 12);
 				break;
 			case IRONGOLEM:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12, 128, 128), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 128, 128), 0.0F, 1.0F, 8, 12),
-					ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 128, 128),
-					3.0F,
-					8.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12, 128, 128), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 128, 128), 0.0F, 1.0F, 8, 12), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 128, 128), 3.0F, 8.0F, 8, 12);
 				break;
 			case LLAMA:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.blankImage(mobImage, 8, 14, 128, 64), ImageUtils.loadImage(mobImage, 6, 20, 8, 8, 128, 64), 0.0F, 3.0F, 8, 14
-							),
-							ImageUtils.loadImage(mobImage, 9, 9, 4, 4, 128, 64),
-							2.0F,
-							5.0F,
-							8,
-							14
-						),
-						ImageUtils.loadImage(mobImage, 19, 2, 3, 3, 128, 64),
-						0.0F,
-						0.0F,
-						8,
-						14
-					),
-					ImageUtils.loadImage(mobImage, 19, 2, 3, 3, 128, 64),
-					5.0F,
-					0.0F,
-					8,
-					14
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 14, 128, 64), ImageUtils.loadImage(mobImage, 6, 20, 8, 8, 128, 64), 0.0F, 3.0F, 8, 14), ImageUtils.loadImage(mobImage, 9, 9, 4, 4, 128, 64), 2.0F, 5.0F, 8, 14), ImageUtils.loadImage(mobImage, 19, 2, 3, 3, 128, 64), 0.0F, 0.0F, 8, 14), ImageUtils.loadImage(mobImage, 19, 2, 3, 3, 128, 64), 5.0F, 0.0F, 8, 14);
 				break;
 			case MAGMA:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 32, 18, 8, 1), 0.0F, 3.0F, 8, 8),
-					ImageUtils.loadImage(mobImage, 32, 27, 8, 1),
-					0.0F,
-					4.0F,
-					8,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 32, 18, 8, 1), 0.0F, 3.0F, 8, 8), ImageUtils.loadImage(mobImage, 32, 27, 8, 1), 0.0F, 4.0F, 8, 8);
 				break;
 			case MOOSHROOM:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(ImageUtils.blankImage(mobImage, 40, 40), ImageUtils.loadImage(mobImage, 6, 6, 8, 8), 16.0F, 16.0F, 40, 40),
-						ImageUtils.loadImage(mobImage, 23, 1, 1, 3),
-						15.0F,
-						15.0F,
-						40,
-						40
-					),
-					ImageUtils.loadImage(mobImage, 23, 1, 1, 3),
-					24.0F,
-					15.0F,
-					40,
-					40
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 40, 40), ImageUtils.loadImage(mobImage, 6, 6, 8, 8), 16.0F, 16.0F, 40, 40), ImageUtils.loadImage(mobImage, 23, 1, 1, 3), 15.0F, 15.0F, 40, 40), ImageUtils.loadImage(mobImage, 23, 1, 1, 3), 24.0F, 15.0F, 40, 40);
 				if (mobImageSecondary != null) {
 					BufferedImage mushroomImage;
 					if (mobImageSecondary.getWidth() != mobImageSecondary.getHeight()) {
@@ -695,37 +488,7 @@ public class Radar implements IRadar {
 				}
 				break;
 			case PARROT:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.addImages(
-									ImageUtils.blankImage(mobImage, 8, 8, 32, 32), ImageUtils.loadImage(mobImage, 2, 22, 3, 5, 32, 32), 1.0F, 0.0F, 8, 8
-								),
-								ImageUtils.loadImage(mobImage, 10, 4, 4, 1, 32, 32),
-								2.0F,
-								4.0F,
-								8,
-								8
-							),
-							ImageUtils.loadImage(mobImage, 2, 4, 2, 3, 32, 32),
-							2.0F,
-							5.0F,
-							8,
-							8
-						),
-						ImageUtils.loadImage(mobImage, 11, 8, 1, 2, 32, 32),
-						4.0F,
-						5.0F,
-						8,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 16, 8, 1, 2, 32, 32),
-					5.0F,
-					5.0F,
-					8,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 8, 32, 32), ImageUtils.loadImage(mobImage, 2, 22, 3, 5, 32, 32), 1.0F, 0.0F, 8, 8), ImageUtils.loadImage(mobImage, 10, 4, 4, 1, 32, 32), 2.0F, 4.0F, 8, 8), ImageUtils.loadImage(mobImage, 2, 4, 2, 3, 32, 32), 2.0F, 5.0F, 8, 8), ImageUtils.loadImage(mobImage, 11, 8, 1, 2, 32, 32), 4.0F, 5.0F, 8, 8), ImageUtils.loadImage(mobImage, 16, 8, 1, 2, 32, 32), 5.0F, 5.0F, 8, 8);
 				break;
 			case PIG:
 				image = ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 16, 17, 6, 3), 1.0F, 4.0F, 8, 8);
@@ -737,54 +500,10 @@ public class Radar implements IRadar {
 				image = ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 40, 8, 8, 8), 0.0F, 0.0F, 8, 8);
 				break;
 			case POLARBEAR:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.blankImage(mobImage, 9, 8, 128, 64), ImageUtils.loadImage(mobImage, 27, 1, 2, 2, 128, 64), 0.0F, 0.0F, 9, 8
-							),
-							ImageUtils.flipHorizontal(ImageUtils.loadImage(mobImage, 27, 1, 2, 2, 128, 64)),
-							7.0F,
-							0.0F,
-							9,
-							8
-						),
-						ImageUtils.loadImage(mobImage, 7, 7, 7, 7, 128, 64),
-						1.0F,
-						1.0F,
-						9,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 3, 47, 5, 3, 128, 64),
-					2.0F,
-					5.0F,
-					9,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 9, 8, 128, 64), ImageUtils.loadImage(mobImage, 27, 1, 2, 2, 128, 64), 0.0F, 0.0F, 9, 8), ImageUtils.flipHorizontal(ImageUtils.loadImage(mobImage, 27, 1, 2, 2, 128, 64)), 7.0F, 0.0F, 9, 8), ImageUtils.loadImage(mobImage, 7, 7, 7, 7, 128, 64), 1.0F, 1.0F, 9, 8), ImageUtils.loadImage(mobImage, 3, 47, 5, 3, 128, 64), 2.0F, 5.0F, 9, 8);
 				break;
 			case RABBIT:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(ImageUtils.blankImage(mobImage, 5, 10), ImageUtils.loadImage(mobImage, 37, 5, 5, 4), 0.0F, 5.0F, 5, 10),
-							ImageUtils.loadImage(mobImage, 33, 10, 1, 1),
-							2.0F,
-							7.5F,
-							5,
-							10
-						),
-						ImageUtils.loadImage(mobImage, 53, 1, 2, 5),
-						0.0F,
-						0.0F,
-						5,
-						10
-					),
-					ImageUtils.loadImage(mobImage, 59, 1, 2, 5),
-					3.0F,
-					0.0F,
-					5,
-					10
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 5, 10), ImageUtils.loadImage(mobImage, 37, 5, 5, 4), 0.0F, 5.0F, 5, 10), ImageUtils.loadImage(mobImage, 33, 10, 1, 1), 2.0F, 7.5F, 5, 10), ImageUtils.loadImage(mobImage, 53, 1, 2, 5), 0.0F, 0.0F, 5, 10), ImageUtils.loadImage(mobImage, 59, 1, 2, 5), 3.0F, 0.0F, 5, 10);
 				break;
 			case SHEEP:
 				image = ImageUtils.loadImage(mobImage, 8, 8, 6, 6);
@@ -802,35 +521,7 @@ public class Radar implements IRadar {
 				image = ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8), ImageUtils.loadImage(mobImage, 40, 8, 8, 8), 0.0F, 0.0F, 8, 8);
 				break;
 			case SLIME:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 8), ImageUtils.loadImage(mobImage, 6, 22, 6, 6), 1.0F, 1.0F, 8, 8),
-								ImageUtils.loadImage(mobImage, 34, 6, 2, 2),
-								5.0F,
-								2.0F,
-								8,
-								8
-							),
-							ImageUtils.loadImage(mobImage, 34, 2, 2, 2),
-							1.0F,
-							2.0F,
-							8,
-							8
-						),
-						ImageUtils.loadImage(mobImage, 33, 9, 1, 1),
-						4.0F,
-						5.0F,
-						8,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 8, 8, 8, 8),
-					0.0F,
-					0.0F,
-					8,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 8), ImageUtils.loadImage(mobImage, 6, 22, 6, 6), 1.0F, 1.0F, 8, 8), ImageUtils.loadImage(mobImage, 34, 6, 2, 2), 5.0F, 2.0F, 8, 8), ImageUtils.loadImage(mobImage, 34, 2, 2, 2), 1.0F, 2.0F, 8, 8), ImageUtils.loadImage(mobImage, 33, 9, 1, 1), 4.0F, 5.0F, 8, 8), ImageUtils.loadImage(mobImage, 8, 8, 8, 8), 0.0F, 0.0F, 8, 8);
 				break;
 			case SNOWGOLEM:
 			case VEXCHARGING:
@@ -841,178 +532,34 @@ public class Radar implements IRadar {
 				image = ImageUtils.scaleImage(ImageUtils.loadImage(mobImage, 12, 12, 12, 16), 0.5F);
 				break;
 			case VILLAGER:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12),
-					ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64),
-					3.0F,
-					8.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64), 3.0F, 8.0F, 8, 12);
 				break;
 			case VINDICATOR:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12),
-					ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64),
-					3.0F,
-					8.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64), 3.0F, 8.0F, 8, 12);
 				break;
 			case WITCH:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(
-								ImageUtils.addImages(
-									ImageUtils.blankImage(mobImage, 10, 16, 64, 128), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 128), 1.0F, 5.0F, 10, 16
-								),
-								ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 128),
-								4.0F,
-								12.0F,
-								10,
-								16
-							),
-							ImageUtils.loadImage(mobImage, 10, 74, 10, 3, 64, 128),
-							0.0F,
-							4.0F,
-							10,
-							16
-						),
-						ImageUtils.loadImage(mobImage, 7, 83, 7, 4, 64, 128),
-						1.5F,
-						0.0F,
-						10,
-						16
-					),
-					ImageUtils.loadImage(mobImage, 1, 1, 1, 1, 64, 128),
-					5.0F,
-					14.0F,
-					10,
-					16
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 10, 16, 64, 128), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 128), 1.0F, 5.0F, 10, 16), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 128), 4.0F, 12.0F, 10, 16), ImageUtils.loadImage(mobImage, 10, 74, 10, 3, 64, 128), 0.0F, 4.0F, 10, 16), ImageUtils.loadImage(mobImage, 7, 83, 7, 4, 64, 128), 1.5F, 0.0F, 10, 16), ImageUtils.loadImage(mobImage, 1, 1, 1, 1, 64, 128), 5.0F, 14.0F, 10, 16);
 				break;
 			case WITHER:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(ImageUtils.blankImage(mobImage, 24, 10, 64, 64), ImageUtils.loadImage(mobImage, 8, 8, 8, 8, 64, 64), 8.0F, 0.0F, 24, 10),
-						ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64),
-						0.0F,
-						2.0F,
-						24,
-						10
-					),
-					ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64),
-					18.0F,
-					2.0F,
-					24,
-					10
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 24, 10, 64, 64), ImageUtils.loadImage(mobImage, 8, 8, 8, 8, 64, 64), 8.0F, 0.0F, 24, 10), ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64), 0.0F, 2.0F, 24, 10), ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64), 18.0F, 2.0F, 24, 10);
 				break;
 			case WITHERINVULNERABLE:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(ImageUtils.blankImage(mobImage, 24, 10, 64, 64), ImageUtils.loadImage(mobImage, 8, 8, 8, 8, 64, 64), 8.0F, 0.0F, 24, 10),
-						ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64),
-						0.0F,
-						2.0F,
-						24,
-						10
-					),
-					ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64),
-					18.0F,
-					2.0F,
-					24,
-					10
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 24, 10, 64, 64), ImageUtils.loadImage(mobImage, 8, 8, 8, 8, 64, 64), 8.0F, 0.0F, 24, 10), ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64), 0.0F, 2.0F, 24, 10), ImageUtils.loadImage(mobImage, 38, 6, 6, 6, 64, 64), 18.0F, 2.0F, 24, 10);
 				break;
 			case WOLF:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(ImageUtils.blankImage(mobImage, 6, 8), ImageUtils.loadImage(mobImage, 4, 4, 6, 6), 0.0F, 2.0F, 6, 8),
-							ImageUtils.loadImage(mobImage, 4, 14, 3, 3),
-							1.5F,
-							5.0F,
-							6,
-							8
-						),
-						ImageUtils.loadImage(mobImage, 17, 15, 2, 2),
-						0.0F,
-						0.0F,
-						6,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 17, 15, 2, 2),
-					4.0F,
-					0.0F,
-					6,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 6, 8), ImageUtils.loadImage(mobImage, 4, 4, 6, 6), 0.0F, 2.0F, 6, 8), ImageUtils.loadImage(mobImage, 4, 14, 3, 3), 1.5F, 5.0F, 6, 8), ImageUtils.loadImage(mobImage, 17, 15, 2, 2), 0.0F, 0.0F, 6, 8), ImageUtils.loadImage(mobImage, 17, 15, 2, 2), 4.0F, 0.0F, 6, 8);
 				break;
 			case WOLFANGRY:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(ImageUtils.blankImage(mobImage, 6, 8), ImageUtils.loadImage(mobImage, 4, 4, 6, 6), 0.0F, 2.0F, 6, 8),
-							ImageUtils.loadImage(mobImage, 4, 14, 3, 3),
-							1.5F,
-							5.0F,
-							6,
-							8
-						),
-						ImageUtils.loadImage(mobImage, 17, 15, 2, 2),
-						0.0F,
-						0.0F,
-						6,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 17, 15, 2, 2),
-					4.0F,
-					0.0F,
-					6,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 6, 8), ImageUtils.loadImage(mobImage, 4, 4, 6, 6), 0.0F, 2.0F, 6, 8), ImageUtils.loadImage(mobImage, 4, 14, 3, 3), 1.5F, 5.0F, 6, 8), ImageUtils.loadImage(mobImage, 17, 15, 2, 2), 0.0F, 0.0F, 6, 8), ImageUtils.loadImage(mobImage, 17, 15, 2, 2), 4.0F, 0.0F, 6, 8);
 				break;
 			case WOLFTAME:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(
-						ImageUtils.addImages(
-							ImageUtils.addImages(ImageUtils.blankImage(mobImage, 6, 8), ImageUtils.loadImage(mobImage, 4, 4, 6, 6), 0.0F, 2.0F, 6, 8),
-							ImageUtils.loadImage(mobImage, 4, 14, 3, 3),
-							1.5F,
-							5.0F,
-							6,
-							8
-						),
-						ImageUtils.loadImage(mobImage, 17, 15, 2, 2),
-						0.0F,
-						0.0F,
-						6,
-						8
-					),
-					ImageUtils.loadImage(mobImage, 17, 15, 2, 2),
-					4.0F,
-					0.0F,
-					6,
-					8
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 6, 8), ImageUtils.loadImage(mobImage, 4, 4, 6, 6), 0.0F, 2.0F, 6, 8), ImageUtils.loadImage(mobImage, 4, 14, 3, 3), 1.5F, 5.0F, 6, 8), ImageUtils.loadImage(mobImage, 17, 15, 2, 2), 0.0F, 0.0F, 6, 8), ImageUtils.loadImage(mobImage, 17, 15, 2, 2), 4.0F, 0.0F, 6, 8);
 				break;
 			case ZOMBIE:
-				image = ImageUtils.addImages(
-					ImageUtils.loadImage(mobImage, 8, 8, 8, 8, 64, 64), ImageUtils.loadImage(mobImage, 40, 8, 8, 8, 64, 64), 0.0F, 0.0F, 8, 8
-				);
+				image = ImageUtils.addImages(ImageUtils.loadImage(mobImage, 8, 8, 8, 8, 64, 64), ImageUtils.loadImage(mobImage, 40, 8, 8, 8, 64, 64), 0.0F, 0.0F, 8, 8);
 				break;
 			case ZOMBIEVILLAGER:
-				image = ImageUtils.addImages(
-					ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12),
-					ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64),
-					3.0F,
-					8.0F,
-					8,
-					12
-				);
+				image = ImageUtils.addImages(ImageUtils.addImages(ImageUtils.blankImage(mobImage, 8, 12), ImageUtils.loadImage(mobImage, 8, 8, 8, 10, 64, 64), 0.0F, 1.0F, 8, 12), ImageUtils.loadImage(mobImage, 26, 2, 2, 4, 64, 64), 3.0F, 8.0F, 8, 12);
 				break;
 			default:
 				throw new IllegalArgumentException("New mob type: " + type.id + ". Need to construct icon for it!");
@@ -1195,8 +742,7 @@ public class Radar implements IRadar {
 					}
 				}
 			} catch (Exception e) {
-				VoxelMapMod.LOGGER.error(e.getLocalizedMessage());
-				e.printStackTrace();
+				VoxelConstants.getLogger().error(e);
 			}
 		}
 
@@ -1204,13 +750,13 @@ public class Radar implements IRadar {
 			try {
 				this.textureAtlas.stitchNew();
 			} catch (StitcherException ex) {
-				VoxelMapMod.LOGGER.error("Stitcher exception!  Resetting mobs texture atlas.");
+				VoxelConstants.getLogger().error("Stitcher exception!  Resetting mobs texture atlas.");
 				this.loadTexturePackIcons();
 			}
 		}
 
 		this.newMobs = false;
-		this.contacts.sort((contact1, contact2) -> contact1.y - contact2.y);
+		this.contacts.sort(Comparator.comparingInt(contact -> contact.y));
 	}
 
 	private void tryCustomIcon(Contact contact) {
@@ -2132,7 +1678,7 @@ public class Radar implements IRadar {
 		}
 
 		if (icon0 == null || icon1 == null) {
-			VoxelMapMod.LOGGER.info("can't get texture for custom armor type: {}", helmet.getClass());
+			VoxelConstants.getLogger().info("can't get texture for custom armor type: {}", helmet.getClass());
 			this.textureAtlas.registerFailedIcon("armor " + helmet.getTranslationKey() + " 0");
 		}
 
@@ -2446,7 +1992,7 @@ public class Radar implements IRadar {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
 							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("wither_invulnerable.png") ? EnumMobs.WITHERINVULNERABLE : EnumMobs.WITHER;
-						} else if (contact.type == EnumMobs.VEX || contact.type == EnumMobs.VEXCHARGING) {
+						} else {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
 							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("vex_charging.png") ? EnumMobs.VEXCHARGING : EnumMobs.VEX;
@@ -2564,7 +2110,7 @@ public class Radar implements IRadar {
 						this.write(contact.name, x * scaleFactor - m, (y + 3) * scaleFactor, 16777215);
 					}
 				} catch (Exception localException) {
-					VoxelMapMod.LOGGER.error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type);
+					VoxelConstants.getLogger().error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type);
 				} finally {
 					GLShim.glPopMatrix();
 				}
@@ -2615,6 +2161,6 @@ public class Radar implements IRadar {
 	}
 
 	private boolean isNeutral(Entity entity) {
-		return entity instanceof EntityLiving && !(entity instanceof EntityPlayer) && !this.isHostile(entity);
+		return entity instanceof EntityLiving && !this.isHostile(entity);
 	}
 }

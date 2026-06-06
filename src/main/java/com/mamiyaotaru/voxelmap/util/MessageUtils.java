@@ -1,10 +1,11 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 
 @SuppressWarnings("unused")
-public class MessageUtils {
+public final class MessageUtils {
 	private static final boolean debug = false;
 
 	public static void chatInfo(String s) {
@@ -12,8 +13,6 @@ public class MessageUtils {
 	}
 
 	public static void printDebug(String line) {
-		if (debug) {
-			System.out.println(line);
-		}
+		if (debug) VoxelConstants.getLogger().warn(line);
 	}
 }

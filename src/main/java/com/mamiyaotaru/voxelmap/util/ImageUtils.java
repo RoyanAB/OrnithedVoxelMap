@@ -1,13 +1,12 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -29,7 +28,6 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class ImageUtils {
 	public static void saveImage(String name, int glid, int maxMipmapLevel, int width, int height) {
-		Logger logger = LogManager.getLogger();
 		GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, glid);
 		GL11.glPixelStorei(GLShim.GL11_GL_PACK_ALIGNMENT, 1);
 		GL11.glPixelStorei(GLShim.GL11_GL_UNPACK_ALIGNMENT, 1);
@@ -48,9 +46,9 @@ public class ImageUtils {
 
 			try {
 				ImageIO.write(bufferedImage, "png", file);
-				logger.debug("Exported png to: {}", new Object[]{file.getAbsolutePath()});
+				VoxelConstants.getLogger().debug("Exported png to: {}", new Object[]{file.getAbsolutePath()});
 			} catch (IOException exception) {
-				logger.debug("Unable to write: ", exception);
+				VoxelConstants.getLogger().debug("Unable to write: ", exception);
 			}
 		}
 	}
@@ -122,7 +120,7 @@ public class ImageUtils {
 				}
 			}
 		} else if (!GLUtils.fboEnabled) {
-			System.err.println("Resource Pack too big for minimap");
+			VoxelConstants.getLogger().error("Resource Pack too big for minimap");
 			image = new BufferedImage(8, 8, 6);
 		} else {
 			while (size > 2147483647L) {
@@ -215,8 +213,7 @@ public class ImageUtils {
 			g2.dispose();
 			return temp;
 		} catch (Exception e) {
-			System.err.println("Failed getting mob: " + path + " - " + e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed getting mob: {} - {}", path, e.getLocalizedMessage(), e);
 			return null;
 		}
 	}
@@ -279,7 +276,7 @@ public class ImageUtils {
 			is.close();
 			return loadImage(mobSkin, x, y, w, h, imageWidth, imageHeight);
 		} catch (Exception e) {
-			System.err.println("Failed getting mob: " + resourceLocation.toString() + " - " + e.getLocalizedMessage());
+			VoxelConstants.getLogger().error("Failed getting mob: {} - {}", resourceLocation.toString(), e.getLocalizedMessage());
 			return null;
 		}
 	}

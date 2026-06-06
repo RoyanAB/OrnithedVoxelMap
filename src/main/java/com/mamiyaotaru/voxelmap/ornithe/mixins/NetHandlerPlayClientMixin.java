@@ -20,7 +20,7 @@ public class NetHandlerPlayClientMixin {
 	private void onChat(SPacketChat packetIn, CallbackInfo ci) {
 		try {
 			VoxelMapMod.tickHandler.onChat(packetIn.getChatComponent(), ci);
-		} catch (Throwable e) {
+		} catch (Throwable ignored) {
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.mamiyaotaru.voxelmap.persistent;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.*;
 import com.mamiyaotaru.voxelmap.gui.overridden.Popup;
 import com.mamiyaotaru.voxelmap.gui.overridden.PopupGuiButton;
@@ -1306,7 +1307,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 				break;
 			default:
-				System.out.println("unimplemented command");
+				VoxelConstants.getLogger().warn("unimplemented command");
 		}
 	}
 

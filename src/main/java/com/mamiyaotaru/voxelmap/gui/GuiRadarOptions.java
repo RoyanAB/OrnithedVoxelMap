@@ -50,7 +50,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		this.screenTitle = I18nUtils.getString("options.minimap.radar.title");
 
 		EnumOptionsMinimap[] relevantOptions;
-		if (this.options.radarMode == 2) {
+		if (this.options.radarMode == RadarSettingsManager.FULL) {
 			relevantOptions = relevantOptionsFull;
 		} else {
 			relevantOptions = relevantOptionsSimple;
@@ -93,7 +93,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 			}
 		}
 
-		if (this.options.radarMode == 2) {
+		if (this.options.radarMode == RadarSettingsManager.FULL) {
 			this.getButtonList()
 				.add(
 					new GuiButton(101, this.getWidth() / 2 - 155, this.getHeight() / 6 + 144 - 6, 150, 20, I18nUtils.getString("options.minimap.radar.selectmobs"))

@@ -4,7 +4,6 @@ import com.mamiyaotaru.voxelmap.gui.GuiAddWaypoint;
 import com.mamiyaotaru.voxelmap.gui.GuiWaypoints;
 import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
 import com.mamiyaotaru.voxelmap.interfaces.*;
-import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.persistent.GuiPersistentMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
@@ -49,10 +48,10 @@ import java.util.List;
 public class Map implements Runnable, IMap {
 	private final float[] lastLightBrightnessTable = new float[16];
 	private final Object coordinateLock = new Object();
+	private final FontRenderer fontRenderer;
 	private final IVoxelMap master;
 	private Minecraft game;
-	private final String zmodver = "v1.9.28";
-	private World world = null;
+
 	private final int worldHeight = 256;
 	private final MapSettingsManager options;
 	private final LayoutVariables layoutVariables;
@@ -65,11 +64,16 @@ public class Map implements Runnable, IMap {
 	private final boolean threading = this.multicore;
 	private final FullMapData[] mapData = new FullMapData[5];
 	private final MapChunkCache[] chunkCache = new MapChunkCache[5];
-	private LiveGLBufferedImage[] mapImages = new LiveGLBufferedImage[5];
+
 	private final LiveGLBufferedImage[] mapImagesFiltered = new LiveGLBufferedImage[5];
 	private final LiveGLBufferedImage[] mapImagesUnfiltered = new LiveScaledGLBufferedImage[5];
-	private MutableBlockPos blockPos = new MutableBlockPos(0, 0, 0);
+	private LiveGLBufferedImage[] mapImages;
+
 	private final MutableBlockPos tempBlockPos = new MutableBlockPos(0, 0, 0);
+	private MutableBlockPos blockPos = new MutableBlockPos(0, 0, 0);
+
+	private World world = null;
+
 	private LiveGLBufferedImage roundImage;
 	private boolean imageChanged = true;
 	private DynamicTexture lightmapTexture = null;
@@ -110,7 +114,7 @@ public class Map implements Runnable, IMap {
 	private boolean enabled = true;
 	private boolean fullscreenMap = false;
 	private boolean active = false;
-	private int zoom = 2;
+	private int zoom;
 	private int scWidth;
 	private int scHeight;
 	private String error = "";
@@ -137,16 +141,20 @@ public class Map implements Runnable, IMap {
 	private int northRotate = 0;
 	private Thread zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
 	private int zCalcTicker = 0;
-	private final FontRenderer fontRenderer;
+
 	private int[] lightmapColors = new int[256];
-	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 	private double zoomScale = 1.0;
 	private double zoomScaleAdjusted = 1.0;
 	private boolean optifineInstalled = false;
+
 	private double rFog;
 	private double bFog;
 	private double gFog;
+
 	private int mapImageInt = -1;
+
+	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
+	private final String zmodver = VoxelConstants.MOD_VERSION;
 
 	public Map(IVoxelMap master) {
 		this.master = master;
@@ -159,8 +167,7 @@ public class Map implements Runnable, IMap {
 		try {
 			NetworkUtils.enumerateInterfaces();
 		} catch (SocketException e) {
-			VoxelMapMod.LOGGER.error("could not get network interface addresses");
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("could not get network interface addresses", e);
 		}
 
 		ArrayList<KeyBinding> tempBindings = new ArrayList<>();
@@ -170,7 +177,7 @@ public class Map implements Runnable, IMap {
 		java.util.Map<String, Integer> categoryOrder = (java.util.Map<String, Integer>) ReflectionUtils.getPrivateFieldValueByType(
 			null, KeyBinding.class, java.util.Map.class, 1
 		);
-		VoxelMapMod.LOGGER.info("CATEGORY ORDER IS {}", categoryOrder.size());
+		VoxelConstants.getLogger().info("CATEGORY ORDER IS {}", categoryOrder.size());
 		Integer categoryPlace = categoryOrder.get("controls.minimap.title");
 		if (categoryPlace == null) {
 			int currentSize = categoryOrder.size();
@@ -412,7 +419,7 @@ public class Map implements Runnable, IMap {
 		this.lastGuiScreen = this.game.currentScreen;
 		this.calculateCurrentLightAndSkyColor();
 		if (this.threading) {
-			if (!this.zCalc.isAlive() && this.threading) {
+			if (!this.zCalc.isAlive()) {
 				this.zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
 				this.zCalc.setPriority(5);
 				this.zCalc.start();
@@ -429,7 +436,7 @@ public class Map implements Runnable, IMap {
 					}
 				}
 			}
-		} else if (!this.threading) {
+		} else {
 			if (!this.options.hide && this.world != null) {
 				this.mapCalc(this.doFullRender);
 				if (!this.doFullRender) {
@@ -841,11 +848,11 @@ public class Map implements Runnable, IMap {
 			UUID playerUUID = this.game.player.getUniqueID();
 			Object guiNewChat = this.game.ingameGUI.getChatGUI();
 			if (guiNewChat == null) {
-				VoxelMapMod.LOGGER.info("failed to get guiNewChat");
+				VoxelConstants.getLogger().info("failed to get guiNewChat");
 			} else {
 				Object chatListObj = ReflectionUtils.getPrivateFieldValueByType(guiNewChat, GuiNewChat.class, List.class, 1);
 				if (chatListObj == null) {
-					VoxelMapMod.LOGGER.info("could not get chatlist");
+					VoxelConstants.getLogger().info("could not get chatlist");
 				} else {
 					List<ChatLine> chatList = (List<ChatLine>) chatListObj;
 					boolean killRadar = false;
@@ -889,7 +896,7 @@ public class Map implements Runnable, IMap {
 		int offsetZ = currentZ - this.lastZ;
 		int offsetY = currentY - this.lastY;
 		int multi = (int) Math.pow(2.0, this.zoom);
-		boolean needHeightAndID = false;
+		boolean needHeightAndID;
 		boolean needHeightMap = false;
 		boolean needLight = false;
 		boolean skyColorChanged = false;
@@ -2154,7 +2161,7 @@ public class Map implements Runnable, IMap {
 				gfx.dispose();
 				this.mapImageInt = GLUtils.tex(mapImagex);
 			} catch (Exception f) {
-				VoxelMapMod.LOGGER.error("Error loading texture pack's map image: {}", f.getLocalizedMessage());
+				VoxelConstants.getLogger().error("Error loading texture pack's map image: {}", f.getLocalizedMessage());
 			}
 		}
 	}

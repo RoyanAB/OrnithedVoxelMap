@@ -3,8 +3,6 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.interfaces.AbstractMapData;
 import com.mamiyaotaru.voxelmap.interfaces.IColorManager;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
-import com.mamiyaotaru.voxelmap.ornithe.Share;
-import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.BlockDoublePlant.EnumPlantType;
@@ -191,30 +189,27 @@ public class ColorManager implements IColorManager {
 				try {
 					this.processCTM();
 				} catch (Exception ex) {
-					VoxelMapMod.LOGGER.error("error loading CTM {}", ex.getLocalizedMessage());
-					ex.printStackTrace();
+					VoxelConstants.getLogger().error("error loading CTM {}", ex.getLocalizedMessage(), ex);
 				}
 			}
 
 			try {
 				this.loadWaterColor();
 			} catch (Exception ex) {
-				VoxelMapMod.LOGGER.error("error getting water color {}", ex.getLocalizedMessage());
+				VoxelConstants.getLogger().error("error getting water color {}", ex.getLocalizedMessage());
 			}
 
 			if (this.optifineInstalled) {
 				try {
 					this.processColorProperties();
 				} catch (Exception ex) {
-					VoxelMapMod.LOGGER.error("error loading custom color properties {}", ex.getLocalizedMessage());
-					ex.printStackTrace();
+					VoxelConstants.getLogger().error("error loading custom color properties {}", ex.getLocalizedMessage(), ex);
 				}
 			}
 
 			this.master.getMap().forceFullRender(true);
 		} catch (Exception e) {
-			VoxelMapMod.LOGGER.error("error loading pack");
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("error loading pack", e);
 		}
 
 		this.loaded = true;
@@ -244,8 +239,7 @@ public class ColorManager implements IColorManager {
 
 			return blockImage;
 		} catch (Exception e) {
-			VoxelMapMod.LOGGER.error("error getting block armor image for {},{}: {}", Block.getIdFromBlock(blockState.getBlock()), blockState.getBlock().getMetaFromState(blockState), e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("error getting block armor image for {},{}: {}", Block.getIdFromBlock(blockState.getBlock()), blockState.getBlock().getMetaFromState(blockState), e.getLocalizedMessage(), e);
 			return null;
 		}
 	}
@@ -323,7 +317,7 @@ public class ColorManager implements IColorManager {
 			gfx.drawImage(picker, 0, 0, null);
 			gfx.dispose();
 		} catch (Exception e) {
-			VoxelMapMod.LOGGER.error("Error loading color picker: {}", e.getLocalizedMessage());
+			VoxelConstants.getLogger().error("Error loading color picker: {}", e.getLocalizedMessage());
 		}
 	}
 
@@ -342,8 +336,7 @@ public class ColorManager implements IColorManager {
 			gfx.drawImage(terrainStitched, 0, 0, null);
 			gfx.dispose();
 		} catch (Exception e) {
-			VoxelMapMod.LOGGER.error("Error processing new resource pack: {}", e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Error processing new resource pack: {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -369,7 +362,7 @@ public class ColorManager implements IColorManager {
 			Field material2 = ReflectionUtils.getFieldByType(BlockRepository.chorusFlower, Block.class, Material.class);
 			material2.set(BlockRepository.chorusFlower, Material.WOOD);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+			VoxelConstants.getLogger().error(e);
 		}
 	}
 
@@ -525,8 +518,7 @@ public class ColorManager implements IColorManager {
 
 			return color;
 		} catch (Exception e) {
-			VoxelMapMod.LOGGER.error("failed getting color: {}", blockState.getBlock().getLocalizedName());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("failed getting color: {}", blockState.getBlock().getLocalizedName(), e);
 			return 452984832;
 		}
 	}
@@ -623,8 +615,8 @@ public class ColorManager implements IColorManager {
 				gfx.dispose();
 				color = singlePixelBuff.getRGB(0, 0);
 			} catch (RasterFormatException e) {
-				VoxelMapMod.LOGGER.info("error getting color");
-				VoxelMapMod.LOGGER.info("{} {} {} {}", left, right, top, bottom);
+				VoxelConstants.getLogger().info("error getting color");
+				VoxelConstants.getLogger().info("{} {} {} {}", left, right, top, bottom);
 			}
 		}
 
@@ -689,7 +681,7 @@ public class ColorManager implements IColorManager {
 			return -1;
 		}
 
-		Share.updateCloudsLock.lock();
+		VoxelConstants.updateCloudsLock.lock();
 		int tint = -1;
 
 		try {
@@ -708,7 +700,7 @@ public class ColorManager implements IColorManager {
 			chunk.setBlockState(loopBlockPos, actualBlockState);
 		} catch (Exception ignored) {
 		} finally {
-			Share.updateCloudsLock.unlock();
+			VoxelConstants.updateCloudsLock.unlock();
 		}
 
 		return tint;
@@ -719,7 +711,7 @@ public class ColorManager implements IColorManager {
 		if (world != null) {
 			Block block = blockState.getBlock();
 			if (block != null) {
-				Share.updateCloudsLock.lock();
+				VoxelConstants.updateCloudsLock.lock();
 
 				try {
 					int[][] tints = new int[this.sizeOfBiomeArray][32];
@@ -753,7 +745,7 @@ public class ColorManager implements IColorManager {
 					this.blockTintTables.put(blockStateID, tints);
 				} catch (Exception ignored) {
 				} finally {
-					Share.updateCloudsLock.unlock();
+					VoxelConstants.updateCloudsLock.unlock();
 				}
 			}
 		}
@@ -1185,8 +1177,7 @@ public class ColorManager implements IColorManager {
 							}
 						}
 					} catch (IOException ex) {
-						VoxelMapMod.LOGGER.error("error getting CTM block from {}: {} {} {}", propertiesFile.getPath(), filePath, Block.REGISTRY.getNameForObject(blockStates.iterator().next().getBlock()), tilePath);
-						ex.printStackTrace();
+						VoxelConstants.getLogger().error("error getting CTM block from {}: {} {} {}", propertiesFile.getPath(), filePath, Block.REGISTRY.getNameForObject(blockStates.iterator().next().getBlock()), tilePath, ex);
 					}
 				}
 			}
@@ -1613,7 +1604,7 @@ public class ColorManager implements IColorManager {
 					Path path = Paths.get("optifine/colormap/blocks/", source);
 					path = path.normalize();
 					resourcePNG = new ResourceLocation(resource.getNamespace(), path.toString().replace(File.separatorChar, '/'));
-					VoxelMapMod.LOGGER.info("trying {}", resourcePNG);
+					VoxelConstants.getLogger().info("trying {}", resourcePNG);
 				}
 			} else {
 				resourcePNG = new ResourceLocation(resource.getNamespace(), resource.getPath().replace(".properties", ".png"));

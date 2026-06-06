@@ -25,7 +25,6 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 		EnumOptionsMinimap.CAVEMODE
 	};
 
-
 	private final GuiScreen parent;
 	private final IVoxelMap master;
 	private final MapSettingsManager options;
@@ -75,7 +74,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 	protected void actionPerformed(GuiButton button) {
 		if (button.enabled) {
 			if (button.id < 100 && button instanceof GuiOptionButtonMinimap) {
-				this.options.setOptionValue(((GuiOptionButtonMinimap) button).returnEnumOptions(), 1);
+				this.options.setOptionValue(((GuiOptionButtonMinimap) button).returnEnumOptions());
 				button.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(button.id)));
 				if (((GuiOptionButtonMinimap) button).returnEnumOptions() == EnumOptionsMinimap.OLDNORTH) {
 					this.master.getWaypointManager().setOldNorth(this.options.oldNorth);

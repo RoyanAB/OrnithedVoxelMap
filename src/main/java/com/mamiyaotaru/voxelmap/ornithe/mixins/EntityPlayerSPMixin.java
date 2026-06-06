@@ -19,7 +19,7 @@ public class EntityPlayerSPMixin {
 	private void onSendChatMessage(String message, CallbackInfo ci) {
 		try {
 			VoxelMapMod.tickHandler.onSendChatMessage(message, ci);
-		} catch (Throwable e) {
+		} catch (Throwable ignored) {
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -34,7 +35,7 @@ public class BiomeRepository {
 						try {
 							color = Integer.decode(curLine[1]);
 						} catch (NumberFormatException e) {
-							System.out.println("Error decoding integer string for biome colors; " + curLine[1]);
+							VoxelConstants.getLogger().error("Error decoding integer string for biome colors; {}", curLine[1]);
 						}
 
 						if (nameToColor.put(name, color) != null) {
@@ -45,8 +46,7 @@ public class BiomeRepository {
 
 				br.close();
 			} catch (Exception e) {
-				System.err.println("biome load error: " + e.getLocalizedMessage());
-				e.printStackTrace();
+				VoxelConstants.getLogger().error("biome load error: {}", e.getLocalizedMessage(), e);
 			}
 		}
 
@@ -64,7 +64,7 @@ public class BiomeRepository {
 					try {
 						color = Integer.decode(curLine[1]);
 					} catch (NumberFormatException e) {
-						System.out.println("Error decoding integer string for biome colors; " + curLine[1]);
+						VoxelConstants.getLogger().error("Error decoding integer string for biome colors; {}", curLine[1]);
 					}
 
 					if (nameToColor.get(name) == null) {
@@ -77,8 +77,7 @@ public class BiomeRepository {
 			br.close();
 			is.close();
 		} catch (IOException e) {
-			System.out.println("Error loading biome color config file from litemod!");
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Error loading biome color config file!", e);
 		}
 	}
 
@@ -109,8 +108,7 @@ public class BiomeRepository {
 
 				out.close();
 			} catch (Exception e) {
-				System.err.println("biome save error: " + e.getLocalizedMessage());
-				e.printStackTrace();
+				VoxelConstants.getLogger().error("biome save error: {}", e.getLocalizedMessage(), e);
 			}
 		}
 
@@ -133,7 +131,7 @@ public class BiomeRepository {
 					dirty = true;
 				}
 			} else {
-				System.out.println("non biome");
+				VoxelConstants.getLogger().warn("non biome");
 				color = 0;
 			}
 

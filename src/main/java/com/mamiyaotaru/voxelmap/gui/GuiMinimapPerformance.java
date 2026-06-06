@@ -96,7 +96,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 
 	protected void actionPerformed(GuiButton par1GuiButton) {
 		if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
-			this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions(), 1);
+			this.options.setOptionValue(((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions());
 			String perfBomb = "";
 			if ((
 				par1GuiButton.id == EnumOptionsMinimap.WATERTRANSPARENCY.ordinal()

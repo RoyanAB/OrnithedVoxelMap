@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap.ornithe;
 
 import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
+import com.mamiyaotaru.voxelmap.util.GLShim;
 import com.mamiyaotaru.voxelmap.util.ReflectionUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -32,8 +33,8 @@ public class TickHandler {
 
 	public void onRenderHand(float partialTicks) {
 		this.voxelMap.getWaypointManager().renderWaypoints(partialTicks);
-		GlStateManager.blendFunc(770, 771);
-		GlStateManager.shadeModel(7424);
+		GlStateManager.blendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.shadeModel(GLShim.GL11_GL_FLAT);
 		GlStateManager.depthMask(true);
 		GlStateManager.enableCull();
 		GlStateManager.disableBlend();

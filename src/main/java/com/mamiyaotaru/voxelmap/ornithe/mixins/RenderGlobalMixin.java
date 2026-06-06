@@ -1,6 +1,6 @@
 package com.mamiyaotaru.voxelmap.ornithe.mixins;
 
-import com.mamiyaotaru.voxelmap.ornithe.Share;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.renderer.RenderGlobal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +16,7 @@ public class RenderGlobalMixin {
 		)
 	)
 	public void preUpdateClouds(CallbackInfo ci) {
-		Share.updateCloudsLock.lock();
+		VoxelConstants.updateCloudsLock.lock();
 	}
 
 	@Inject(
@@ -26,6 +26,6 @@ public class RenderGlobalMixin {
 		)
 	)
 	public void postUpdateClouds(CallbackInfo ci) {
-		Share.updateCloudsLock.unlock();
+		VoxelConstants.updateCloudsLock.unlock();
 	}
 }

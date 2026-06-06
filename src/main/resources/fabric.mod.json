@@ -14,9 +14,6 @@
   "icon": "assets/voxelmap/icon.png",
   "environment": "*",
   "entrypoints": {
-    "init": [
-      "com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod"
-    ],
     "modmenu": [
       "com.mamiyaotaru.voxelmap.ornithe.compat.modmenu.ModMenuApiImpl"
     ]
@@ -27,6 +24,6 @@
   "depends": {
     "fabricloader": ">=0.14.21",
     "minecraft": "1.12.2",
-    "osl-entrypoints": ">=0.4.0"
+    "osl-resource-loader": ">=0.4.0"
   }
 }

@@ -5,10 +5,10 @@ import net.minecraft.block.state.IBlockState;
 
 import java.util.Arrays;
 
-@SuppressWarnings("unused")
+
 public class FullMapData extends AbstractMapData {
 	public static final int DATABITS = 17;
-	public static final int BYTESPERDATUM = 4;
+
 	private static final int HEIGHTPOS = 0;
 	private static final int BLOCKSTATEPOS = 1;
 	private static final int TINTPOS = 2;
@@ -26,6 +26,7 @@ public class FullMapData extends AbstractMapData {
 	private static final int FOLIAGETINTPOS = 14;
 	private static final int FOLIAGELIGHTPOS = 15;
 	private static final int BIOMEIDPOS = 16;
+
 	private int[] data;
 
 	public FullMapData(int width, int height) {

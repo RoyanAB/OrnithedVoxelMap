@@ -1,6 +1,7 @@
 package com.mamiyaotaru.voxelmap.persistent;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.*;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.Block;
@@ -23,25 +24,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PersistentMap implements IPersistentMap, IChangeObserver {
 	protected final List<CachedRegion> cachedRegionsPool = Collections.synchronizedList(new ArrayList<>());
 	protected final ConcurrentHashMap<String, CachedRegion> cachedRegions = new ConcurrentHashMap<>(150, 0.9F, 2);
-	private final int SEAFLOORLAYER = 0;
-	private final int GROUNDLAYER = 1;
-	private final int FOLIAGELAYER = 2;
-	private final int TRANSPARENTLAYER = 3;
-	private final int DRAWHEIGHT = 80;
-	IVoxelMap master;
-	IColorManager colorManager;
-	MapSettingsManager mapOptions;
-	PersistentMapSettingsManager options;
-	WorldMatcher worldMatcher;
-	int[] lightmapColors;
-	World world;
-	String subworldName = "";
-	int lastLeft = 0;
-	int lastRight = 0;
-	int lastTop = 0;
-	int lastBottom = 0;
-	CachedRegion[] lastRegionsArray = new CachedRegion[0];
-	Comparator<CachedRegion> ageThenDistanceSorter = (region1, region2) -> {
+	private final IVoxelMap master;
+	private final IColorManager colorManager;
+	private final MapSettingsManager mapOptions;
+	private final PersistentMapSettingsManager options;
+
+	private WorldMatcher worldMatcher;
+	private int[] lightmapColors;
+	private World world;
+	private String subworldName = "";
+
+	private int lastLeft = 0;
+	private int lastRight = 0;
+	private int lastTop = 0;
+	private int lastBottom = 0;
+
+	private CachedRegion[] lastRegionsArray = new CachedRegion[0];
+
+	private final Comparator<CachedRegion> ageThenDistanceSorter = (region1, region2) -> {
 		long mostRecentAccess1 = region1.getMostRecentView();
 		long mostRecentAccess2 = region2.getMostRecentView();
 		if (mostRecentAccess1 < mostRecentAccess2) {
@@ -62,7 +62,8 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 			* (region2.getZ() * 256 + region2.getWidth() / 2F - PersistentMap.this.options.mapZ);
 		return Double.compare(distance1sq, distance2sq);
 	};
-	Comparator<PersistentMap.RegionCoordinates> distanceSorter = (coordinates1, coordinates2) -> {
+
+	private final Comparator<PersistentMap.RegionCoordinates> distanceSorter = (coordinates1, coordinates2) -> {
 		double distance1sq = (coordinates1.x * 256 + 128 - PersistentMap.this.options.mapX) * (coordinates1.x * 256 + 128 - PersistentMap.this.options.mapX)
 			+ (coordinates1.z * 256 + 128 - PersistentMap.this.options.mapZ) * (coordinates1.z * 256 + 128 - PersistentMap.this.options.mapZ);
 		double distance2sq = (coordinates2.x * 256 + 128 - PersistentMap.this.options.mapX) * (coordinates2.x * 256 + 128 - PersistentMap.this.options.mapX)
@@ -96,7 +97,7 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 					try {
 						Thread.sleep(1000L);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						VoxelConstants.getLogger().error(e);
 					}
 
 					if (PersistentMap.this.world != null) {
@@ -116,9 +117,9 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 			newCacheDir.getParentFile().mkdirs();
 			boolean success = oldCacheDir.renameTo(newCacheDir);
 			if (!success) {
-				System.out.println("Failed moving Voxelmap cache files.  Please move " + oldCacheDir.getPath() + " to " + newCacheDir.getPath());
+				VoxelConstants.getLogger().error("Failed moving Voxelmap cache files.  Please move {} to {}", oldCacheDir.getPath(), newCacheDir.getPath());
 			} else {
-				System.out.println("Moved Voxelmap cache files from " + oldCacheDir.getPath() + " to " + newCacheDir.getPath());
+				VoxelConstants.getLogger().info("Moved Voxelmap cache files from {} to {}", oldCacheDir.getPath(), newCacheDir.getPath());
 			}
 		}
 

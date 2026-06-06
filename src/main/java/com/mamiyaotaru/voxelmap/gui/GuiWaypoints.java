@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiYesNo;
 import org.lwjgl.input.Keyboard;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -24,14 +25,6 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private final Random generator = new Random();
 	private final GuiScreen parentScreen;
 	private final IVoxelMap master;
-	private final int EDIT = -1;
-	private final int DELETE = -2;
-	private final int HIGHLIGHT = -3;
-	private final int TELEPORT = -4;
-	private final int SHARE = -5;
-	private final int NEW = -6;
-	private final int OPTIONS = -7;
-	private final int DONE = -200;
 	protected String screenTitle = "Waypoints";
 	protected GuiTextField filter;
 	protected Waypoint selectedWaypoint;
@@ -52,6 +45,15 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private boolean addClicked = false;
 	private String tooltip;
 	private boolean changedSort = false;
+
+	private final int EDIT = -1;
+	private final int DELETE = -2;
+	private final int HIGHLIGHT = -3;
+	private final int TELEPORT = -4;
+	private final int SHARE = -5;
+	private final int NEW = -6;
+	private final int OPTIONS = -7;
+	private final int DONE = -200;
 
 	public GuiWaypoints(GuiScreen parentScreen, IVoxelMap master) {
 		this.master = master;
@@ -369,9 +371,9 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		boolean singlePlayer = this.options.game.isIntegratedServerRunning();
 		if (singlePlayer) {
 			try {
-				allowed = this.mc.getIntegratedServer().getPlayerList().canSendCommands(this.mc.player.getGameProfile());
+				allowed = Objects.requireNonNull(this.mc.getIntegratedServer()).getPlayerList().canSendCommands(this.mc.player.getGameProfile());
 			} catch (Exception e) {
-				allowed = this.mc.getIntegratedServer().worlds[0].getWorldInfo().areCommandsAllowed();
+				allowed = Objects.requireNonNull(this.mc.getIntegratedServer()).worlds[0].getWorldInfo().areCommandsAllowed();
 			}
 		} else {
 			allowed = true;

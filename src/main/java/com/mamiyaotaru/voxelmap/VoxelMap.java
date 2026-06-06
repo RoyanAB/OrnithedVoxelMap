@@ -159,11 +159,11 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 	@Override
 	public IRadar getRadar() {
 		if (this.radarOptions.showRadar) {
-			if (this.radarOptions.radarMode == 1) {
+			if (this.radarOptions.radarMode == RadarSettingsManager.SIMPLE) {
 				return this.radarSimple;
 			}
 
-			if (this.radarOptions.radarMode == 2) {
+			if (this.radarOptions.radarMode == RadarSettingsManager.FULL) {
 				return this.radar;
 			}
 		}
