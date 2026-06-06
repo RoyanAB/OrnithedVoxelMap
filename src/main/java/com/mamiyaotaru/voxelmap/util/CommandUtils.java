@@ -36,9 +36,8 @@ public class CommandUtils {
 	public static Pattern pattern = Pattern.compile("\\[(\\w+\\s*:\\s*[-#]?[^\\[\\]]+)(,\\s*\\w+\\s*:\\s*[-#]?[^\\[\\]]+)+\\]", 2);
 
 	public static boolean checkForWaypoints(ITextComponent chat, String message) {
-		message = chat.getUnformattedText();
 		ArrayList<String> waypointStrings = getWaypointStrings(message);
-		if (waypointStrings.size() <= 0) {
+		if (waypointStrings.isEmpty()) {
 			return true;
 		}
 
@@ -144,7 +143,7 @@ public class CommandUtils {
 							int color = Integer.decode(value);
 							red = (color >> 16 & 0xFF) / 255.0F;
 							green = (color >> 8 & 0xFF) / 255.0F;
-							blue = (color >> 0 & 0xFF) / 255.0F;
+							blue = (color & 0xFF) / 255.0F;
 							break;
 						case "suffix":
 						case "icon":

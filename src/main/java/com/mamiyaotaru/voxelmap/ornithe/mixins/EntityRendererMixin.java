@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.ornithe.mixins;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.ornithe.VoxelMapMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -38,7 +39,7 @@ public class EntityRendererMixin {
 		)
 	)
 	private void onSetupCameraTransform(int pass, float partialTicks, long timeSlice, CallbackInfo ci) {
-		VoxelMapMod.onSetupCameraTransform();
+		VoxelConstants.getVoxelMapInstance().onSetupCameraTransform();
 	}
 
 	@Inject(

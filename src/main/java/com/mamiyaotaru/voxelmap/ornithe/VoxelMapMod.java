@@ -13,10 +13,6 @@ public class VoxelMapMod {
 		Runtime.getRuntime().addShutdownHook(new Thread(VoxelMapMod::onShutDown));
 	}
 
-	public static void onSetupCameraTransform() {
-		VoxelConstants.getVoxelMapInstance().onSetupCameraTransform();
-	}
-
 	public static void onShutDown() {
 		VoxelConstants.getLogger().info("Saving all world maps");
 		VoxelConstants.getVoxelMapInstance().getPersistentMap().saveCachedRegions();
