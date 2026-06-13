@@ -3,7 +3,6 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.ornithe.mixins.RenderAccessor;
-import com.mamiyaotaru.voxelmap.textures.FontRendererWithAtlas;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.StitcherException;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
@@ -55,7 +54,6 @@ public class Radar implements IRadar {
 	public static final int UNKNOWN = EnumMobs.UNKNOWN.ordinal();
 	private final IVoxelMap master;
 	public final RadarSettingsManager options;
-	private final FontRendererWithAtlas fontRenderer;
 	public MapSettingsManager minimapOptions;
 
 	private final TextureAtlas textureAtlas;
@@ -104,7 +102,6 @@ public class Radar implements IRadar {
 		this.minimapOptions = master.getMapOptions();
 		this.options = master.getRadarOptions();
 		this.game = Minecraft.getMinecraft();
-		this.fontRenderer = new FontRendererWithAtlas(this.game.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.game.getTextureManager(), false);
 		this.textureAtlas = new TextureAtlas("mobs");
 		this.textureAtlas.setBlurMipmapDirect(false, false);
 
@@ -175,7 +172,6 @@ public class Radar implements IRadar {
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager) {
 		this.loadTexturePackIcons();
-		this.fontRenderer.onResourceManagerReload(resourceManager);
 	}
 
 	private void loadTexturePackIcons() {
@@ -369,8 +365,6 @@ public class Radar implements IRadar {
 				fontImage.getHeight() + 2
 			);
 			Sprite fontSprite = this.textureAtlas.registerIconForBufferedImage(fontResourceLocation.toString(), fontImage);
-			this.fontRenderer.setFontSprite(fontSprite);
-			this.fontRenderer.setFontRef(this.textureAtlas.getGlTextureId());
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
@@ -610,16 +604,6 @@ public class Radar implements IRadar {
 				GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			}
 		}
-	}
-
-	private int chkLen(String paramStr) {
-		return this.fontRenderer.getStringWidth(paramStr);
-	}
-
-	private void write(String paramStr, float x, float y, int color) {
-		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
-		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
-		this.fontRenderer.drawStringWithShadow(paramStr, x, y, color);
 	}
 
 	private boolean isEntityShown(Entity entity) {
@@ -2106,8 +2090,11 @@ public class Radar implements IRadar {
 					if (this.options.showPlayerNames && contact.type == EnumMobs.PLAYER) {
 						float scaleFactor = this.layoutVariables.scScale / this.options.fontScale;
 						GLShim.glScalef(1.0F / scaleFactor, 1.0F / scaleFactor, 1.0F);
-						int m = this.chkLen(contact.name) / 2;
-						this.write(contact.name, x * scaleFactor - m, (y + 3) * scaleFactor, 16777215);
+						Minecraft minecraft = Minecraft.getMinecraft();
+						int m = minecraft.fontRenderer.getStringWidth(contact.name) / 2;
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
+						minecraft.fontRenderer.drawStringWithShadow(contact.name, x * scaleFactor - m, (y + 3) * scaleFactor, 16777215);
 					}
 				} catch (Exception localException) {
 					VoxelConstants.getLogger().error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type);

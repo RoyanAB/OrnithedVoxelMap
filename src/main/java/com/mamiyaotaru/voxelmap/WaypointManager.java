@@ -48,7 +48,6 @@ public class WaypointManager implements IWaypointManager {
 	private final HashSet<String> oldNorthWorldNames = new HashSet<>();
 	private final HashMap<String, String> worldSeeds = new HashMap<>();
 
-
 	private String worldName = "";
 	private String latestRealmsID = "";
 	private String currentSubWorldName = "";
