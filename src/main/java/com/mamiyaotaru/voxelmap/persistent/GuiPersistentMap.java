@@ -43,10 +43,24 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private static int playerGLID = 0;
 	private static boolean gotSkin = false;
 	private static int skinTries = 0;
+
+	private final Minecraft mc;
+	private final IVoxelMap master;
 	private final GuiScreen parent;
 	private final MapSettingsManager mapOptions;
 	private final PersistentMapSettingsManager options;
+	private final IPersistentMap persistentMap;
+	private final IWaypointManager waypointManager;
+	private final int forwardCode;
+	private final int leftCode;
+	private final int backCode;
+	private final int rightCode;
+	private final int sprintCode;
+
+	private final Random generator = new Random();
+	private final BiomeMapData biomeMapData = new BiomeMapData(760, 360);
 	private final Object closedLock = new Object();
+
 	private final int NEW = 0;
 	private final int HIGHLIGHTPOINT = 1;
 	private final int SHAREPOINT = 2;
@@ -56,21 +70,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private final int HIGHLIGHTWP = 6;
 	private final int SHAREWP = 7;
 	private final int TPTOWP = 8;
-	private final Minecraft mc;
-	private final Random generator = new Random();
-	private final IVoxelMap master;
-	private final IPersistentMap persistentMap;
-	private final IWaypointManager waypointManager;
-	private final BiomeMapData biomeMapData = new BiomeMapData(760, 360);
-	private final KeyBinding keyBindForward = new KeyBinding("key.forward.fake", 17, "key.categories.movement");
-	private final KeyBinding keyBindLeft = new KeyBinding("key.left.fake", 30, "key.categories.movement");
-	private final KeyBinding keyBindBack = new KeyBinding("key.back.fake", 31, "key.categories.movement");
-	private final KeyBinding keyBindRight = new KeyBinding("key.right.fake", 32, "key.categories.movement");
-	private final KeyBinding keyBindSprint = new KeyBinding("key.sprint.fake", 29, "key.categories.movement");
+
 	public boolean editClicked = false;
 	public boolean deleteClicked = false;
 	public boolean addClicked = false;
-	protected String screenTitle = "World Map";
 	protected String worldNameDisplay = "";
 	protected int worldNameDisplayLength = 0;
 	protected int maxWorldNameDisplayLength = 0;
@@ -123,13 +126,16 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private float guiToDirectMouse = 2.0F;
 	private boolean closed = false;
 	private CachedRegion[] regions = new CachedRegion[0];
-	private float mapPixelsX = 0.0F;
-	private float mapPixelsY = 0.0F;
-	private int forwardCode = 0;
-	private int leftCode = 0;
-	private int backCode = 0;
-	private int rightCode = 0;
-	private int sprintCode = 0;
+	private float mapPixelsX;
+	private float mapPixelsY;
+
+	private final KeyBinding keyBindForward = new KeyBinding("key.forward.fake", 17, "key.categories.movement");
+	private final KeyBinding keyBindLeft = new KeyBinding("key.left.fake", 30, "key.categories.movement");
+	private final KeyBinding keyBindBack = new KeyBinding("key.back.fake", 31, "key.categories.movement");
+	private final KeyBinding keyBindRight = new KeyBinding("key.right.fake", 32, "key.categories.movement");
+	private final KeyBinding keyBindSprint = new KeyBinding("key.sprint.fake", 29, "key.categories.movement");
+
+	protected String screenTitle = "World Map";
 
 	public GuiPersistentMap(GuiScreen parent, IVoxelMap master) {
 		this.mc = Minecraft.getMinecraft();

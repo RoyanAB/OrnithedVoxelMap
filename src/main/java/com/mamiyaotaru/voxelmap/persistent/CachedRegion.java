@@ -71,7 +71,6 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	private CompressibleGLBufferedImage image;
 	private CompressibleMapData data;
 
-
 	public CachedRegion() {
 	}
 

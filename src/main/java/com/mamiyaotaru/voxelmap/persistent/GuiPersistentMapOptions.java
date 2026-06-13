@@ -15,6 +15,7 @@ import java.util.Objects;
 public class GuiPersistentMapOptions extends GuiScreenMinimap {
 	private final GuiScreen parent;
 	private final PersistentMapSettingsManager options;
+
 	protected String screenTitle = "Worldmap Options";
 	protected String cacheSettings = "Zoom/Cache Settings";
 	protected String warning = "Edit at your own risk";
@@ -24,6 +25,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 		this.options = master.getPersistentMapOptions();
 	}
 
+	@Override
 	public void initGui() {
 		EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.SHOWWAYPOINTS, EnumOptionsMinimap.SHOWWAYPOINTNAMES};
 		this.screenTitle = I18nUtils.getString("options.worldmap.title");
@@ -52,8 +54,6 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 				float fValue;
 				switch (option) {
 					case MINZOOM:
-						fValue = (sValue + 3.0F) / (5 + 3);
-						break;
 					case MAXZOOM:
 						fValue = (sValue + 3.0F) / (5 + 3);
 						break;
@@ -103,6 +103,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 		}
 	}
 
+	@Override
 	protected void actionPerformed(GuiButton par1GuiButton) {
 		if (par1GuiButton.enabled) {
 			if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
@@ -125,6 +126,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 		}
 	}
 
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		for (Object buttonObj : this.getButtonList()) {
 			if (buttonObj instanceof GuiOptionSliderMinimap) {
@@ -134,8 +136,6 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 				float fValue;
 				switch (option) {
 					case MINZOOM:
-						fValue = (sValue + 3.0F) / (5 + 3);
-						break;
 					case MAXZOOM:
 						fValue = (sValue + 3.0F) / (5 + 3);
 						break;
