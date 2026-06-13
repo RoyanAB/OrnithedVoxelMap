@@ -9,7 +9,6 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public class GuiSubworldEdit extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final GuiScreen parent;
 

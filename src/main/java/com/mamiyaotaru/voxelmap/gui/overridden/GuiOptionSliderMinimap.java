@@ -5,7 +5,6 @@ import com.mamiyaotaru.voxelmap.util.GLShim;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
-@SuppressWarnings("unused")
 public class GuiOptionSliderMinimap extends GuiButton {
 	private final ISettingsManager options;
 	private final EnumOptionsMinimap enumOptions;
@@ -21,10 +20,12 @@ public class GuiOptionSliderMinimap extends GuiButton {
 		this.displayString = this.options.getKeyText(optionIn);
 	}
 
+	@Override
 	public int getHoverState(boolean mouseOver) {
 		return 0;
 	}
 
+	@Override
 	protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
 		if (this.visible) {
 			if (this.dragging) {
@@ -47,6 +48,7 @@ public class GuiOptionSliderMinimap extends GuiButton {
 		}
 	}
 
+	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
 		if (super.mousePressed(mc, mouseX, mouseY)) {
 			this.sliderValue = (float) (mouseX - (this.x + 4)) / (this.width - 8);
@@ -67,6 +69,7 @@ public class GuiOptionSliderMinimap extends GuiButton {
 		}
 	}
 
+	@Override
 	public void mouseReleased(int mouseX, int mouseY) {
 		this.dragging = false;
 	}

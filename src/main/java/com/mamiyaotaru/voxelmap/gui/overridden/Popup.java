@@ -11,34 +11,28 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public class Popup {
-	public int clickedX;
-	public int clickedY;
 	public int clickedDirectX;
 	public int clickedDirectY;
 
-	Minecraft mc;
-	FontRenderer fontRendererObj;
+	private final Minecraft mc;
+	private final FontRenderer fontRendererObj;
+	private final PopupGuiScreen parentGui;
+	private final Popup.PopupEntry[] entries;
 
-	int x;
-	int y;
+	private int x;
+	private int y;
+	private int w;
+	private final int h;
 
-	Popup.PopupEntry[] entries;
+	private boolean shouldClose = false;
 
-	int w;
-	int h;
-
-	boolean shouldClose = false;
-	PopupGuiScreen parentGui;
-	int padding = 6;
+	private final int padding = 6;
 
 	public Popup(int x, int y, int directX, int directY, ArrayList<Popup.PopupEntry> entries, PopupGuiScreen parentGui) {
 		this.mc = Minecraft.getMinecraft();
 		this.fontRendererObj = this.mc.fontRenderer;
 		this.parentGui = parentGui;
-		this.clickedX = x;
-		this.clickedY = y;
 		this.clickedDirectX = directX;
 		this.clickedDirectY = directY;
 		this.x = x - 1;

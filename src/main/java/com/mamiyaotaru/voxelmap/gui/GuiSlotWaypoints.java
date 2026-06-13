@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiSlotWaypoints extends GuiSlotMinimap {
 	final GuiWaypoints parentGui;
 	private final ArrayList<Waypoint> waypoints;

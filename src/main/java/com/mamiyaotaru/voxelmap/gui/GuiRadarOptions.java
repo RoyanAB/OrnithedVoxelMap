@@ -11,7 +11,6 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiRadarOptions extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptionsFull = new EnumOptionsMinimap[]{
 		EnumOptionsMinimap.SHOWRADAR,
@@ -37,6 +36,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
 	private final GuiScreen parent;
 	private final RadarSettingsManager options;
+
 	protected String screenTitle = "Radar Options";
 
 	public GuiRadarOptions(GuiScreen parent, IVoxelMap master) {
@@ -44,6 +44,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		this.options = master.getRadarOptions();
 	}
 
+	@Override
 	public void initGui() {
 		this.getButtonList().clear();
 		int optionIndex = 0;
@@ -103,6 +104,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		this.getButtonList().add(new GuiButton(200, this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, I18nUtils.getString("gui.done")));
 	}
 
+	@Override
 	protected void actionPerformed(GuiButton buttonClicked) {
 		if (buttonClicked.enabled) {
 			if (buttonClicked.id < 100 && buttonClicked instanceof GuiOptionButtonMinimap) {
@@ -154,6 +156,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		}
 	}
 
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.drawDefaultBackground();

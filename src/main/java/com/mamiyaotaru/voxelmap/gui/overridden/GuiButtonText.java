@@ -5,7 +5,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 
-@SuppressWarnings("unused")
 public class GuiButtonText extends GuiButton {
 	private final GuiTextField textField;
 
@@ -20,6 +19,7 @@ public class GuiButtonText extends GuiButton {
 		this.textField = new GuiTextField(buttonId, fontRenderer, x, y, widthIn, heightIn);
 	}
 
+	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (!this.editing) {
 			super.drawButton(mc, mouseX, mouseY, partialTicks);
@@ -28,6 +28,7 @@ public class GuiButtonText extends GuiButton {
 		}
 	}
 
+	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
 		boolean pressed = super.mousePressed(mc, mouseX, mouseY);
 		this.setEditing(pressed);

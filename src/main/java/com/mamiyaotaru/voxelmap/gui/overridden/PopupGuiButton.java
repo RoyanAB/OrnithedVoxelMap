@@ -6,19 +6,15 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 
-@SuppressWarnings("unused")
 public class PopupGuiButton extends GuiButton {
 	IPopupGuiScreen parentScreen;
-
-	public PopupGuiButton(int buttonId, int x, int y, String buttonText, IPopupGuiScreen parentScreen) {
-		this(buttonId, x, y, 200, 20, buttonText, parentScreen);
-	}
 
 	public PopupGuiButton(int buttonId, int x, int y, int widthIn, int heightIn, String buttonText, IPopupGuiScreen parentScreen) {
 		super(buttonId, x, y, widthIn, heightIn, buttonText);
 		this.parentScreen = parentScreen;
 	}
 
+	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (this.visible) {
 			FontRenderer fontrenderer = mc.fontRenderer;
@@ -45,15 +41,15 @@ public class PopupGuiButton extends GuiButton {
 
 			this.mouseDragged(mc, mouseX, mouseY);
 
-			int j = 14737632;
+			int color = 14737632;
 			if (!this.enabled) {
-				j = 10526880;
+				color = 10526880;
 			} else if (this.hovered) {
-				j = 16777120;
+				color = 16777120;
 			}
 
 			this.drawCenteredString(
-				fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, j
+				fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, color
 			);
 		}
 	}

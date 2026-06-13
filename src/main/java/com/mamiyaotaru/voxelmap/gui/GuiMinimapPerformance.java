@@ -13,7 +13,6 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiMinimapPerformance extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{
 		EnumOptionsMinimap.LIGHTING,
@@ -29,9 +28,10 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 	private final int worldSeedButtonID = relevantOptions.length;
 	private final GuiScreen parentScreen;
 	private final MapSettingsManager options;
-	protected String screenTitle = "Details / Performance";
-	IVoxelMap master;
+	private final IVoxelMap master;
 	private GuiButtonText worldSeedButton;
+
+	protected String screenTitle = "Details / Performance";
 
 	public GuiMinimapPerformance(GuiScreen par1GuiScreen, IVoxelMap master) {
 		this.parentScreen = par1GuiScreen;

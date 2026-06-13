@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.gui;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiSlotMinimap;
 import com.mamiyaotaru.voxelmap.interfaces.IDimensionManager;
 import com.mamiyaotaru.voxelmap.util.Dimension;
@@ -9,15 +10,13 @@ import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Mouse;
 
-@SuppressWarnings("unused")
 public class GuiSlotDimensions extends GuiSlotMinimap {
 	final GuiAddWaypoint parentGui;
 	private final IDimensionManager dimensionManager;
 
 	public GuiSlotDimensions(GuiAddWaypoint guiAddWaypoint) {
-		super(
-			Minecraft.getMinecraft(), 101, guiAddWaypoint.getHeight(), guiAddWaypoint.getHeight() / 6 + 82 + 6, guiAddWaypoint.getHeight() / 6 + 164 + 3, 18
-		);
+		super(Minecraft.getMinecraft(), 101, guiAddWaypoint.getHeight(), guiAddWaypoint.getHeight() / 6 + 82 + 6, guiAddWaypoint.getHeight() / 6 + 164 + 3, 18);
+
 		this.parentGui = guiAddWaypoint;
 		this.setSlotWidth(88);
 		this.setSlotXBoundsFromLeft(this.parentGui.getWidth() / 2);
@@ -25,9 +24,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 		this.setShowTopBottomBG(false);
 		this.setShowSlotBG(false);
 		this.dimensionManager = this.parentGui.master.getDimensionManager();
-		this.scrollBy(
-			this.dimensionManager.getDimensions().indexOf(this.dimensionManager.getDimensionByID(this.parentGui.waypoint.dimensions.first())) * this.slotHeight
-		);
+		this.scrollBy(this.dimensionManager.getDimensions().indexOf(this.dimensionManager.getDimensionByID(this.parentGui.waypoint.dimensions.first())) * this.slotHeight);
 	}
 
 	@Override
@@ -51,23 +48,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 				return;
 			}
 
-			System.out
-				.println(
-					"mousex: "
-						+ this.mouseX
-						+ ", leftEdge: "
-						+ leftEdge
-						+ ", width: "
-						+ width
-						+ ", iw: "
-						+ iconWidth
-						+ ", pad: "
-						+ padding
-						+ ", le: "
-						+ (leftEdge + width - iconWidth - padding)
-						+ ", re: "
-						+ (leftEdge + width)
-				);
+			VoxelConstants.getLogger().info("mousex: {}, leftEdge: {}, width: {}, iw: {}, pad: {}, le: {}, re: {}", this.mouseX, leftEdge, width, iconWidth, padding, leftEdge + width - iconWidth - padding, leftEdge + width);
 		}
 	}
 

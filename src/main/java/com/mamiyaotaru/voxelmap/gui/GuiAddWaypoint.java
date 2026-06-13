@@ -37,7 +37,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 	IColorManager colorManager;
 	private PopupGuiButton doneButton;
 	private GuiSlotDimensions dimensionList;
-	private String tooltip;
 	private GuiTextField waypointName;
 	private GuiTextField waypointX;
 	private GuiTextField waypointZ;
@@ -58,10 +57,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		this.suffix = this.waypoint.imageSuffix;
 		this.enabled = this.waypoint.enabled;
 		this.editing = editing;
-	}
-
-	static String setTooltip(GuiAddWaypoint guiAddWaypoint, String string) {
-		return guiAddWaypoint.tooltip = string;
 	}
 
 	public void updateScreen() {

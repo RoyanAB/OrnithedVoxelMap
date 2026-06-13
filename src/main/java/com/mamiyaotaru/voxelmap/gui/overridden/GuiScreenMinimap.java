@@ -10,8 +10,9 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class GuiScreenMinimap extends GuiScreen {
+	public String tooltip;
+
 	public void drawMap() {
 		if (this.mc.world != null && this.mc.player != null) {
 			if (!VoxelMap.instance.getMapOptions().showUnderMenus) {
@@ -21,8 +22,13 @@ public class GuiScreenMinimap extends GuiScreen {
 		}
 	}
 
+	@Override
 	public void onGuiClosed() {
 		MapSettingsManager.instance.saveAll();
+	}
+
+	public static void setTooltip(GuiScreenMinimap guiScreenMinimap, String string) {
+		guiScreenMinimap.tooltip = string;
 	}
 
 	public Minecraft getMinecraft() {

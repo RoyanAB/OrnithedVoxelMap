@@ -1,6 +1,5 @@
 package com.mamiyaotaru.voxelmap.gui;
 
-import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiSlotMinimap;
 import com.mamiyaotaru.voxelmap.util.*;
 import org.lwjgl.input.Mouse;
@@ -10,27 +9,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiSlotMobs extends GuiSlotMinimap {
 	final GuiMobs parentGui;
-	private final ArrayList<String> mobNames;
-	private final RadarSettingsManager options;
+	private final ArrayList<String> mobNames = new ArrayList<>();
 	private ArrayList<String> mobNamesFiltered;
 
 	public GuiSlotMobs(GuiMobs guiMobs) {
 		super(guiMobs.options.game, guiMobs.getWidth(), guiMobs.getHeight(), 32, guiMobs.getHeight() - 65 + 4, 18);
 		this.parentGui = guiMobs;
-		this.options = this.parentGui.options;
-		this.mobNames = new ArrayList<>();
 
 		for (EnumMobs mob : EnumMobs.values()) {
-			if (mob.isTopLevelUnit && (mob.isHostile && this.options.showHostiles || mob.isNeutral && this.options.showNeutrals)) {
+			if (mob.isTopLevelUnit && (mob.isHostile && this.parentGui.options.showHostiles || mob.isNeutral && this.parentGui.options.showNeutrals)) {
 				this.mobNames.add(mob.id);
 			}
 		}
 
 		for (CustomMob mob : CustomMobsManager.mobs) {
-			if (mob.isHostile && this.options.showHostiles || mob.isNeutral && this.options.showNeutrals) {
+			if (mob.isHostile && this.parentGui.options.showHostiles || mob.isNeutral && this.parentGui.options.showNeutrals) {
 				this.mobNames.add(mob.id);
 			}
 		}

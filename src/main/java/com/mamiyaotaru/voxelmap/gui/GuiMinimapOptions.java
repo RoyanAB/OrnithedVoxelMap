@@ -12,7 +12,6 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiMinimapOptions extends GuiScreenMinimap {
 	EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{
 		EnumOptionsMinimap.COORDS,
@@ -28,6 +27,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 	private final GuiScreen parent;
 	private final IVoxelMap master;
 	private final MapSettingsManager options;
+
 	protected String screenTitle = "Minimap Options";
 
 	public GuiMinimapOptions(GuiScreen parent, IVoxelMap master) {

@@ -18,14 +18,12 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.TreeSet;
 
-@SuppressWarnings("unused")
 public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	protected final MapSettingsManager options;
 	protected final IWaypointManager waypointManager;
 	private final Random generator = new Random();
 	private final GuiScreen parentScreen;
 	private final IVoxelMap master;
-	protected String screenTitle = "Waypoints";
 	protected GuiTextField filter;
 	protected Waypoint selectedWaypoint;
 	protected Waypoint highlightedWaypoint;
@@ -43,7 +41,6 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private GuiButton buttonSortDistance;
 	private GuiButton buttonSortColor;
 	private boolean addClicked = false;
-	private String tooltip;
 	private boolean changedSort = false;
 
 	private final int EDIT = -1;
@@ -55,16 +52,14 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private final int OPTIONS = -7;
 	private final int DONE = -200;
 
+	protected String screenTitle = "Waypoints";
+
 	public GuiWaypoints(GuiScreen parentScreen, IVoxelMap master) {
 		this.master = master;
 		this.parentScreen = parentScreen;
 		this.options = master.getMapOptions();
 		this.waypointManager = master.getWaypointManager();
 		this.highlightedWaypoint = this.waypointManager.getHighlightedWaypoint();
-	}
-
-	static String setTooltip(GuiWaypoints guiWaypoints, String string) {
-		return guiWaypoints.tooltip = string;
 	}
 
 	public void updateScreen() {

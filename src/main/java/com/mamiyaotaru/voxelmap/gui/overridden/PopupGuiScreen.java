@@ -2,7 +2,6 @@ package com.mamiyaotaru.voxelmap.gui.overridden;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupGuiScreen {
 	private final ArrayList<Popup> popups = new ArrayList<>();
 
@@ -58,6 +57,7 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
 		return !this.popups.isEmpty();
 	}
 
+	@Override
 	public void drawScreen(int x, int y, float dunno) {
 		super.drawScreen(x, y, dunno);
 
@@ -66,6 +66,7 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
 		}
 	}
 
+	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (!this.clickedPopup(mouseX, mouseY)) {
 			super.mouseClicked(mouseX, mouseY, mouseButton);

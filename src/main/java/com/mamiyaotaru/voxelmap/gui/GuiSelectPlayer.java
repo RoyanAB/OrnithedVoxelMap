@@ -9,19 +9,17 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import org.lwjgl.input.Keyboard;
 
-@SuppressWarnings("unused")
 public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final GuiScreen parentScreen;
 	private final boolean sharingWaypoint;
 	private final String locInfo;
 
-	protected String screenTitle = "Players";
 	protected boolean allClicked = false;
 	protected GuiTextField message;
 	protected GuiTextField filter;
 	private GuiButtonRowListPlayers playerList;
-	private String tooltip = null;
 
+	protected String screenTitle = "Players";
 
 	public GuiSelectPlayer(GuiScreen parentScreen, IVoxelMap master, String locInfo, boolean sharingWaypoint) {
 		this.parentScreen = parentScreen;
@@ -29,15 +27,13 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		this.sharingWaypoint = sharingWaypoint;
 	}
 
-	static String setTooltip(GuiSelectPlayer guiSelectPlayer, String string) {
-		return guiSelectPlayer.tooltip = string;
-	}
-
+	@Override
 	public void updateScreen() {
 		this.message.updateCursorCounter();
 		this.filter.updateCursorCounter();
 	}
 
+	@Override
 	public void initGui() {
 		this.screenTitle = I18nUtils.getString(this.sharingWaypoint ? "minimap.waypointshare.title" : "minimap.waypointshare.titlecoordinate");
 		Keyboard.enableRepeatEvents(true);
@@ -57,12 +53,14 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		this.buttonList.add(new GuiButton(-200, this.width / 2 - 100, this.height - 27, I18nUtils.getString("gui.cancel")));
 	}
 
+	@Override
 	protected void actionPerformed(GuiButton button) {
 		if (button.enabled && button.id == -200) {
 			this.getMinecraft().displayGuiScreen(this.parentScreen);
 		}
 	}
 
+	@Override
 	protected void keyTyped(char character, int keycode) {
 		super.keyTyped(character, keycode);
 		this.message.textboxKeyTyped(character, keycode);
@@ -71,6 +69,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		}
 	}
 
+	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		this.message.mouseClicked(mouseX, mouseY, mouseButton);
@@ -78,6 +77,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		this.playerList.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
+	@Override
 	public void confirmClicked(boolean result, int id) {
 		if (this.allClicked) {
 			this.allClicked = false;
@@ -116,6 +116,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		}
 	}
 
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.tooltip = null;

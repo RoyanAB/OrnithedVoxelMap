@@ -11,11 +11,11 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiWaypointsOptions extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.DEATHPOINTS};
 	private final GuiScreen parent;
 	private final MapSettingsManager options;
+
 	protected String screenTitle = "Waypoint Options";
 
 	public GuiWaypointsOptions(GuiScreen parent, MapSettingsManager options) {
@@ -23,6 +23,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 		this.options = options;
 	}
 
+	@Override
 	public void initGui() {
 		int optionIndex = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.waypoints.title");
@@ -63,6 +64,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 		this.getButtonList().add(new GuiButton(200, this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, I18nUtils.getString("gui.done")));
 	}
 
+	@Override
 	protected void actionPerformed(GuiButton par1GuiButton) {
 		if (par1GuiButton.enabled) {
 			if (par1GuiButton.id < 100 && par1GuiButton instanceof GuiOptionButtonMinimap) {
@@ -76,6 +78,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 		}
 	}
 
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.drawDefaultBackground();

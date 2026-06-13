@@ -14,7 +14,6 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final int thirdPersonViewOrig;
 	private final GuiScreen parent;
@@ -22,15 +21,15 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	private final IWaypointManager waypointManager;
 	EntityPlayerSP thePlayer;
 	EntityPlayerSP camera;
-	private String title = "VoxelMap - Multiworld Selection";
-	private String select = "Which world are you in?";
 	private boolean multiworld = false;
 	private GuiTextField newNameField;
 	private boolean newWorld = false;
 	private float yaw;
 	private GuiButton[] selectButtons;
-	private GuiButton[] editButtons;
 	private String[] worlds;
+
+	private String title = "VoxelMap - Multiworld Selection";
+	private String select = "Which world are you in?";
 
 	public GuiSubworldsSelect(GuiScreen parent, IVoxelMap master) {
 		this.mc = Minecraft.getMinecraft();
@@ -91,7 +90,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 		int lastRowShiftBy = (int) (Math.ceil((float) (numKnownSubworlds + 1) / buttonsPerRow) * buttonsPerRow - (numKnownSubworlds + 1));
 		this.worlds = new String[numKnownSubworlds];
 		this.selectButtons = new GuiButton[numKnownSubworlds + 1];
-		this.editButtons = new GuiButton[numKnownSubworlds + 1];
+		GuiButton[] editButtons = new GuiButton[numKnownSubworlds + 1];
 
 		for (int t = 0; t < numKnownSubworlds; t++) {
 			int shiftBy = 1;
@@ -108,16 +107,9 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 				20,
 				this.worlds[t]
 			);
-			this.editButtons[t] = new GuiButton(
-				-(t + 1),
-				(buttonsPerRow - shiftBy - t % buttonsPerRow) * buttonWidth + xSpacing + buttonWidth - 32,
-				this.height - 60 - t / buttonsPerRow * 21,
-				30,
-				20,
-				"⚒"
-			);
+			editButtons[t] = new GuiButton(-(t + 1), (buttonsPerRow - shiftBy - t % buttonsPerRow) * buttonWidth + xSpacing + buttonWidth - 32, this.height - 60 - t / buttonsPerRow * 21, 30, 20, "⚒");
 			this.buttonList.add(this.selectButtons[t]);
-			this.buttonList.add(this.editButtons[t]);
+			this.buttonList.add(editButtons[t]);
 		}
 
 		int numButtons = this.selectButtons.length - 1;

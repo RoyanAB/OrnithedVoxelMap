@@ -11,25 +11,20 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Keyboard;
 
-@SuppressWarnings("unused")
 public class GuiMobs extends GuiScreenMinimap {
 	protected final RadarSettingsManager options;
 	private final GuiScreen parentScreen;
-	protected String screenTitle = "Select Mobs";
 	protected GuiTextField filter;
-	protected String selectedMobName = null;
+	protected String selectedMobName;
 	private GuiSlotMobs mobsList;
 	private GuiButton buttonEnable;
 	private GuiButton buttonDisable;
-	private String tooltip = null;
+
+	protected String screenTitle = "Select Mobs";
 
 	public GuiMobs(GuiScreen parentScreen, RadarSettingsManager options) {
 		this.parentScreen = parentScreen;
 		this.options = options;
-	}
-
-	static String setTooltip(GuiMobs guiMobs, String string) {
-		return guiMobs.tooltip = string;
 	}
 
 	public void updateScreen() {

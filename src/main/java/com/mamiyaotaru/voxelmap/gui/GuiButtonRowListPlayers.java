@@ -18,7 +18,6 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-@SuppressWarnings("unused")
 public class GuiButtonRowListPlayers extends GuiListExtended {
 	final GuiSelectPlayer parentGui;
 	private final ArrayList<GuiButtonRowListPlayers.Row> rows = new ArrayList<>();
@@ -53,18 +52,22 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 		return new GuiButton(index, x, y, 150, 20, name);
 	}
 
+	@Override
 	public GuiButtonRowListPlayers.Row getListEntry(int index) {
 		return this.rows.get(index);
 	}
 
+	@Override
 	protected int getSize() {
 		return this.rows.size();
 	}
 
+	@Override
 	public int getListWidth() {
 		return 400;
 	}
 
+	@Override
 	protected int getScrollBarX() {
 		return super.getScrollBarX() + 32;
 	}
@@ -134,15 +137,14 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			this.button2 = button2;
 		}
 
+		@Override
 		public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
 			this.drawButton(this.button, slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 			this.drawButton(this.button1, slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 			this.drawButton(this.button2, slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 		}
 
-		private void drawButton(
-			GuiButton button, int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks
-		) {
+		private void drawButton(GuiButton button, int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
 			if (button != null) {
 				button.y = y;
 				button.drawButton(this.client, mouseX, mouseY, partialTicks);
@@ -168,6 +170,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			}
 		}
 
+		@Override
 		public boolean mousePressed(int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY) {
 			if (this.button != null && this.button.mousePressed(this.client, mouseX, mouseY)) {
 				GuiButtonRowListPlayers.this.buttonClicked(this.button.id);
@@ -183,6 +186,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			}
 		}
 
+		@Override
 		public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {
 			if (this.button != null) {
 				this.button.mouseReleased(x, y);
@@ -197,7 +201,6 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			}
 		}
 
-		public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partialTicks) {
-		}
+		public void updatePosition(int slotIndex, int x, int y, float partialTicks) {}
 	}
 }

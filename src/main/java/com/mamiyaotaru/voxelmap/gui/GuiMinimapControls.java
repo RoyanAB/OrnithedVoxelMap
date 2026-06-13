@@ -9,12 +9,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 
-@SuppressWarnings("unused")
 public class GuiMinimapControls extends GuiScreenMinimap {
 	private final GuiScreen parentScreen;
 	private final MapSettingsManager options;
-	protected String screenTitle = "Controls";
 	private int buttonId = -1;
+
+	protected String screenTitle = "Controls";
 
 	public GuiMinimapControls(GuiScreen guiScreen, IVoxelMap master) {
 		this.parentScreen = guiScreen;
