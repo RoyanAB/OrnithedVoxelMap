@@ -34,10 +34,6 @@ public final class VoxelConstants {
 		return VOXELMAP_INSTANCE;
 	}
 
-	public static boolean isOldNorth() {
-		return VOXELMAP_INSTANCE.getMapOptions().oldNorth;
-	}
-
 	public static void newWorldName(String worldName) {
 		VOXELMAP_INSTANCE.newSubWorldName(worldName, true);
 	}

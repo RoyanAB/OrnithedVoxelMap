@@ -310,7 +310,6 @@ public class Map implements Runnable, IMap {
 
 	@Override
 	public void onTickInGame(Minecraft mc) {
-		this.northRotate = this.options.oldNorth ? 90 : 0;
 		if (this.game == null) {
 			this.game = mc;
 		}
@@ -1008,7 +1007,7 @@ public class Map implements Runnable, IMap {
 
 		if ((full || offsetX != 0 || offsetZ != 0 || !this.lastFullscreen) && this.fullscreenMap && this.options.biomeOverlay != 0) {
 			this.mapData[this.zoom].segmentBiomes();
-			this.mapData[this.zoom].findCenterOfSegments(!this.options.oldNorth);
+			this.mapData[this.zoom].findCenterOfSegments(true);
 		}
 
 		this.lastFullscreen = this.fullscreenMap;
@@ -1720,7 +1719,7 @@ public class Map implements Runnable, IMap {
 			GLUtils.disp(this.mapImages[this.zoom].getIndex());
 			GLShim.glPushMatrix();
 			GLShim.glTranslatef(x, y, 0.0F);
-			GLShim.glRotatef(!this.options.rotates ? this.northRotate : -this.direction + this.northRotate, 0.0F, 0.0F, 1.0F);
+			GLShim.glRotatef(!this.options.rotates ? 0.0F : -this.direction, 0.0F, 0.0F, 1.0F);
 			GLShim.glTranslatef(-x, -y, 0.0F);
 			GLShim.glTranslatef(-this.percentX, -this.percentY, 0.0F);
 			if (GLUtils.openGL14Enabled) {
@@ -1780,9 +1779,9 @@ public class Map implements Runnable, IMap {
 			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 			GLShim.glTranslatef(GLUtils.fboRad, GLUtils.fboRad, 0.0F);
 			if (!this.options.rotates) {
-				GLShim.glRotatef(-this.northRotate, 0.0F, 0.0F, 1.0F);
+				GLShim.glRotatef(0.0F, 0.0F, 0.0F, 1.0F);
 			} else {
-				GLShim.glRotatef(this.direction - this.northRotate, 0.0F, 0.0F, 1.0F);
+				GLShim.glRotatef(this.direction, 0.0F, 0.0F, 1.0F);
 			}
 
 			GLShim.glTranslatef(-GLUtils.fboRad, -GLUtils.fboRad, 0.0F);
@@ -1860,7 +1859,7 @@ public class Map implements Runnable, IMap {
 			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 			GLShim.glPushMatrix();
 			GLShim.glTranslatef(x, y, 0.0F);
-			GLShim.glRotatef(!this.options.rotates ? this.northRotate : -this.direction + this.northRotate, 0.0F, 0.0F, 1.0F);
+			GLShim.glRotatef(!this.options.rotates ? 0.0F : -this.direction, 0.0F, 0.0F, 1.0F);
 			GLShim.glTranslatef(-x, -y, 0.0F);
 			GLShim.glTranslatef(-this.percentX, -this.percentY, 0.0F);
 		}
@@ -1984,10 +1983,10 @@ public class Map implements Runnable, IMap {
 				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				GLShim.glTranslatef(x, y, 0.0F);
-				GLShim.glRotatef(-locate + this.northRotate, 0.0F, 0.0F, 1.0F);
+				GLShim.glRotatef(-locate, 0.0F, 0.0F, 1.0F);
 				if (uprightIcon) {
 					GLShim.glTranslated(0.0, -hypot, 0.0);
-					GLShim.glRotatef(locate - this.northRotate, 0.0F, 0.0F, 1.0F);
+					GLShim.glRotatef(locate, 0.0F, 0.0F, 1.0F);
 					GLShim.glTranslatef(-x, -y, 0.0F);
 				} else {
 					GLShim.glTranslatef(-x, -y, 0.0F);
@@ -2026,9 +2025,9 @@ public class Map implements Runnable, IMap {
 				GLShim.glColor4f(r, g, b, !pt.enabled && !target ? 0.3F : 1.0F);
 				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
-				GLShim.glRotatef(-locate + this.northRotate, 0.0F, 0.0F, 1.0F);
+				GLShim.glRotatef(-locate, 0.0F, 0.0F, 1.0F);
 				GLShim.glTranslated(0.0, -hypot, 0.0);
-				GLShim.glRotatef(-(-locate + this.northRotate), 0.0F, 0.0F, 1.0F);
+				GLShim.glRotatef(-(-locate), 0.0F, 0.0F, 1.0F);
 				GLUtils.drawPre();
 				GLUtils.setMap(icon, x, y, 16.0F);
 				GLUtils.drawPost();
@@ -2081,7 +2080,7 @@ public class Map implements Runnable, IMap {
 		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 		GLShim.glPushMatrix();
 		GLShim.glTranslatef(scWidth / 2.0F, scHeight / 2.0F, 0.0F);
-		GLShim.glRotatef(this.northRotate, 0.0F, 0.0F, 1.0F);
+		GLShim.glRotatef(0.0F, 0.0F, 0.0F, 1.0F);
 		GLShim.glTranslatef(-(scWidth / 2.0F), -(scHeight / 2.0F), 0.0F);
 		GLUtils.drawPre();
 		int left = scWidth / 2 - 128;
@@ -2105,11 +2104,7 @@ public class Map implements Runnable, IMap {
 					int nameWidth = this.chkLen(name);
 					float x = (float) (label.x * factor);
 					float z = (float) (label.z * factor);
-					if (this.options.oldNorth) {
-						this.write(name, left + 256 - z - (float) nameWidth / 2, top + x - 3.0F, 16777215);
-					} else {
-						this.write(name, left + x - (float) nameWidth / 2, top + z - 3.0F, 16777215);
-					}
+					this.write(name, left + x - (float) nameWidth / 2, top + z - 3.0F, 16777215);
 				}
 			}
 

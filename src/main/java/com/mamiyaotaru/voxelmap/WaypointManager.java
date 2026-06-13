@@ -386,24 +386,6 @@ public class WaypointManager implements IWaypointManager {
 	}
 
 	@Override
-	public void setOldNorth(boolean oldNorth) {
-		String oldNorthWorldName;
-		if (this.knownSubworldNames.isEmpty()) {
-			oldNorthWorldName = "all";
-		} else {
-			oldNorthWorldName = this.getCurrentSubworldDescriptor(false);
-		}
-
-		if (oldNorth) {
-			this.oldNorthWorldNames.add(oldNorthWorldName);
-		} else {
-			this.oldNorthWorldNames.remove(oldNorthWorldName);
-		}
-
-		this.saveWaypoints();
-	}
-
-	@Override
 	public TreeSet<String> getKnownSubworldNames() {
 		return this.knownSubworldNames;
 	}
@@ -447,10 +429,8 @@ public class WaypointManager implements IWaypointManager {
 	}
 
 	private void setSubWorldDescriptor(String descriptor) {
-		boolean serverSaysOldNorth = false;
 		if (descriptor.endsWith("§o§n")) {
 			descriptor = descriptor.substring(0, descriptor.length() - 4);
-			serverSaysOldNorth = true;
 		}
 
 		this.currentSubworldDescriptor = descriptor;
@@ -462,16 +442,6 @@ public class WaypointManager implements IWaypointManager {
 				pt.inWorld = currentSubWorldDescriptorScrubbed.isEmpty() || pt.world.isEmpty() || currentSubWorldDescriptorScrubbed.equals(pt.world);
 			}
 		}
-
-		if (serverSaysOldNorth) {
-			if (this.currentSubworldDescriptorNoCodes.isEmpty()) {
-				this.oldNorthWorldNames.add("all");
-			} else {
-				this.oldNorthWorldNames.add(this.currentSubworldDescriptorNoCodes);
-			}
-		}
-
-		this.master.getMapOptions().oldNorth = this.oldNorthWorldNames.contains(this.currentSubworldDescriptorNoCodes);
 	}
 
 	private void newSubworldName(String name) {
@@ -604,13 +574,7 @@ public class WaypointManager implements IWaypointManager {
 			}
 
 			out.println("subworlds:" + knownSubworldsString);
-			String oldNorthWorldsString = "";
 
-			for (String oldNorthWorldName : this.oldNorthWorldNames) {
-				oldNorthWorldsString = oldNorthWorldsString + TextUtils.scrubName(oldNorthWorldName) + ",";
-			}
-
-			out.println("oldNorthWorlds:" + oldNorthWorldsString);
 			String seedsString = "";
 
 			for (Entry<String, String> entry : this.worldSeeds.entrySet()) {
@@ -670,7 +634,6 @@ public class WaypointManager implements IWaypointManager {
 		this.gotAutoSubworldName = false;
 		this.currentDimension = 0.5F;
 		this.knownSubworldNames.clear();
-		this.oldNorthWorldNames.clear();
 		this.worldSeeds.clear();
 		synchronized (this.waypointLock) {
 			boolean loaded;
@@ -745,15 +708,6 @@ public class WaypointManager implements IWaypointManager {
 				for (String subWorld : subWorlds) {
 					if (!subWorld.isEmpty()) {
 						this.knownSubworldNames.add(TextUtils.descrubName(subWorld));
-					}
-				}
-
-				String oldNorthWorldsS = properties.getProperty("oldNorthWorlds", "");
-				String[] oldNorthWorlds = oldNorthWorldsS.split(",");
-
-				for (String oldNorthWorld : oldNorthWorlds) {
-					if (!oldNorthWorld.isEmpty()) {
-						this.oldNorthWorldNames.add(TextUtils.descrubName(oldNorthWorld));
 					}
 				}
 

@@ -113,7 +113,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private PopupGuiButton buttonMultiworld;
 	private int top;
 	private int bottom;
-	private boolean oldNorth = false;
 	private boolean lastStill = false;
 	private boolean editingCoordinates = false;
 	private boolean lastEditingCoordinates = false;
@@ -198,7 +197,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	public void initGui() {
-		this.oldNorth = this.mapOptions.oldNorth;
 		this.centerAt(this.options.mapX, this.options.mapZ);
 		Keyboard.enableRepeatEvents(true);
 		if (this.getMinecraft().currentScreen == this) {
@@ -288,13 +286,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	private void centerAt(int x, int z) {
-		if (this.oldNorth) {
-			this.mapCenterX = -z;
-			this.mapCenterZ = x;
-		} else {
-			this.mapCenterX = x;
-			this.mapCenterZ = z;
-		}
+		this.mapCenterX = x;
+		this.mapCenterZ = z;
 	}
 
 	private void buildWorldName() {
@@ -433,15 +426,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			this.coordinates.mouseClicked(mouseX, mouseY, mouseButton);
 			this.editingCoordinates = this.coordinates.isFocused();
 			if (this.editingCoordinates && !this.lastEditingCoordinates) {
-				int x;
-				int z;
-				if (this.oldNorth) {
-					x = (int) Math.floor(this.mapCenterZ);
-					z = -((int) Math.floor(this.mapCenterX));
-				} else {
-					x = (int) Math.floor(this.mapCenterX);
-					z = (int) Math.floor(this.mapCenterZ);
-				}
+				int	x = (int) Math.floor(this.mapCenterX);
+				int	z = (int) Math.floor(this.mapCenterZ);
 
 				this.coordinates.setText(x + ", " + z);
 				this.coordinates.setTextColor(16777215);
@@ -632,31 +618,16 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		this.mapCenterX = this.mapCenterX + this.deltaX;
 		this.mapCenterZ = this.mapCenterZ + this.deltaY;
-		if (this.oldNorth) {
-			this.options.mapX = (int) this.mapCenterZ;
-			this.options.mapZ = -((int) this.mapCenterX);
-		} else {
-			this.options.mapX = (int) this.mapCenterX;
-			this.options.mapZ = (int) this.mapCenterZ;
-		}
+		this.options.mapX = (int) this.mapCenterX;
+		this.options.mapZ = (int) this.mapCenterZ;
 
 		this.centerX = this.getWidth() / 2;
 		this.centerY = (this.bottom - this.top) / 2;
-		int left;
-		int right;
-		int top;
-		int bottom;
-		if (this.oldNorth) {
-			left = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
-			right = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
-			top = (int) Math.floor((-this.mapCenterX - this.centerX * this.guiToMap) / 256.0F);
-			bottom = (int) Math.floor((-this.mapCenterX + this.centerX * this.guiToMap) / 256.0F);
-		} else {
-			left = (int) Math.floor((this.mapCenterX - this.centerX * this.guiToMap) / 256.0F);
-			right = (int) Math.floor((this.mapCenterX + this.centerX * this.guiToMap) / 256.0F);
-			top = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
-			bottom = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
-		}
+
+		int	left = (int) Math.floor((this.mapCenterX - this.centerX * this.guiToMap) / 256.0F);
+		int	right = (int) Math.floor((this.mapCenterX + this.centerX * this.guiToMap) / 256.0F);
+		int	top = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
+		int	bottom = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
 
 		synchronized (this.closedLock) {
 			if (this.closed) {
@@ -668,9 +639,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		GLShim.glColor3f(1.0F, 1.0F, 1.0F);
 		GLShim.glTranslatef(this.centerX - this.mapCenterX * this.mapToGui, this.top + this.centerY - this.mapCenterZ * this.mapToGui, 0.0F);
-		if (this.oldNorth) {
-			GLShim.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
-		}
 
 		this.backGroundImageInfo = this.waypointManager.getBackgroundImageInfo();
 		if (this.backGroundImageInfo != null) {
@@ -721,15 +689,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			cursorY = Display.getHeight() - Display.getHeight() / 2F - this.top * this.guiToDirectMouse;
 		}
 
-		float cursorCoordZ;
-		float cursorCoordX;
-		if (this.oldNorth) {
-			cursorCoordX = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-			cursorCoordZ = -(cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
-		} else {
-			cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
-			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-		}
+		float cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
+		float cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 
 		GLShim.glEnable(GLShim.GL11_GL_BLEND);
 		if (this.options.showWaypoints) {
@@ -756,23 +717,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 		float playerX = (float) GameVariableAccessShim.xCoordDouble();
 		float playerZ = (float) GameVariableAccessShim.zCoordDouble();
-		if (this.oldNorth) {
-			GLShim.glPushMatrix();
-			GLShim.glTranslatef(playerX * this.mapToGui, playerZ * this.mapToGui, 0.0F);
-			GLShim.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
-			GLShim.glTranslatef(-(playerX * this.mapToGui), -(playerZ * this.mapToGui), 0.0F);
-		}
 
 		this.drawTexturedModalRect(
 			-10.0F / this.scScale + playerX * this.mapToGui, -10.0F / this.scScale + playerZ * this.mapToGui, 20.0F / this.scScale, 20.0F / this.scScale
 		);
-		if (this.oldNorth) {
-			GLShim.glPopMatrix();
-		}
-
-		if (this.oldNorth) {
-			GLShim.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
-		}
 
 		GLShim.glTranslatef(-(this.centerX - this.mapCenterX * this.mapToGui), -(this.top + this.centerY - this.mapCenterZ * this.mapToGui), 0.0F);
 		if (this.mapOptions.biomeOverlay != 0) {
@@ -783,34 +731,22 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			still = still && this.deltaX == 0.0F && this.deltaY == 0.0F;
 			still = still && ThreadManager.executorService.getActiveCount() == 0;
 			if (still && !this.lastStill) {
-				int column;
-				if (this.oldNorth) {
-					column = (int) Math.floor(Math.floor(this.mapCenterZ - this.centerY * this.guiToMap) / 256.0) - (left - 1);
-				} else {
-					column = (int) Math.floor(Math.floor(this.mapCenterX - this.centerX * this.guiToMap) / 256.0) - (left - 1);
-				}
+				int	column = (int) Math.floor(Math.floor(this.mapCenterX - this.centerX * this.guiToMap) / 256.0) - (left - 1);
 
 				for (int x = 0; x < this.biomeMapData.getWidth(); x++) {
 					for (int z = 0; z < this.biomeMapData.getHeight(); z++) {
-						float floatMapX;
-						float floatMapZ;
-						if (this.oldNorth) {
-							floatMapX = z * biomeScaleY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-							floatMapZ = -(x * biomeScaleX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
-						} else {
-							floatMapX = x * biomeScaleX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
-							floatMapZ = z * biomeScaleY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-						}
+						float floatMapX = x * biomeScaleX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
+						float floatMapZ = z * biomeScaleY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 
 						int mapX = (int) Math.floor(floatMapX);
 						int mapZ = (int) Math.floor(floatMapZ);
 						int regionX = (int) Math.floor(mapX / 256.0F) - (left - 1);
 						int regionZ = (int) Math.floor(mapZ / 256.0F) - (top - 1);
-						if (!this.oldNorth && regionX != column || this.oldNorth && regionZ != column) {
+						if (regionX != column) {
 							this.persistentMap.compress();
 						}
 
-						column = !this.oldNorth ? regionX : regionZ;
+						column = regionX;
 						CachedRegion region = this.regions[regionZ * (right + 1 - (left - 1) + 1) + regionX];
 						int id = -1;
 						if (region.getMapData() != null && region.isLoaded() && !region.isEmpty()) {
@@ -941,30 +877,16 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				GLShim.glColor4f(r, g, b, !pt.enabled && !target && !hover ? 0.3F : 1.0F);
 				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
-				if (this.oldNorth) {
-					GLShim.glPushMatrix();
-					GLShim.glTranslatef(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
-					GLShim.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
-					GLShim.glTranslatef(-(ptX * this.mapToGui), -(ptZ * this.mapToGui), 0.0F);
-				}
 
 				this.drawTexturedModalRect(
 					-16.0F / this.scScale + ptX * this.mapToGui, -16.0F / this.scScale + ptZ * this.mapToGui, icon, 32.0F / this.scScale, 32.0F / this.scScale
 				);
-				if (this.oldNorth) {
-					GLShim.glPopMatrix();
-				}
 
 				if (this.mapOptions.biomeOverlay == 0 && this.options.showWaypointNames || target || hover) {
 					float fontScale = 2.0F / this.scScale;
 					int m = this.chkLen(name) / 2;
 					GLShim.glPushMatrix();
 					GLShim.glScalef(fontScale, fontScale, 1.0F);
-					if (this.oldNorth) {
-						GLShim.glTranslatef(ptX * this.mapToGui / fontScale, ptZ * this.mapToGui / fontScale, 0.0F);
-						GLShim.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
-						GLShim.glTranslatef(-(ptX * this.mapToGui / fontScale), -(ptZ * this.mapToGui / fontScale), 0.0F);
-					}
 
 					this.write(
 						name,
@@ -980,21 +902,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	private boolean isOnScreen(int x, int z) {
-		int left;
-		int right;
-		int top;
-		int bottom;
-		if (this.oldNorth) {
-			left = (int) Math.floor(this.mapCenterZ - this.centerY * this.guiToMap * 1.1);
-			right = (int) Math.floor(this.mapCenterZ + this.centerY * this.guiToMap * 1.1);
-			top = (int) Math.floor(-this.mapCenterX - this.centerX * this.guiToMap * 1.1);
-			bottom = (int) Math.floor(-this.mapCenterX + this.centerX * this.guiToMap * 1.1);
-		} else {
-			left = (int) Math.floor(this.mapCenterX - this.centerX * this.guiToMap * 1.1);
-			right = (int) Math.floor(this.mapCenterX + this.centerX * this.guiToMap * 1.1);
-			top = (int) Math.floor(this.mapCenterZ - this.centerY * this.guiToMap * 1.1);
-			bottom = (int) Math.floor(this.mapCenterZ + this.centerY * this.guiToMap * 1.1);
-		}
+		int	left = (int) Math.floor(this.mapCenterX - this.centerX * this.guiToMap * 1.1);
+		int	right = (int) Math.floor(this.mapCenterX + this.centerX * this.guiToMap * 1.1);
+		int	top = (int) Math.floor(this.mapCenterZ - this.centerY * this.guiToMap * 1.1);
+		int	bottom = (int) Math.floor(this.mapCenterZ + this.centerY * this.guiToMap * 1.1);
 
 		return x > left && x < right && z > top && z < bottom;
 	}
@@ -1084,15 +995,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		float cursorX = mouseDirectX;
 		float cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
 
-		float cursorCoordX;
-		float cursorCoordZ;
-		if (this.oldNorth) {
-			cursorCoordX = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-			cursorCoordZ = -(cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
-		} else {
-			cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
-			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-		}
+		float cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
+		float cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 
 		int x = (int) Math.floor(cursorCoordX);
 		int z = (int) Math.floor(cursorCoordZ);
@@ -1174,15 +1078,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		float cursorX = mouseDirectX;
 		float cursorY = mouseDirectY - this.top * this.guiToDirectMouse;
 
-		float cursorCoordX;
-		float cursorCoordZ;
-		if (this.oldNorth) {
-			cursorCoordX = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-			cursorCoordZ = -(cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap));
-		} else {
-			cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
-			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
-		}
+		float cursorCoordX = cursorX * this.mouseDirectToMap + (this.mapCenterX - this.centerX * this.guiToMap);
+		float cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 
 		int x = (int) Math.floor(cursorCoordX);
 		int z = (int) Math.floor(cursorCoordZ);

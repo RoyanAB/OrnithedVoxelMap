@@ -233,8 +233,6 @@ public class RadarSimple implements IRadar {
 
 			if (this.minimapOptions.rotates) {
 				contact.angle = contact.angle + this.direction;
-			} else if (this.minimapOptions.oldNorth) {
-				contact.angle -= 90.0F;
 			}
 
 			boolean inRange;
@@ -253,8 +251,6 @@ public class RadarSimple implements IRadar {
 					float contactFacing = contact.entity.getRotationYawHead();
 					if (this.minimapOptions.rotates) {
 						contactFacing -= this.direction;
-					} else if (this.minimapOptions.oldNorth) {
-						contactFacing += 90.0F;
 					}
 
 					GLShim.glTranslatef(x, y, 0.0F);

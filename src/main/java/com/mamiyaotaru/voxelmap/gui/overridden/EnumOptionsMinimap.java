@@ -8,7 +8,6 @@ public enum EnumOptionsMinimap {
 	TERRAIN("options.minimap.terraindepth", false, false, true),
 	SQUARE("options.minimap.squaremap", false, true, false),
 	ROTATES("options.minimap.rotation", false, true, false),
-	OLDNORTH("options.minimap.oldnorth", false, true, false),
 	BEACONS("options.minimap.ingamewaypoints", false, false, true),
 	WELCOME("Welcome Screen", false, true, false),
 	ZOOM("option.minimapZoom", false, true, false),

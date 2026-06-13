@@ -1928,25 +1928,20 @@ public class Radar implements IRadar {
 			if (inRange) {
 				try {
 					GLShim.glPushMatrix();
-					int northRotate = this.minimapOptions.oldNorth && !this.minimapOptions.rotates ? 90 : 0;
 					if (this.options.filtering) {
 						GLShim.glTranslatef(x, y, 0.0F);
-						GLShim.glRotatef(-contact.angle + northRotate, 0.0F, 0.0F, 1.0F);
+						GLShim.glRotatef(-contact.angle, 0.0F, 0.0F, 1.0F);
 						GLShim.glTranslated(0.0, -contact.distance, 0.0);
-						GLShim.glRotatef(contact.angle - northRotate + contact.rotationFactor, 0.0F, 0.0F, 1.0F);
+						GLShim.glRotatef(contact.angle + contact.rotationFactor, 0.0F, 0.0F, 1.0F);
 						GLShim.glTranslatef(-x, -y, 0.0F);
 					} else {
-						wayX = Math.sin(Math.toRadians(contact.angle - northRotate)) * contact.distance;
-						wayZ = Math.cos(Math.toRadians(contact.angle - northRotate)) * contact.distance;
-						if (this.options.filtering) {
-							GLShim.glTranslated(-wayX, -wayZ, 0.0);
-						} else {
-							GLShim.glTranslated(
-								(double) Math.round(-wayX * this.layoutVariables.scScale) / this.layoutVariables.scScale,
-								(double) Math.round(-wayZ * this.layoutVariables.scScale) / this.layoutVariables.scScale,
-								0.0
-							);
-						}
+						wayX = Math.sin(Math.toRadians(contact.angle)) * contact.distance;
+						wayZ = Math.cos(Math.toRadians(contact.angle)) * contact.distance;
+						GLShim.glTranslated(
+							(double) Math.round(-wayX * this.layoutVariables.scScale) / this.layoutVariables.scScale,
+							(double) Math.round(-wayZ * this.layoutVariables.scScale) / this.layoutVariables.scScale,
+							0.0
+						);
 					}
 
 					float yOffset = 0.0F;

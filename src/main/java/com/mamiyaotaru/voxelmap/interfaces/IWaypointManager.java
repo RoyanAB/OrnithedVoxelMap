@@ -43,8 +43,6 @@ public interface IWaypointManager {
 
 	void deleteSubworld(String name);
 
-	void setOldNorth(boolean isOldNorth);
-
 	String getCurrentSubworldDescriptor(boolean b);
 
 	void renderWaypoints(float partialTicks);

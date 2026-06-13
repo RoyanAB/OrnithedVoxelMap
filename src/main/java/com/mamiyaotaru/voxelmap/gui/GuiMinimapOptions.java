@@ -76,9 +76,6 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 			if (button.id < 100 && button instanceof GuiOptionButtonMinimap) {
 				this.options.setOptionValue(((GuiOptionButtonMinimap) button).returnEnumOptions());
 				button.displayString = this.options.getKeyText(Objects.requireNonNull(EnumOptionsMinimap.getEnumOptions(button.id)));
-				if (((GuiOptionButtonMinimap) button).returnEnumOptions() == EnumOptionsMinimap.OLDNORTH) {
-					this.master.getWaypointManager().setOldNorth(this.options.oldNorth);
-				}
 			}
 
 			if (button.id == 103) {

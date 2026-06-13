@@ -26,7 +26,6 @@ public class MapSettingsManager implements ISettingsManager {
 	public boolean slimeChunks = false;
 	public boolean squareMap = false;
 	public boolean rotates = true;
-	public boolean oldNorth = false;
 	public boolean showBeacons = false;
 	public boolean showWaypoints = true;
 	public int deathpoints = 1;
@@ -163,9 +162,6 @@ public class MapSettingsManager implements ISettingsManager {
 						case "Rotation":
 							this.rotates = Boolean.parseBoolean(curLine[1]);
 							break;
-						case "Old North":
-							this.oldNorth = Boolean.parseBoolean(curLine[1]);
-							break;
 						case "Waypoint Beacons":
 							this.showBeacons = Boolean.parseBoolean(curLine[1]);
 							break;
@@ -257,7 +253,6 @@ public class MapSettingsManager implements ISettingsManager {
 			out.println("Slime Chunks:" + this.slimeChunks);
 			out.println("Square Map:" + this.squareMap);
 			out.println("Rotation:" + this.rotates);
-			out.println("Old North:" + this.oldNorth);
 			out.println("Waypoint Beacons:" + this.showBeacons);
 			out.println("Waypoint Signs:" + this.showWaypoints);
 			out.println("Deathpoints:" + this.deathpoints);
@@ -329,8 +324,6 @@ public class MapSettingsManager implements ISettingsManager {
 				return this.squareMap;
 			case ROTATES:
 				return this.rotates;
-			case OLDNORTH:
-				return this.oldNorth;
 			case WELCOME:
 				return this.welcome;
 			case FILTERING:
@@ -474,9 +467,6 @@ public class MapSettingsManager implements ISettingsManager {
 				break;
 			case ROTATES:
 				this.rotates = !this.rotates;
-				break;
-			case OLDNORTH:
-				this.oldNorth = !this.oldNorth;
 				break;
 			case WELCOME:
 				this.welcome = !this.welcome;
