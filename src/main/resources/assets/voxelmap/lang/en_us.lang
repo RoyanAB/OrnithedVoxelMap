@@ -18,7 +18,6 @@ options.minimap.dynamiclighting=Dynamic Lighting
 options.minimap.terraindepth=Terrain Depth
 options.minimap.squaremap=Square Map
 options.minimap.rotation=Rotation
-options.minimap.oldnorth=Old North
 options.minimap.ingamewaypoints=In-game Waypoints
 options.minimap.ingamewaypoints.beacons=Beacons
 options.minimap.ingamewaypoints.signs=Signs

@@ -18,7 +18,6 @@ options.minimap.dynamiclighting=动态光源
 options.minimap.terraindepth=地形显示类型
 options.minimap.squaremap=方形地图
 options.minimap.rotation=地图旋转
-options.minimap.oldnorth=日落北方
 options.minimap.ingamewaypoints=坐标点显示类型
 options.minimap.ingamewaypoints.beacons=只显示光柱
 options.minimap.ingamewaypoints.signs=只显示坐标

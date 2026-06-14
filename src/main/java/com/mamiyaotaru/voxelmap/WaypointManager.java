@@ -45,7 +45,6 @@ public class WaypointManager implements IWaypointManager {
 	private ArrayList<Waypoint> wayPts = new ArrayList<>();
 	private ArrayList<Waypoint> old2dWayPts = new ArrayList<>();
 	private final TreeSet<String> knownSubworldNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-	private final HashSet<String> oldNorthWorldNames = new HashSet<>();
 	private final HashMap<String, String> worldSeeds = new HashMap<>();
 
 	private String worldName = "";
