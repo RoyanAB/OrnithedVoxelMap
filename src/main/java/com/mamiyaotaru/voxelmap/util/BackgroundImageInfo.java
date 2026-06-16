@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.image.BufferedImage;
 
-@SuppressWarnings("unused")
 public class BackgroundImageInfo {
 	public final int glid;
 	public final int left;

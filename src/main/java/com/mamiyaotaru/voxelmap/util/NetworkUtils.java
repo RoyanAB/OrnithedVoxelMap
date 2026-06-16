@@ -7,7 +7,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-@SuppressWarnings("unused")
 public class NetworkUtils {
 	private static ArrayList<InterfaceAddress> interfaceAddresses;
 

@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class BlockModel {
-	ArrayList<BlockModel.BlockFace> faces = new ArrayList<>();
-	BlockModel.BlockVertex[] longestSide;
-	float failedToLoadX;
-	float failedToLoadY;
+	private final ArrayList<BlockModel.BlockFace> faces = new ArrayList<>();
+	private BlockModel.BlockVertex[] longestSide;
+	private float failedToLoadX;
+	private float failedToLoadY;
 
 	public BlockModel(List<BakedQuad> quads) {
 		for (BakedQuad bakedQuad : quads) {

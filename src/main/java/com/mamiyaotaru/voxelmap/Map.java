@@ -138,7 +138,7 @@ public class Map implements Runnable, IMap {
 	private Long newServerTime = 0L;
 	private boolean checkMOTD = false;
 	private ChatLine mostRecentLine = null;
-	private int northRotate = 0;
+	private final int northRotate = 0;
 	private Thread zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
 	private int zCalcTicker = 0;
 

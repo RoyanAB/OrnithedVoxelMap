@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@SuppressWarnings("unused")
 public class ThreadManager {
 	static final int concurrentThreads = Math.max(Runtime.getRuntime().availableProcessors() - 1, 1);
 	static final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();

@@ -21,7 +21,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Collections;
 
-@SuppressWarnings("unused")
 public class WaypointContainer {
 	private final String TARGETFLAG = "*&^TARget%$^";
 	public MapSettingsManager options;

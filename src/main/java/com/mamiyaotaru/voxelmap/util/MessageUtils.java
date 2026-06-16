@@ -4,7 +4,6 @@ import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 
-@SuppressWarnings("unused")
 public final class MessageUtils {
 	private static final boolean debug = false;
 

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.zip.DataFormatException;
 
-
 public class CompressibleMapData extends AbstractMapData {
 	public static final int DATABITS = 18;
 

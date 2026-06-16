@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.zip.DataFormatException;
 
-@SuppressWarnings("unused")
 public class CompressibleGLBufferedImage implements IGLBufferedImage {
 	private static final HashMap<Integer, ByteBuffer> byteBuffers = new HashMap<>(4);
 	private static final ByteBuffer defaultSizeBuffer = ByteBuffer.allocateDirect(262144).order(ByteOrder.nativeOrder());

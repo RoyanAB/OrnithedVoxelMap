@@ -69,7 +69,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 	protected void drawSlot(int slotIndex, int leftEdge, int slotYPos, int topFudge, int mouseX, int mouseY, float partialTicks) {
 		Dimension dim = this.dimensionManager.getDimensions().get(slotIndex);
 
-		this.parentGui.drawCenteredString(this.parentGui.getFontRenderer(), dim.name, this.parentGui.getWidth() / 2 + this.slotWidth / 2, slotYPos + 3, 16777215);
+		this.parentGui.drawCenteredString(this.parentGui.getFontRenderer(), dim.getName(), this.parentGui.getWidth() / 2 + this.slotWidth / 2, slotYPos + 3, 16777215);
 		byte padding = 4;
 		byte iconWidth = 16;
 		leftEdge = this.parentGui.getWidth() / 2;
@@ -80,7 +80,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 			&& this.mouseY <= slotYPos + this.slotHeight) {
 			String tooltip = null;
 			if (!this.parentGui.popupOpen() && this.mouseX >= leftEdge + width - iconWidth - padding && this.mouseX <= leftEdge + width) {
-				tooltip = this.parentGui.waypoint.dimensions.contains(dim.ID)
+				tooltip = this.parentGui.waypoint.dimensions.contains(dim.getID())
 					? I18nUtils.getString("minimap.waypoints.dimension.applies")
 					: I18nUtils.getString("minimap.waypoints.dimension.notapplies");
 			}
@@ -90,7 +90,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GLUtils.img("textures/gui/container/beacon.png");
-		int xOffset = this.parentGui.waypoint.dimensions.contains(dim.ID) ? 91 : 113;
+		int xOffset = this.parentGui.waypoint.dimensions.contains(dim.getID()) ? 91 : 113;
 		int yOffset = 222;
 		this.parentGui.drawTexturedModalRect(leftEdge + width - iconWidth, slotYPos - 2, xOffset, yOffset, 16, 16);
 	}

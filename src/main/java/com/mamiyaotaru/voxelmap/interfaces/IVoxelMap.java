@@ -4,7 +4,6 @@ import com.mamiyaotaru.voxelmap.MapSettingsManager;
 import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMapSettingsManager;
 
-@SuppressWarnings("unused")
 public interface IVoxelMap {
 	MapSettingsManager getMapOptions();
 

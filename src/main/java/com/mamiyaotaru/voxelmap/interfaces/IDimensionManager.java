@@ -4,7 +4,6 @@ import com.mamiyaotaru.voxelmap.util.Dimension;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public interface IDimensionManager {
 	ArrayList<Dimension> getDimensions();
 

@@ -26,14 +26,13 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("unused")
 public class CommandUtils {
 	private static final String newWaypointCommand = "/newWaypoint ";
 	private static final int newWaypointCommandLength = newWaypointCommand.length();
 	private static final String teleportCommand = "/ztp ";
 	private static final int teleportCommandLength = teleportCommand.length();
 	private static final Random generator = new Random();
-	public static Pattern pattern = Pattern.compile("\\[(\\w+\\s*:\\s*[-#]?[^\\[\\]]+)(,\\s*\\w+\\s*:\\s*[-#]?[^\\[\\]]+)+\\]", 2);
+	public static Pattern pattern = Pattern.compile("\\[(\\w+\\s*:\\s*[-#]?[^\\[\\]]+)(,\\s*\\w+\\s*:\\s*[-#]?[^\\[\\]]+)+]", 2);
 
 	public static boolean checkForWaypoints(ITextComponent chat, String message) {
 		ArrayList<String> waypointStrings = getWaypointStrings(message);

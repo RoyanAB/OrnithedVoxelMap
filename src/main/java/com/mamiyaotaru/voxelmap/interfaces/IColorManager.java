@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 
 import java.awt.image.BufferedImage;
 
-@SuppressWarnings("unused")
 public interface IColorManager {
 	void onResourceManagerReload(IResourceManager iResourceManager);
 

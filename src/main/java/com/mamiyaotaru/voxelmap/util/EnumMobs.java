@@ -2,7 +2,6 @@ package com.mamiyaotaru.voxelmap.util;
 
 import net.minecraft.util.ResourceLocation;
 
-@SuppressWarnings("unused")
 public enum EnumMobs {
 	BLANK("Blank", "", false, 2, "textures/entity/bat.png", "", false, false),
 	GENERICHOSTILE("Monster", "hostile", false, 8, "textures/entity/zombie/zombie.png", "", true, false),
@@ -93,9 +92,5 @@ public enum EnumMobs {
 		}
 
 		return null;
-	}
-
-	public int returnEnumOrdinal() {
-		return this.ordinal();
 	}
 }

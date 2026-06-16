@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@SuppressWarnings("unused")
 public class BlockRepository {
 	private static final Reference2IntOpenHashMap<IBlockState> stateToInt = new Reference2IntOpenHashMap<>(1024);
 	private static final ReferenceArrayList<IBlockState> blockStates = new ReferenceArrayList<>(16384);

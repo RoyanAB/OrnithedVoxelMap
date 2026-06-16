@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-@SuppressWarnings("unused")
 public interface IPersistentMap extends IChangeObserver {
 	void newWorld(World world);
 

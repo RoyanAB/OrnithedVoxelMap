@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class GameVariableAccessShim {
+public final class GameVariableAccessShim {
 	private static final Minecraft minecraft = Minecraft.getMinecraft();
 
 	public static Minecraft getMinecraft() {

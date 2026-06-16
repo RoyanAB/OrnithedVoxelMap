@@ -29,7 +29,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-@SuppressWarnings("unused")
 public class CachedRegion implements IThreadCompleteListener, ISettingsAndLightingChangeListener {
 	public final static EmptyCachedRegion emptyRegion = new EmptyCachedRegion();
 	private final int width = 256;

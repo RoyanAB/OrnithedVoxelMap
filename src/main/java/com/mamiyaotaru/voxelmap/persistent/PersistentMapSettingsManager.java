@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
 
-
 public class PersistentMapSettingsManager implements ISubSettingsManager {
 	protected final int MINMINZOOMPOWER = -3;
 	protected final int MAXMAXZOOMPOWER = 5;

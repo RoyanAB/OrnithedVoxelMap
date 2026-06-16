@@ -7,7 +7,6 @@ import net.minecraft.world.biome.Biome;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@SuppressWarnings("unused")
 public abstract class AbstractMapData implements IMapData {
 	protected final Object dataLock = new Object();
 	private final Object labelLock = new Object();

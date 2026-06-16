@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-@SuppressWarnings("unused")
 public class WorldMatcher {
 	private final IVoxelMap master;
 	private final IPersistentMap map;

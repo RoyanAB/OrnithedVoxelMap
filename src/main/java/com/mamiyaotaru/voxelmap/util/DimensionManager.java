@@ -9,10 +9,9 @@ import net.minecraft.world.WorldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-@SuppressWarnings("unused")
 public class DimensionManager implements IDimensionManager {
-	public ArrayList<Dimension> dimensions;
-	IVoxelMap master;
+	private final ArrayList<Dimension> dimensions;
+	private final IVoxelMap master;
 
 	public DimensionManager(IVoxelMap master) {
 		this.master = master;
@@ -78,7 +77,7 @@ public class DimensionManager implements IDimensionManager {
 			}
 		}
 
-		this.dimensions.sort(Comparator.comparingInt(dim -> dim.ID));
+		this.dimensions.sort(Comparator.comparingInt(Dimension::getID));
 	}
 
 	@Override
@@ -87,14 +86,14 @@ public class DimensionManager implements IDimensionManager {
 		if (dim == null) {
 			dim = new Dimension("notLoaded", ID);
 			this.dimensions.add(dim);
-			this.dimensions.sort(Comparator.comparingInt(dim2 -> dim2.ID));
+			this.dimensions.sort(Comparator.comparingInt(Dimension::getID));
 		}
 
-		if (dim.name.equals("notLoaded") || dim.name.equals("failedToLoad")) {
+		if (dim.getName().equals("notLoaded") || dim.getName().equals("failedToLoad")) {
 			try {
-				dim.name = Minecraft.getMinecraft().world.provider.getDimensionType().getName() + " " + ID;
+				dim.setName(Minecraft.getMinecraft().world.provider.getDimensionType().getName() + " " + ID);
 			} catch (Exception e) {
-				dim.name = "dimension " + ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")";
+				dim.setName("dimension " + ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")");
 			}
 		}
 	}
@@ -102,7 +101,7 @@ public class DimensionManager implements IDimensionManager {
 	@Override
 	public Dimension getDimensionByID(int ID) {
 		for (Dimension dim : this.dimensions) {
-			if (dim.ID == ID) {
+			if (dim.getID() == ID) {
 				return dim;
 			}
 		}

@@ -1,6 +1,5 @@
 package com.mamiyaotaru.voxelmap.util;
 
-@SuppressWarnings("unused")
 public class LayoutVariables {
 	public int scScale = 0;
 	public int mapX = 0;

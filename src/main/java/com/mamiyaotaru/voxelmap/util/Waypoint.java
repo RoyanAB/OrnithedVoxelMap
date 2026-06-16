@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.TreeSet;
 
-@SuppressWarnings("unused")
 public class Waypoint implements Serializable, Comparable<Waypoint> {
 	private static final long serialVersionUID = 8136790917447997951L;
 	public String name;

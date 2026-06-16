@@ -426,8 +426,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			this.coordinates.mouseClicked(mouseX, mouseY, mouseButton);
 			this.editingCoordinates = this.coordinates.isFocused();
 			if (this.editingCoordinates && !this.lastEditingCoordinates) {
-				int	x = (int) Math.floor(this.mapCenterX);
-				int	z = (int) Math.floor(this.mapCenterZ);
+				int x = (int) Math.floor(this.mapCenterX);
+				int z = (int) Math.floor(this.mapCenterZ);
 
 				this.coordinates.setText(x + ", " + z);
 				this.coordinates.setTextColor(16777215);
@@ -624,10 +624,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		this.centerX = this.getWidth() / 2;
 		this.centerY = (this.bottom - this.top) / 2;
 
-		int	left = (int) Math.floor((this.mapCenterX - this.centerX * this.guiToMap) / 256.0F);
-		int	right = (int) Math.floor((this.mapCenterX + this.centerX * this.guiToMap) / 256.0F);
-		int	top = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
-		int	bottom = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
+		int left = (int) Math.floor((this.mapCenterX - this.centerX * this.guiToMap) / 256.0F);
+		int right = (int) Math.floor((this.mapCenterX + this.centerX * this.guiToMap) / 256.0F);
+		int top = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
+		int bottom = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
 
 		synchronized (this.closedLock) {
 			if (this.closed) {
@@ -731,7 +731,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			still = still && this.deltaX == 0.0F && this.deltaY == 0.0F;
 			still = still && ThreadManager.executorService.getActiveCount() == 0;
 			if (still && !this.lastStill) {
-				int	column = (int) Math.floor(Math.floor(this.mapCenterX - this.centerX * this.guiToMap) / 256.0) - (left - 1);
+				int column = (int) Math.floor(Math.floor(this.mapCenterX - this.centerX * this.guiToMap) / 256.0) - (left - 1);
 
 				for (int x = 0; x < this.biomeMapData.getWidth(); x++) {
 					for (int z = 0; z < this.biomeMapData.getHeight(); z++) {
@@ -902,10 +902,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	private boolean isOnScreen(int x, int z) {
-		int	left = (int) Math.floor(this.mapCenterX - this.centerX * this.guiToMap * 1.1);
-		int	right = (int) Math.floor(this.mapCenterX + this.centerX * this.guiToMap * 1.1);
-		int	top = (int) Math.floor(this.mapCenterZ - this.centerY * this.guiToMap * 1.1);
-		int	bottom = (int) Math.floor(this.mapCenterZ + this.centerY * this.guiToMap * 1.1);
+		int left = (int) Math.floor(this.mapCenterX - this.centerX * this.guiToMap * 1.1);
+		int right = (int) Math.floor(this.mapCenterX + this.centerX * this.guiToMap * 1.1);
+		int top = (int) Math.floor(this.mapCenterZ - this.centerY * this.guiToMap * 1.1);
+		int bottom = (int) Math.floor(this.mapCenterZ + this.centerY * this.guiToMap * 1.1);
 
 		return x > left && x < right && z > top && z < bottom;
 	}

@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
-@SuppressWarnings("unused")
 public class MapChunkCache {
 	private final int width;
 	private final int height;

@@ -1,6 +1,5 @@
 package com.mamiyaotaru.voxelmap.interfaces;
 
-@SuppressWarnings("unused")
 public interface IGLBufferedImage {
 	int getIndex();
 

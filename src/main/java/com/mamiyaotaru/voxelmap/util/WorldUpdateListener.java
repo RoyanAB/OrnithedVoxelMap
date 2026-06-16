@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public class WorldUpdateListener implements IWorldEventListener {
 	private final ArrayList<IChangeObserver> chunkProcessors = new ArrayList<>();
 

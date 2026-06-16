@@ -8,7 +8,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
-@SuppressWarnings("unused")
 public class BlockStateParser {
 	public static void parseLine(String line, BiMap<IBlockState, Integer> map) {
 		String[] lineParts = line.split(" ");

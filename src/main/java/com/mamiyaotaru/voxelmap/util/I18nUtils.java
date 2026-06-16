@@ -6,8 +6,7 @@ import net.minecraft.client.resources.I18n;
 import java.text.Collator;
 import java.util.Locale;
 
-@SuppressWarnings("unused")
-public class I18nUtils {
+public final class I18nUtils {
 	public static String getString(String translateMe, Object... args) {
 		return I18n.format(translateMe, args);
 	}

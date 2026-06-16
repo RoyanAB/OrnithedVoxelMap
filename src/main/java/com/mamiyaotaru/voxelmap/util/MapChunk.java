@@ -4,7 +4,6 @@ import com.mamiyaotaru.voxelmap.interfaces.IChangeObserver;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.chunk.Chunk;
 
-@SuppressWarnings("unused")
 public class MapChunk {
 	private final int x;
 	private final int z;

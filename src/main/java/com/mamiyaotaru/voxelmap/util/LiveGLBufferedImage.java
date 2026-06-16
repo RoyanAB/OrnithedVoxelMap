@@ -5,7 +5,6 @@ import com.mamiyaotaru.voxelmap.VoxelMap;
 
 import java.nio.Buffer;
 
-@SuppressWarnings("unused")
 public class LiveGLBufferedImage extends GLBufferedImage {
 	public LiveGLBufferedImage(int width, int height, int imageType) {
 		super(width, height, imageType);

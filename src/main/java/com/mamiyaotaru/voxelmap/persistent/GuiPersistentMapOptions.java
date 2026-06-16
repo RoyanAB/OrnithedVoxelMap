@@ -11,7 +11,6 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class GuiPersistentMapOptions extends GuiScreenMinimap {
 	private final GuiScreen parent;
 	private final PersistentMapSettingsManager options;

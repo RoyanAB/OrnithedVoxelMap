@@ -4,7 +4,6 @@ import net.minecraft.util.Util.EnumOS;
 
 import java.io.File;
 
-@SuppressWarnings("unused")
 public class FilesystemUtils {
 	public static File getAppDir(String appName, boolean createIfNotExist) {
 		String userHome = System.getProperty("user.home", ".");

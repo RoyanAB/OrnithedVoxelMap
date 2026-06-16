@@ -201,6 +201,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			}
 		}
 
-		public void updatePosition(int slotIndex, int x, int y, float partialTicks) {}
+		public void updatePosition(int slotIndex, int x, int y, float partialTicks) {
+		}
 	}
 }

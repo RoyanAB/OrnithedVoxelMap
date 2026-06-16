@@ -3,7 +3,6 @@ package com.mamiyaotaru.voxelmap.persistent;
 import com.mamiyaotaru.voxelmap.interfaces.ISettingsAndLightingChangeNotifier;
 import net.minecraft.world.chunk.Chunk;
 
-@SuppressWarnings("unused")
 public class EmptyCachedRegion extends CachedRegion {
 	@Override
 	public void notifyOfActionableChange(ISettingsAndLightingChangeNotifier notifier) {

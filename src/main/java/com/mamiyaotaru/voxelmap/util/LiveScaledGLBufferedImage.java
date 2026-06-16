@@ -1,6 +1,5 @@
 package com.mamiyaotaru.voxelmap.util;
 
-@SuppressWarnings("unused")
 public class LiveScaledGLBufferedImage extends LiveGLBufferedImage {
 	private final int scale;
 

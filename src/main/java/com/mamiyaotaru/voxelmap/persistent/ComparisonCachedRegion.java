@@ -20,7 +20,6 @@ import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-@SuppressWarnings("unused")
 public class ComparisonCachedRegion {
 	private final IPersistentMap persistentMap;
 	private final String key;

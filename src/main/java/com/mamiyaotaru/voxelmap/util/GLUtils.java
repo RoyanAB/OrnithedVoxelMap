@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GLContext;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
-@SuppressWarnings("unused")
 public class GLUtils {
 	private static final Tessellator tessellator = Tessellator.getInstance();
 	private static final BufferBuilder vertexBuffer = tessellator.getBuffer();
@@ -61,10 +60,6 @@ public class GLUtils {
 
 	public static void unbindFrameBuffer() {
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, previousFBOID);
-	}
-
-	public static void setMap(int x, int y) {
-		setMap(x, y, 128);
 	}
 
 	public static void setMapWithScale(int x, int y, float scale) {

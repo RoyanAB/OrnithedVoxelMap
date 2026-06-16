@@ -5,7 +5,6 @@ import net.minecraft.block.state.IBlockState;
 
 import java.util.Arrays;
 
-@SuppressWarnings("unused")
 public class BiomeMapData extends AbstractMapData {
 	public static final int DATABITS = 1;
 

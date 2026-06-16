@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings("unused")
 public class PersistentMap implements IPersistentMap, IChangeObserver {
 	protected final List<CachedRegion> cachedRegionsPool = Collections.synchronizedList(new ArrayList<>());
 	protected final ConcurrentHashMap<String, CachedRegion> cachedRegions = new ConcurrentHashMap<>(150, 0.9F, 2);

@@ -2,7 +2,6 @@ package com.mamiyaotaru.voxelmap.interfaces;
 
 import net.minecraft.block.state.IBlockState;
 
-@SuppressWarnings("unused")
 public interface IMapData {
 	int getWidth();
 

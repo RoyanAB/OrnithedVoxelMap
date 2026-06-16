@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
-@SuppressWarnings("unused")
 public interface IWaypointManager {
 	ArrayList<Waypoint> getWaypoints();
 

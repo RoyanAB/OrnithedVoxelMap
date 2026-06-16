@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-@SuppressWarnings("unused")
 public class GLBufferedImage extends BufferedImage implements IGLBufferedImage {
 	protected final Object bufferLock = new Object();
 	protected ByteBuffer buffer;

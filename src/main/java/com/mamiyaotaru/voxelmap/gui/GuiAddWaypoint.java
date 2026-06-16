@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-@SuppressWarnings("unused")
+
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
 	private final IGuiWaypoints parentGui;
 	private final float red;
@@ -402,11 +402,11 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 
 	public void toggleDimensionSelected() {
 		if (this.waypoint.dimensions.size() > 1
-			&& this.waypoint.dimensions.contains(this.selectedDimension.ID)
-			&& this.selectedDimension.ID != Minecraft.getMinecraft().player.dimension) {
-			this.waypoint.dimensions.remove(this.selectedDimension.ID);
+			&& this.waypoint.dimensions.contains(this.selectedDimension.getID())
+			&& this.selectedDimension.getID() != Minecraft.getMinecraft().player.dimension) {
+			this.waypoint.dimensions.remove(this.selectedDimension.getID());
 		} else
-			this.waypoint.dimensions.add(this.selectedDimension.ID);
+			this.waypoint.dimensions.add(this.selectedDimension.getID());
 	}
 
 	protected void drawTooltip(String par1Str, int mouseX, int mouseY) {
@@ -417,12 +417,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 			this.drawGradientRect(var4 - 3, var5 - 3, var4 + var6 + 3, var5 + 8 + 3, -1073741824, -1073741824);
 			this.getFontRenderer().drawStringWithShadow(par1Str, var4, var5, -1);
 		}
-	}
-
-	public void drawTexturedModalRect(Sprite icon, float x, float y) {
-		float width = icon.getIconWidth() / 2.0F;
-		float height = icon.getIconHeight() / 2.0F;
-		this.drawTexturedModalRect(x, y, icon, width, height);
 	}
 
 	public void drawTexturedModalRect(float xCoord, float yCoord, Sprite icon, float widthIn, float heightIn) {

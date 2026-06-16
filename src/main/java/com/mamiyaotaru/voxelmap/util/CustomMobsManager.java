@@ -2,7 +2,6 @@ package com.mamiyaotaru.voxelmap.util;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public class CustomMobsManager {
 	public static ArrayList<CustomMob> mobs = new ArrayList<>();
 

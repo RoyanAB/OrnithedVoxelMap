@@ -6,7 +6,6 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-@SuppressWarnings("unused")
 public class CompressionUtils {
 	public static byte[] compress(byte[] dataToCompress) throws IOException {
 		Deflater deflater = new Deflater();

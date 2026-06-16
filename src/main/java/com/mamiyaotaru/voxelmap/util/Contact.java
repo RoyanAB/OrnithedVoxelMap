@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 
 import java.util.UUID;
 
-@SuppressWarnings("unused")
 public class Contact {
 	public double x;
 	public double z;
