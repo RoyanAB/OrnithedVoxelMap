@@ -1,0 +1,92 @@
+package com.mamiyaotaru.voxelmap.util;
+
+import com.mamiyaotaru.voxelmap.interfaces.IChangeObserver;
+import java.util.ArrayList;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldEventListener;
+import net.minecraft.world.World;
+
+public class WorldUpdateListener implements IWorldEventListener {
+   private ArrayList<IChangeObserver> chunkProcessors = new ArrayList<>();
+
+   public void addListener(IChangeObserver chunkProcessor) {
+      this.chunkProcessors.add(chunkProcessor);
+   }
+
+   @Override
+   public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
+      this.notifyObservers(pos, null);
+   }
+
+   @Override
+   public void notifyLightSet(BlockPos pos) {
+      this.notifyObservers(pos, null);
+   }
+
+   @Override
+   public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {
+      this.notifyObservers(new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2));
+   }
+
+   private void notifyObservers(BlockPos pos1, BlockPos pos2) {
+      for (IChangeObserver chunkProcessor : this.chunkProcessors) {
+         chunkProcessor.handleChangeInWorld(pos1, pos2);
+      }
+   }
+
+   @Override
+   public void playSoundToAllNearExcept(
+      EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch
+   ) {
+   }
+
+   @Override
+   public void playRecord(SoundEvent soundIn, BlockPos pos) {
+   }
+
+   @Override
+   public void spawnParticle(
+      int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters
+   ) {
+   }
+
+   @Override
+   public void spawnParticle(
+      int p_190570_1_,
+      boolean p_190570_2_,
+      boolean p_190570_3_,
+      double p_190570_4_,
+      double p_190570_6_,
+      double z,
+      double p_190570_10_,
+      double p_190570_12_,
+      double p_190570_14_,
+      int... p_190570_16_
+   ) {
+   }
+
+   @Override
+   public void onEntityAdded(Entity entityIn) {
+   }
+
+   @Override
+   public void onEntityRemoved(Entity entityIn) {
+   }
+
+   @Override
+   public void broadcastSound(int soundID, BlockPos pos, int data) {
+   }
+
+   @Override
+   public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data) {
+   }
+
+   @Override
+   public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
+   }
+}
