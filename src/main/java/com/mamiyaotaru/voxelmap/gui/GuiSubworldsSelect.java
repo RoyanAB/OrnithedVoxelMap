@@ -12,26 +12,24 @@ import net.minecraft.util.MovementInputFromOptions;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCallback {
 	private String title = "VoxelMap - Multiworld Selection";
 	private String select = "Which world are you in?";
-	private boolean multiworld = false;
-	private GuiButton cancelBtn;
-	private GuiTextField newNameField;
-	private boolean newWorld = false;
-	private float yaw;
-	private final int thirdPersonViewOrig;
-	private GuiButton[] selectButtons;
-	private GuiButton[] editButtons;
-	private String[] worlds;
-	private final GuiScreen parent;
-	EntityPlayerSP thePlayer;
-	EntityPlayerSP camera;
+
 	private final IVoxelMap master;
 	private final IWaypointManager waypointManager;
+	private final EntityPlayerSP thePlayer;
+	private final EntityPlayerSP camera;
+	private final GuiScreen parent;
+	private final int thirdPersonViewOrig;
+
+	private GuiTextField newNameField;
+	private boolean multiworld = false;
+	private boolean newWorld = false;
+	private GuiButton[] selectButtons;
+	private String[] worlds;
+	private float yaw;
 
 	public GuiSubworldsSelect(GuiScreen parent, IVoxelMap master) {
 		this.mc = Minecraft.getMinecraft();
@@ -78,20 +76,16 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 
 		int buttonWidth = this.width / buttonsPerRow - 5;
 		int xSpacing = (this.width - buttonsPerRow * buttonWidth) / 2;
-		this.cancelBtn = new GuiButton(0, centerX - 100, this.height - 30, I18nUtils.getString("gui.cancel"));
-		this.buttonList.add(this.cancelBtn);
+		GuiButton cancelBtn = new GuiButton(0, centerX - 100, this.height - 30, I18nUtils.getString("gui.cancel"));
+		this.buttonList.add(cancelBtn);
 		final Collator collator = I18nUtils.getLocaleAwareCollator();
-		Collections.sort(knownSubworldNames, new Comparator<String>() {
-			public int compare(String name1, String name2) {
-				return -collator.compare(name1, name2);
-			}
-		});
+		knownSubworldNames.sort((name1, name2) -> -collator.compare(name1, name2));
 		int numKnownSubworlds = knownSubworldNames.size();
 		int completeRows = (int) Math.floor((float) (numKnownSubworlds + 1) / buttonsPerRow);
 		int lastRowShiftBy = (int) (Math.ceil((float) (numKnownSubworlds + 1) / buttonsPerRow) * buttonsPerRow - (numKnownSubworlds + 1));
 		this.worlds = new String[numKnownSubworlds];
 		this.selectButtons = new GuiButton[numKnownSubworlds + 1];
-		this.editButtons = new GuiButton[numKnownSubworlds + 1];
+		GuiButton[] editButtons = new GuiButton[numKnownSubworlds + 1];
 
 		for (int t = 0; t < numKnownSubworlds; t++) {
 			int shiftBy = 1;
@@ -108,7 +102,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 				20,
 				this.worlds[t]
 			);
-			this.editButtons[t] = new GuiButton(
+			editButtons[t] = new GuiButton(
 				-(t + 1),
 				(buttonsPerRow - shiftBy - t % buttonsPerRow) * buttonWidth + xSpacing + buttonWidth - 32,
 				this.height - 60 - t / buttonsPerRow * 21,
@@ -117,7 +111,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 				"⚒"
 			);
 			this.buttonList.add(this.selectButtons[t]);
-			this.buttonList.add(this.editButtons[t]);
+			this.buttonList.add(editButtons[t]);
 		}
 
 		int numButtons = this.selectButtons.length - 1;
@@ -229,11 +223,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 
 	private void worldSelected(String selectedSubworldName) {
 		this.waypointManager.setSubworldName(selectedSubworldName, false);
-		if (this.parent == null) {
-			this.getMinecraft().displayGuiScreen(null);
-		} else {
-			this.getMinecraft().displayGuiScreen(this.parent);
-		}
+		this.getMinecraft().displayGuiScreen(this.parent);
 	}
 
 	private void editWorld(String subworldNameToEdit) {

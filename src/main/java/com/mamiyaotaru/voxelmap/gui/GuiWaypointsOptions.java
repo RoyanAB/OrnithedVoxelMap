@@ -13,6 +13,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 	private static final EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.DEATHPOINTS};
 	private final GuiScreen parent;
 	private final MapSettingsManager options;
+
 	protected String screenTitle = "Waypoint Options";
 
 	public GuiWaypointsOptions(GuiScreen parent, MapSettingsManager options) {
@@ -25,8 +26,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 		int var2 = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.waypoints.title");
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			if (option.isFloat()) {
 				float distance = this.options.getOptionFloatValue(option);
 				if (distance < 0.0F) {

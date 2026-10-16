@@ -11,9 +11,11 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class GuiMinimapControls extends GuiScreenMinimap {
 	private final GuiScreen parentScreen;
-	protected String screenTitle = "Controls";
 	private final MapSettingsManager options;
+
 	private int buttonId = -1;
+
+	protected String screenTitle = "Controls";
 
 	public GuiMinimapControls(GuiScreen par1GuiScreen, IVoxelMap master) {
 		this.parentScreen = par1GuiScreen;

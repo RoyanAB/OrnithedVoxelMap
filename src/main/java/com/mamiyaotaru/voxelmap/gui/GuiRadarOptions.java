@@ -30,9 +30,9 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		EnumOptionsMinimap.SHOWPLAYERS,
 		EnumOptionsMinimap.SHOWFACING
 	};
-	private static EnumOptionsMinimap[] relevantOptions;
 	private final GuiScreen parent;
 	private final RadarSettingsManager options;
+
 	protected String screenTitle = "Radar Options";
 
 	public GuiRadarOptions(GuiScreen parent, IVoxelMap master) {
@@ -45,14 +45,14 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		this.getButtonList().clear();
 		int var2 = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.radar.title");
+		EnumOptionsMinimap[] relevantOptions;
 		if (this.options.radarMode == 2) {
 			relevantOptions = relevantOptionsFull;
 		} else {
 			relevantOptions = relevantOptionsSimple;
 		}
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
 				this.getWidth() / 2 - 155 + var2 % 2 * 160,
@@ -111,7 +111,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
 				button.displayString = this.options.getKeyText(EnumOptionsMinimap.getEnumOptions(button.id));
 
-				for (Object buttonObj : this.getButtonList()) {
+				for (GuiButton buttonObj : this.getButtonList()) {
 					if (buttonObj instanceof GuiOptionButtonMinimap) {
 						GuiOptionButtonMinimap buttonx = (GuiOptionButtonMinimap) buttonObj;
 						if (!buttonx.returnEnumOptions().equals(EnumOptionsMinimap.SHOWRADAR)) {
@@ -132,9 +132,8 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 								&& (this.options.radarAllowed || this.options.radarMobsAllowed);
 						}
 					} else if (buttonObj instanceof GuiButton) {
-						GuiButton buttonx = (GuiButton) buttonObj;
-						if (buttonx.id == 101) {
-							buttonx.enabled = this.options.showRadar;
+						if (buttonObj.id == 101) {
+							buttonObj.enabled = this.options.showRadar;
 						}
 					}
 				}

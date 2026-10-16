@@ -7,41 +7,37 @@ import org.lwjgl.input.Mouse;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 
-class GuiSlotMobs extends GuiSlotMinimap {
+public class GuiSlotMobs extends GuiSlotMinimap {
 	private final ArrayList<String> mobNames;
+	private final GuiMobs parentGui;
+
 	private ArrayList<String> mobNamesFiltered;
-	private final RadarSettingsManager options;
-	final GuiMobs parentGui;
 
 	public GuiSlotMobs(GuiMobs par1GuiMobs) {
 		super(par1GuiMobs.options.game, par1GuiMobs.getWidth(), par1GuiMobs.getHeight(), 32, par1GuiMobs.getHeight() - 65 + 4, 18);
 		this.parentGui = par1GuiMobs;
-		this.options = this.parentGui.options;
+		RadarSettingsManager options = this.parentGui.options;
 		this.mobNames = new ArrayList<>();
 
 		for (EnumMobs mob : EnumMobs.values()) {
-			if (mob.isTopLevelUnit && (mob.isHostile && this.options.showHostiles || mob.isNeutral && this.options.showNeutrals)) {
+			if (mob.isTopLevelUnit && (mob.isHostile && options.showHostiles || mob.isNeutral && options.showNeutrals)) {
 				this.mobNames.add(mob.id);
 			}
 		}
 
 		for (CustomMob mob : CustomMobsManager.mobs) {
-			if (mob.isHostile && this.options.showHostiles || mob.isNeutral && this.options.showNeutrals) {
+			if (mob.isHostile && options.showHostiles || mob.isNeutral && options.showNeutrals) {
 				this.mobNames.add(mob.id);
 			}
 		}
 
 		final Collator collator = I18nUtils.getLocaleAwareCollator();
-		Collections.sort(this.mobNames, new Comparator<String>() {
-			public int compare(String name1, String name2) {
-				name1 = GuiSlotMobs.getTranslatedName(name1);
-				name2 = GuiSlotMobs.getTranslatedName(name2);
-				return collator.compare(name1, name2);
-			}
+		this.mobNames.sort((name1, name2) -> {
+			name1 = GuiSlotMobs.getTranslatedName(name1);
+			name2 = GuiSlotMobs.getTranslatedName(name2);
+			return collator.compare(name1, name2);
 		});
 		this.mobNamesFiltered = new ArrayList<>(this.mobNames);
 	}
@@ -135,7 +131,7 @@ class GuiSlotMobs extends GuiSlotMinimap {
 		while (iterator.hasNext()) {
 			String mobName = iterator.next();
 			if (!getTranslatedName(mobName).toLowerCase().contains(filterString)) {
-				if (mobName == this.parentGui.selectedMobName) {
+				if (mobName.equals(this.parentGui.selectedMobName)) {
 					this.parentGui.setSelectedMob(null);
 				}
 

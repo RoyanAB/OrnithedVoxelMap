@@ -14,13 +14,15 @@ import org.lwjgl.input.Keyboard;
 public class GuiMobs extends GuiScreenMinimap {
 	private final GuiScreen parentScreen;
 	protected final RadarSettingsManager options;
-	protected String screenTitle = "Select Mobs";
+
 	private GuiSlotMobs mobsList;
 	private GuiButton buttonEnable;
 	private GuiButton buttonDisable;
 	protected GuiTextField filter;
-	private String tooltip = null;
-	protected String selectedMobName = null;
+	private String tooltip;
+	protected String selectedMobName;
+
+	protected String screenTitle = "Select Mobs";
 
 	public GuiMobs(GuiScreen parentScreen, RadarSettingsManager options) {
 		this.parentScreen = parentScreen;

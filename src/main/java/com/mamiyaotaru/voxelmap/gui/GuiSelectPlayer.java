@@ -11,15 +11,16 @@ import org.lwjgl.input.Keyboard;
 
 public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallback {
 	private final GuiScreen parentScreen;
+	private final boolean sharingWaypoint;
+	private final String locInfo;
+	private final int maxMessageLength = 78;
+
 	protected String screenTitle = "Players";
-	private boolean sharingWaypoint = true;
 	private GuiButtonRowListPlayers playerList;
 	protected boolean allClicked = false;
 	protected GuiTextField message;
 	protected GuiTextField filter;
-	private String tooltip = null;
-	private final String locInfo;
-	private final int maxMessageLength = 78;
+	private String tooltip;
 
 	public GuiSelectPlayer(GuiScreen parentScreen, IVoxelMap master, String locInfo, boolean sharingWaypoint) {
 		this.parentScreen = parentScreen;
@@ -41,7 +42,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		this.playerList.registerScrollButtons(7, 8);
 		int messageStringWidth = this.getFontRenderer().getStringWidth(I18nUtils.getString("minimap.waypointshare.sharemessage") + ":");
 		this.message = new GuiTextField(1, this.getFontRenderer(), this.getWidth() / 2 - 153 + messageStringWidth + 5, 34, 305 - messageStringWidth - 5, 20);
-		this.message.setMaxStringLength(78);
+		this.message.setMaxStringLength(maxMessageLength);
 		int filterStringWidth = this.getFontRenderer().getStringWidth(I18nUtils.getString("minimap.waypoints.filter") + ":");
 		this.filter = new GuiTextField(
 			2, this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 55, 305 - filterStringWidth - 5, 20

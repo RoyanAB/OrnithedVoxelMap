@@ -16,17 +16,16 @@ import org.lwjgl.input.Mouse;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 
 public class GuiButtonRowListPlayers extends GuiListExtended {
+	private final GuiSelectPlayer parentGui;
 	private final ArrayList<GuiButtonRowListPlayers.Row> rows = new ArrayList<>();
 	private final Minecraft mc = Minecraft.getMinecraft();
 	private final ArrayList<NetworkPlayerInfo> players;
+	private final GuiButtonRowListPlayers.Row everyoneRow;
+
 	private ArrayList<NetworkPlayerInfo> playersFiltered;
-	final GuiSelectPlayer parentGui;
-	GuiButtonRowListPlayers.Row everyoneRow;
 
 	public GuiButtonRowListPlayers(GuiSelectPlayer par1GuiSelectPlayer) {
 		super(Minecraft.getMinecraft(), par1GuiSelectPlayer.getWidth(), par1GuiSelectPlayer.getHeight(), 89, par1GuiSelectPlayer.getHeight() - 65 + 4, 25);
@@ -75,12 +74,10 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 
 	protected void sort() {
 		final Collator collator = I18nUtils.getLocaleAwareCollator();
-		Collections.sort(this.players, new Comparator<NetworkPlayerInfo>() {
-			public int compare(NetworkPlayerInfo player1, NetworkPlayerInfo player2) {
-				String name1 = GuiButtonRowListPlayers.this.getPlayerName(player1);
-				String name2 = GuiButtonRowListPlayers.this.getPlayerName(player2);
-				return collator.compare(name1, name2);
-			}
+		this.players.sort((player1, player2) -> {
+			String name1 = GuiButtonRowListPlayers.this.getPlayerName(player1);
+			String name2 = GuiButtonRowListPlayers.this.getPlayerName(player2);
+			return collator.compare(name1, name2);
 		});
 	}
 

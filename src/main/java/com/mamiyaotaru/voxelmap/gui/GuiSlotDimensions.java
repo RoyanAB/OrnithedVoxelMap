@@ -9,9 +9,9 @@ import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Mouse;
 
-class GuiSlotDimensions extends GuiSlotMinimap {
+public class GuiSlotDimensions extends GuiSlotMinimap {
 	private final IDimensionManager dimensionManager;
-	final GuiAddWaypoint parentGui;
+	private final GuiAddWaypoint parentGui;
 
 	public GuiSlotDimensions(GuiAddWaypoint par1GuiWaypoints) {
 		super(
@@ -91,7 +91,7 @@ class GuiSlotDimensions extends GuiSlotMinimap {
 			name = "dimension " + dim.ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")";
 		}
 
-		this.parentGui.drawCenteredString(this.parentGui.getFontRenderer(), dim.name, this.parentGui.getWidth() / 2 + this.slotWidth / 2, slotYPos + 3, 16777215);
+		this.parentGui.drawCenteredString(this.parentGui.getFontRenderer(), name, this.parentGui.getWidth() / 2 + this.slotWidth / 2, slotYPos + 3, 16777215);
 		byte padding = 4;
 		byte iconWidth = 16;
 		leftEdge = this.parentGui.getWidth() / 2;
@@ -100,7 +100,7 @@ class GuiSlotDimensions extends GuiSlotMinimap {
 			&& this.mouseY >= slotYPos
 			&& this.mouseX <= leftEdge + width + padding
 			&& this.mouseY <= slotYPos + this.slotHeight) {
-			String tooltip = null;
+			String tooltip;
 			if (!this.parentGui.popupOpen() && this.mouseX >= leftEdge + width - iconWidth - padding && this.mouseX <= leftEdge + width) {
 				tooltip = this.parentGui.waypoint.dimensions.contains(dim.ID)
 					? I18nUtils.getString("minimap.waypoints.dimension.applies")

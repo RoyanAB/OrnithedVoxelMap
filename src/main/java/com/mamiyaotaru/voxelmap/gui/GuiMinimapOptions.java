@@ -13,8 +13,8 @@ import net.minecraft.client.gui.GuiScreen;
 public class GuiMinimapOptions extends GuiScreenMinimap {
 	private final GuiScreen parent;
 	private final IVoxelMap master;
-	private static EnumOptionsMinimap[] relevantOptions;
 	private final MapSettingsManager options;
+
 	protected String screenTitle = "Minimap Options";
 
 	public GuiMinimapOptions(GuiScreen parent, IVoxelMap master) {
@@ -25,7 +25,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 
 	@Override
 	public void initGui() {
-		relevantOptions = new EnumOptionsMinimap[]{
+		EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{
 			EnumOptionsMinimap.COORDS,
 			EnumOptionsMinimap.HIDE,
 			EnumOptionsMinimap.LOCATION,
@@ -38,8 +38,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 		int var2 = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.title");
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
 				this.getWidth() / 2 - 155 + var2 % 2 * 160,

@@ -21,28 +21,33 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
-	IVoxelMap master;
-	IWaypointManager waypointManager;
-	IColorManager colorManager;
+	private final IWaypointManager waypointManager;
+	private final IColorManager colorManager;
 	private final IGuiWaypoints parentGui;
-	private PopupGuiButton doneButton;
-	private GuiSlotDimensions dimensionList;
-	protected Dimension selectedDimension = null;
-	private String tooltip = null;
-	private GuiTextField waypointName;
-	private GuiTextField waypointX;
-	private GuiTextField waypointZ;
-	private GuiTextField waypointY;
-	private PopupGuiButton buttonEnabled;
-	protected Waypoint waypoint;
-	private boolean choosingColor = false;
-	private boolean choosingIcon = false;
 	private final float red;
 	private final float green;
 	private final float blue;
 	private final String suffix;
 	private final boolean enabled;
-	private boolean editing = false;
+	private final boolean editing;
+
+	public IVoxelMap master;
+
+	private boolean choosingColor = false;
+	private boolean choosingIcon = false;
+
+	private PopupGuiButton doneButton;
+	private GuiSlotDimensions dimensionList;
+	protected Dimension selectedDimension;
+	private String tooltip;
+
+	private GuiTextField waypointName;
+	private GuiTextField waypointX;
+	private GuiTextField waypointZ;
+	private GuiTextField waypointY;
+	private PopupGuiButton buttonEnabled;
+
+	protected Waypoint waypoint;
 
 	public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, IVoxelMap master, Waypoint par2Waypoint, boolean editing) {
 		this.master = master;
@@ -98,7 +103,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 			);
 		this.getButtonList()
 			.add(new PopupGuiButton(8, this.getWidth() / 2 - 101, buttonListY + 48, 100, 20, I18nUtils.getString("minimap.waypoints.sortbyicon") + ":     ", this));
-		this.doneButton.enabled = this.waypointName.getText().length() > 0;
+		this.doneButton.enabled = !this.waypointName.getText().isEmpty();
 		this.dimensionList = new GuiSlotDimensions(this);
 		this.dimensionList.registerScrollButtons(9, 10);
 	}
@@ -198,7 +203,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				this.actionPerformed(this.doneButton);
 			}
 
-			boolean acceptable = this.waypointName.getText().length() > 0;
+			boolean acceptable = !this.waypointName.getText().isEmpty();
 
 			try {
 				Integer.parseInt(this.waypointX.getText());
@@ -228,7 +233,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				int color = this.colorManager.getColorPicker().getRGB(mouseX - (this.getWidth() / 2 - 128), mouseY - (this.getHeight() / 2 - 128));
 				this.waypoint.red = (color >> 16 & 0xFF) / 255.0F;
 				this.waypoint.green = (color >> 8 & 0xFF) / 255.0F;
-				this.waypoint.blue = (color >> 0 & 0xFF) / 255.0F;
+				this.waypoint.blue = (color & 0xFF) / 255.0F;
 				this.choosingColor = false;
 			}
 		} else if (this.choosingIcon) {
@@ -412,14 +417,12 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		if (this.waypoint.dimensions.size() > 1
 			&& this.waypoint.dimensions.contains(this.selectedDimension.ID)
 			&& this.selectedDimension.ID != Minecraft.getMinecraft().player.dimension) {
-			this.waypoint.dimensions.remove(Integer.valueOf(this.selectedDimension.ID));
-		} else if (!this.waypoint.dimensions.contains(this.selectedDimension.ID)) {
-			this.waypoint.dimensions.add(Integer.valueOf(this.selectedDimension.ID));
-		}
+			this.waypoint.dimensions.remove(this.selectedDimension.ID);
+		} else this.waypoint.dimensions.add(this.selectedDimension.ID);
 	}
 
 	protected void drawTooltip(String par1Str, int mouseX, int mouseY) {
-		if (par1Str != null && !par1Str.equals("")) {
+		if (par1Str != null && !par1Str.isEmpty()) {
 			int var4 = mouseX + 12;
 			int var5 = mouseY - 12;
 			int var6 = this.getFontRenderer().getStringWidth(par1Str);
@@ -430,12 +433,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 
 	static String setTooltip(GuiAddWaypoint par0GuiWaypoint, String par1Str) {
 		return par0GuiWaypoint.tooltip = par1Str;
-	}
-
-	public void drawTexturedModalRect(Sprite icon, float x, float y) {
-		float width = icon.getIconWidth() / 2.0F;
-		float height = icon.getIconHeight() / 2.0F;
-		this.drawTexturedModalRect(x, y, icon, width, height);
 	}
 
 	public void drawTexturedModalRect(float xCoord, float yCoord, Sprite icon, float widthIn, float heightIn) {

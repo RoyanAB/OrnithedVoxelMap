@@ -22,12 +22,15 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private final IVoxelMap master;
 	protected final MapSettingsManager options;
 	protected final IWaypointManager waypointManager;
-	protected String screenTitle = "Waypoints";
-	private GuiSlotWaypoints waypointList;
-	private GuiButton buttonEdit;
+	private final Random generator = new Random();
+
 	private boolean editClicked = false;
-	private GuiButton buttonDelete;
 	private boolean deleteClicked = false;
+	private boolean addClicked = false;
+	private boolean changedSort = false;
+
+	private GuiButton buttonDelete;
+	private GuiButton buttonEdit;
 	private GuiButton buttonHighlight;
 	private GuiButton buttonShare;
 	private GuiButton buttonTeleport;
@@ -36,13 +39,13 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private GuiButton buttonSortDistance;
 	private GuiButton buttonSortColor;
 	protected GuiTextField filter;
-	private boolean addClicked = false;
-	private String tooltip = null;
-	protected Waypoint selectedWaypoint = null;
-	protected Waypoint highlightedWaypoint = null;
-	protected Waypoint newWaypoint = null;
-	private final Random generator = new Random();
-	private boolean changedSort = false;
+
+	private String tooltip;
+	private GuiSlotWaypoints waypointList;
+	protected Waypoint selectedWaypoint;
+	protected Waypoint highlightedWaypoint;
+	protected Waypoint newWaypoint;
+
 	private final int EDIT = -1;
 	private final int DELETE = -2;
 	private final int HIGHLIGHT = -3;
@@ -50,6 +53,8 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	private final int SHARE = -5;
 	private final int NEW = -6;
 	private final int OPTIONS = -7;
+
+	protected String screenTitle = "Waypoints";
 
 	public GuiWaypoints(GuiScreen parentScreen, IVoxelMap master) {
 		this.master = master;
@@ -295,7 +300,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		float r;
 		float g;
 		float b;
-		if (this.waypointManager.getWaypoints().size() == 0) {
+		if (this.waypointManager.getWaypoints().isEmpty()) {
 			r = 0.0F;
 			g = 1.0F;
 			b = 0.0F;
@@ -365,7 +370,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	}
 
 	public boolean canTeleport() {
-		boolean allowed = false;
+		boolean allowed;
 		boolean singlePlayer = this.options.game.isIntegratedServerRunning();
 		if (singlePlayer) {
 			try {
