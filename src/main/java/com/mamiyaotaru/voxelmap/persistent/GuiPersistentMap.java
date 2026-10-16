@@ -1268,12 +1268,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				if (hovered != null) {
 					this.deleteClicked = true;
 					this.selectedWaypoint = hovered;
-					String var4 = I18nUtils.getString("minimap.waypoints.deleteconfirm");
-					String var5 = "'" + this.selectedWaypoint.name + "' " + I18nUtils.getString("selectServer.deleteWarning");
-					String var6 = I18nUtils.getString("selectServer.deleteButton");
-					String var7 = I18nUtils.getString("gui.cancel");
-					GuiYesNo var8 = new GuiYesNo(this, var4, var5, var6, var7, this.waypointManager.getWaypoints().indexOf(this.selectedWaypoint));
-					this.getMinecraft().displayGuiScreen(var8);
+					String confirmTitle = I18nUtils.getString("minimap.waypoints.deleteconfirm");
+					String confirmMessage = "'" + this.selectedWaypoint.name + "' " + I18nUtils.getString("selectServer.deleteWarning");
+					String deleteButtonText = I18nUtils.getString("selectServer.deleteButton");
+					String cancelButtonText = I18nUtils.getString("gui.cancel");
+					GuiYesNo confirmDialog = new GuiYesNo(this, confirmTitle, confirmMessage, deleteButtonText, cancelButtonText, this.waypointManager.getWaypoints().indexOf(this.selectedWaypoint));
+					this.getMinecraft().displayGuiScreen(confirmDialog);
 				}
 				break;
 			case 6:

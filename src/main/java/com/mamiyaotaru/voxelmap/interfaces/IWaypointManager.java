@@ -12,19 +12,19 @@ import java.util.TreeSet;
 public interface IWaypointManager {
 	ArrayList<Waypoint> getWaypoints();
 
-	void deleteWaypoint(Waypoint var1);
+	void deleteWaypoint(Waypoint waypoint);
 
 	void saveWaypoints();
 
-	void addWaypoint(Waypoint var1);
+	void addWaypoint(Waypoint waypoint);
 
 	void check2dWaypoints();
 
 	void handleDeath();
 
-	void newWorld(World var1);
+	void newWorld(World world);
 
-	void setConnectedRealm(String var1);
+	void setConnectedRealm(String realmName);
 
 	String getCurrentWorldName();
 
@@ -34,33 +34,33 @@ public interface IWaypointManager {
 
 	boolean isMultiworld();
 
-	void setSubworldName(String var1, boolean var2);
+	void setSubworldName(String subworldName, boolean vanilla);
 
-	void setSubworldHash(String var1);
+	void setSubworldHash(String subworldHash);
 
-	void changeSubworldName(String var1, String var2);
+	void changeSubworldName(String oldName, String newName);
 
-	void deleteSubworld(String var1);
+	void deleteSubworld(String subworldName);
 
-	void setOldNorth(boolean var1);
+	void setOldNorth(boolean oldNorth);
 
-	String getCurrentSubworldDescriptor(boolean var1);
+	String getCurrentSubworldDescriptor(boolean autoSubworld);
 
-	void renderWaypoints(float var1);
+	void renderWaypoints(float partialTicks);
 
-	void onResourceManagerReload(IResourceManager var1);
+	void onResourceManagerReload(IResourceManager resourceManager);
 
 	TextureAtlas getTextureAtlas();
 
 	TextureAtlas getTextureAtlasChooser();
 
-	void setHighlightedWaypoint(Waypoint var1, boolean var2);
+	void setHighlightedWaypoint(Waypoint waypoint, boolean toggle);
 
 	Waypoint getHighlightedWaypoint();
 
 	String getWorldSeed();
 
-	void setWorldSeed(String var1);
+	void setWorldSeed(String seed);
 
 	BackgroundImageInfo getBackgroundImageInfo();
 }

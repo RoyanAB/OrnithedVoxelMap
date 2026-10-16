@@ -49,11 +49,11 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 
 	protected Waypoint waypoint;
 
-	public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, IVoxelMap master, Waypoint par2Waypoint, boolean editing) {
+	public GuiAddWaypoint(IGuiWaypoints iGuiWaypoints, IVoxelMap master, Waypoint par2Waypoint, boolean editing) {
 		this.master = master;
 		this.waypointManager = master.getWaypointManager();
 		this.colorManager = master.getColorManager();
-		this.parentGui = par1GuiScreen;
+		this.parentGui = iGuiWaypoints;
 		this.waypoint = par2Waypoint;
 		this.red = this.waypoint.red;
 		this.green = this.waypoint.green;
@@ -421,18 +421,18 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		} else this.waypoint.dimensions.add(this.selectedDimension.ID);
 	}
 
-	protected void drawTooltip(String par1Str, int mouseX, int mouseY) {
-		if (par1Str != null && !par1Str.isEmpty()) {
-			int var4 = mouseX + 12;
-			int var5 = mouseY - 12;
-			int var6 = this.getFontRenderer().getStringWidth(par1Str);
-			this.drawGradientRect(var4 - 3, var5 - 3, var4 + var6 + 3, var5 + 8 + 3, -1073741824, -1073741824);
-			this.getFontRenderer().drawStringWithShadow(par1Str, var4, var5, -1);
+	protected void drawTooltip(String tooltipText, int mouseX, int mouseY) {
+		if (tooltipText != null && !tooltipText.isEmpty()) {
+			int tooltipX = mouseX + 12;
+			int tooltipY = mouseY - 12;
+			int tooltipWidth = this.getFontRenderer().getStringWidth(tooltipText);
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + 8 + 3, -1073741824, -1073741824);
+			this.getFontRenderer().drawStringWithShadow(tooltipText, tooltipX, tooltipY, -1);
 		}
 	}
 
-	static String setTooltip(GuiAddWaypoint par0GuiWaypoint, String par1Str) {
-		return par0GuiWaypoint.tooltip = par1Str;
+	static String setTooltip(GuiAddWaypoint guiAddWaypoint, String tooltipText) {
+		return guiAddWaypoint.tooltip = tooltipText;
 	}
 
 	public void drawTexturedModalRect(float xCoord, float yCoord, Sprite icon, float widthIn, float heightIn) {

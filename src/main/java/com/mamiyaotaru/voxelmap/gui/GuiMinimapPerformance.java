@@ -32,8 +32,8 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 
 	protected String screenTitle = "Details / Performance";
 
-	public GuiMinimapPerformance(GuiScreen par1GuiScreen, IVoxelMap master) {
-		this.parentScreen = par1GuiScreen;
+	public GuiMinimapPerformance(GuiScreen guiScreen, IVoxelMap master) {
+		this.parentScreen = guiScreen;
 		this.options = master.getMapOptions();
 		this.master = master;
 	}
@@ -47,7 +47,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 		this.screenTitle = I18nUtils.getString("options.minimap.detailsperformance");
 		Keyboard.enableRepeatEvents(true);
 		int leftBorder = this.getLeftBorder();
-		int var2 = 0;
+		int buttonIndex = 0;
 
 		for (EnumOptionsMinimap option : relevantOptions) {
 			String text = this.options.getKeyText(option);
@@ -57,11 +57,11 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 				text = "§c" + text;
 			}
 
-			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
-				option.returnEnumOrdinal(), leftBorder + var2 % 2 * 160, this.getHeight() / 6 + 24 * (var2 >> 1), option, text
+			GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
+				option.returnEnumOrdinal(), leftBorder + buttonIndex % 2 * 160, this.getHeight() / 6 + 24 * (buttonIndex >> 1), option, text
 			);
-			this.buttonList.add(var7);
-			var2++;
+			this.buttonList.add(button);
+			buttonIndex++;
 		}
 
 		String worldSeedDisplay = this.master.getWorldSeed();
@@ -71,7 +71,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 
 		String buttonText = I18nUtils.getString("options.minimap.worldseed") + ": " + worldSeedDisplay;
 		this.worldSeedButton = new GuiButtonText(
-			this.worldSeedButtonID, this.getFontRenderer(), leftBorder + var2 % 2 * 160, this.getHeight() / 6 + 24 * (var2 >> 1), 150, 20, buttonText
+			this.worldSeedButtonID, this.getFontRenderer(), leftBorder + buttonIndex % 2 * 160, this.getHeight() / 6 + 24 * (buttonIndex >> 1), 150, 20, buttonText
 		);
 		this.worldSeedButton.setText(this.master.getWorldSeed());
 		this.buttonList.add(this.worldSeedButton);

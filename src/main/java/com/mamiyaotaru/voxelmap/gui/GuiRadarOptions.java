@@ -43,7 +43,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 	@Override
 	public void initGui() {
 		this.getButtonList().clear();
-		int var2 = 0;
+		int buttonIndex = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.radar.title");
 		EnumOptionsMinimap[] relevantOptions;
 		if (this.options.radarMode == 2) {
@@ -53,15 +53,15 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 		}
 
 		for (EnumOptionsMinimap option : relevantOptions) {
-			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
+			GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
-				this.getWidth() / 2 - 155 + var2 % 2 * 160,
-				this.getHeight() / 6 + 24 * (var2 >> 1),
+				this.getWidth() / 2 - 155 + buttonIndex % 2 * 160,
+				this.getHeight() / 6 + 24 * (buttonIndex >> 1),
 				option,
 				this.options.getKeyText(option)
 			);
-			this.getButtonList().add(var7);
-			var2++;
+			this.getButtonList().add(button);
+			buttonIndex++;
 		}
 
 		for (Object buttonObj : this.getButtonList()) {

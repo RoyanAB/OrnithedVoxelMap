@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 public class GLUtils {
 	private static final Tessellator tessellator = Tessellator.getInstance();
 	private static final BufferBuilder vertexBuffer = tessellator.getBuffer();
+
 	public static TextureManager textureManager;
 	public static int fboID = 0;
 	public static boolean openGL14Enabled = GLContext.getCapabilities().OpenGL14;

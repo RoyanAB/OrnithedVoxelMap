@@ -13,11 +13,11 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 	private final IDimensionManager dimensionManager;
 	private final GuiAddWaypoint parentGui;
 
-	public GuiSlotDimensions(GuiAddWaypoint par1GuiWaypoints) {
+	public GuiSlotDimensions(GuiAddWaypoint guiAddWaypoint) {
 		super(
-			Minecraft.getMinecraft(), 101, par1GuiWaypoints.getHeight(), par1GuiWaypoints.getHeight() / 6 + 82 + 6, par1GuiWaypoints.getHeight() / 6 + 164 + 3, 18
+			Minecraft.getMinecraft(), 101, guiAddWaypoint.getHeight(), guiAddWaypoint.getHeight() / 6 + 82 + 6, guiAddWaypoint.getHeight() / 6 + 164 + 3, 18
 		);
-		this.parentGui = par1GuiWaypoints;
+		this.parentGui = guiAddWaypoint;
 		this.setSlotWidth(88);
 		this.setSlotXBoundsFromLeft(this.parentGui.getWidth() / 2);
 		this.setShowSelectionBox(false);
@@ -71,8 +71,8 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 	}
 
 	@Override
-	protected boolean isSelected(int par1) {
-		return this.dimensionManager.getDimensions().get(par1).equals(this.parentGui.selectedDimension);
+	protected boolean isSelected(int index) {
+		return this.dimensionManager.getDimensions().get(index).equals(this.parentGui.selectedDimension);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 	}
 
 	@Override
-	protected void overlayBackground(int par1, int par2, int par3, int par4) {
+	protected void overlayBackground(int startY, int endY, int startAlpha, int endAlpha) {
 	}
 
 	@Override

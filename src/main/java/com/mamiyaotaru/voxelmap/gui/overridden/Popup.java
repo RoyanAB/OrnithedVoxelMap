@@ -92,12 +92,12 @@ public class Popup {
 		GLShim.glDisable(2929);
 		this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		float var6 = 32.0F;
+		float textureScale = 32.0F;
 		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-		vertexBuffer.pos(this.x, this.y + this.h, 0.0).tex(this.x / var6, this.y / var6).color(64, 64, 64, 255).endVertex();
-		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).tex((this.x + this.w) / var6, this.y / var6).color(64, 64, 64, 255).endVertex();
-		vertexBuffer.pos(this.x + this.w, this.y, 0.0).tex((this.x + this.w) / var6, (this.y + this.h) / var6).color(64, 64, 64, 255).endVertex();
-		vertexBuffer.pos(this.x, this.y, 0.0).tex(this.x / var6, (this.y + this.h) / var6).color(64, 64, 64, 255).endVertex();
+		vertexBuffer.pos(this.x, this.y + this.h, 0.0).tex(this.x / textureScale, this.y / textureScale).color(64, 64, 64, 255).endVertex();
+		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).tex((this.x + this.w) / textureScale, this.y / textureScale).color(64, 64, 64, 255).endVertex();
+		vertexBuffer.pos(this.x + this.w, this.y, 0.0).tex((this.x + this.w) / textureScale, (this.y + this.h) / textureScale).color(64, 64, 64, 255).endVertex();
+		vertexBuffer.pos(this.x, this.y, 0.0).tex(this.x / textureScale, (this.y + this.h) / textureScale).color(64, 64, 64, 255).endVertex();
 		tessellator.draw();
 		GLShim.glEnable(3042);
 		GLShim.glBlendFunc(770, 771);

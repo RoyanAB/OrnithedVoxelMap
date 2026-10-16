@@ -269,7 +269,6 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 
 			if (blockState != BlockRepository.air.getDefaultState()) {
 				blockState = blockState.getActualState(world, blockPos);
-				int var32 = 255;
 				seafloorLight = this.getLight(blockState, chunk, blockPos, startX + imageX, startZ + imageY, seafloorHeight, solid);
 			}
 
@@ -292,7 +291,6 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 
 			if (blockState != BlockRepository.air.getDefaultState()) {
 				blockState = blockState.getActualState(world, blockPos);
-				int var37 = 255;
 				transparentLight = this.getLight(blockState, chunk, blockPos, startX + imageX, startZ + imageY, transparentHeight, solid);
 			}
 
@@ -338,7 +336,6 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 
 			if (blockState != BlockRepository.air.getDefaultState()) {
 				blockState = blockState.getActualState(world, blockPos);
-				int var38 = 255;
 				foliageLight = this.getLight(blockState, chunk, blockPos, startX + imageX, startZ + imageY, foliageHeight, solid);
 			}
 
@@ -563,7 +560,6 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 			}
 
 			if (this.mapOptions.blockTransparency && !solid) {
-				int var32 = -1;
 				transparentHeight = mapData.getTransparentHeight(imageX, imageY);
 				blockPos.setXYZ(mcX, transparentHeight - 1, mcZ);
 				blockState = mapData.getTransparentBlockstate(imageX, imageY);

@@ -5,50 +5,50 @@ import net.minecraft.util.Util;
 import java.io.File;
 
 public class FilesystemUtils {
-	public static File getAppDir(String par0Str, boolean createIfNotExist) {
-		String var1 = System.getProperty("user.home", ".");
-		File var2;
+	public static File getAppDir(String appName, boolean createIfNotExist) {
+		String userHome = System.getProperty("user.home", ".");
+		File appDir;
 		switch (getOs()) {
 			case LINUX:
 			case SOLARIS:
-				var2 = new File(var1, '.' + par0Str + '/');
+				appDir = new File(userHome, '.' + appName + '/');
 				break;
 			case WINDOWS:
-				String var3 = System.getenv("APPDATA");
-				if (var3 != null) {
-					var2 = new File(var3, "." + par0Str + '/');
+				String appDataPath = System.getenv("APPDATA");
+				if (appDataPath != null) {
+					appDir = new File(appDataPath, "." + appName + '/');
 				} else {
-					var2 = new File(var1, '.' + par0Str + '/');
+					appDir = new File(userHome, '.' + appName + '/');
 				}
 				break;
 			case OSX:
-				var2 = new File(var1, "Library/Application Support/" + par0Str);
+				appDir = new File(userHome, "Library/Application Support/" + appName);
 				break;
 			default:
-				var2 = new File(var1, par0Str + '/');
+				appDir = new File(userHome, appName + '/');
 		}
 
-		if (createIfNotExist && !var2.exists() && !var2.mkdirs()) {
-			throw new RuntimeException("The working directory could not be created: " + var2);
+		if (createIfNotExist && !appDir.exists() && !appDir.mkdirs()) {
+			throw new RuntimeException("The working directory could not be created: " + appDir);
 		} else {
-			return var2;
+			return appDir;
 		}
 	}
 
 	public static Util.EnumOS getOs() {
-		String var0 = System.getProperty("os.name").toLowerCase();
-		return var0.contains("win")
+		String osName = System.getProperty("os.name").toLowerCase();
+		return osName.contains("win")
 			? Util.EnumOS.WINDOWS
 			: (
-			var0.contains("mac")
+			osName.contains("mac")
 				? Util.EnumOS.OSX
 				: (
-				var0.contains("solaris")
+				osName.contains("solaris")
 					? Util.EnumOS.SOLARIS
 					: (
-					var0.contains("sunos")
+					osName.contains("sunos")
 						? Util.EnumOS.SOLARIS
-						: (var0.contains("linux") ? Util.EnumOS.LINUX : (var0.contains("unix") ? Util.EnumOS.LINUX : Util.EnumOS.UNKNOWN))
+						: (osName.contains("linux") ? Util.EnumOS.LINUX : (osName.contains("unix") ? Util.EnumOS.LINUX : Util.EnumOS.UNKNOWN))
 				)
 			)
 		);

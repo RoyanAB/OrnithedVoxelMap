@@ -17,10 +17,8 @@ public class BlockModel {
 	float failedToLoadY;
 
 	public BlockModel(List<BakedQuad> quads) {
-		BakedQuad quad = null;
-
 		for (BakedQuad var9 : quads) {
-			BlockModel.BlockFace face = new BlockModel.BlockFace(var9.getVertexData());
+			BlockModel.BlockFace face = new BlockFace(var9.getVertexData());
 			if (face.isClockwise && !face.isVertical) {
 				this.faces.add(face);
 			}
@@ -29,7 +27,6 @@ public class BlockModel {
 		Collections.sort(this.faces);
 		this.longestSide = new BlockModel.BlockVertex[2];
 		float greatestLength = 0.0F;
-		BlockModel.BlockFace face = null;
 
 		for (BlockModel.BlockFace var12 : this.faces) {
 			float uDiff = var12.longestSide[0].u - var12.longestSide[1].u;
@@ -68,7 +65,6 @@ public class BlockModel {
 		g2.setColor(new Color(0, 0, 0, 0));
 		g2.fillRect(0, 0, modelImage.getWidth(), modelImage.getHeight());
 		g2.dispose();
-		BlockModel.BlockFace face = null;
 
 		for (BlockModel.BlockFace var32 : this.faces) {
 			float minU = var32.getMinU();
@@ -142,12 +138,12 @@ public class BlockModel {
 		return modelImage;
 	}
 
-	private boolean similarEnough(float a, float b, float one, float two) {
-		boolean similar = Math.abs(a - one) < 1.0E-4;
-		return similar && Math.abs(b - two) < 1.0E-4;
+	private boolean similarEnough(float u1, float v1, float u2, float v2) {
+		boolean similar = Math.abs(u1 - u2) < 1.0E-4;
+		return similar && Math.abs(v1 - v2) < 1.0E-4;
 	}
 
-	public class BlockFace implements Comparable<BlockModel.BlockFace> {
+	public static class BlockFace implements Comparable<BlockModel.BlockFace> {
 		BlockModel.BlockVertex[] vertices;
 		boolean isHorizontal;
 		boolean isVertical;
@@ -166,7 +162,7 @@ public class BlockModel {
 				float z = Float.intBitsToFloat(values[t * intsPerVertex + 2]);
 				float u = Float.intBitsToFloat(values[t * intsPerVertex + 4]);
 				float v = Float.intBitsToFloat(values[t * intsPerVertex + 5]);
-				this.vertices[t] = BlockModel.this.new BlockVertex(x, y, z, u, v);
+				this.vertices[t] = new BlockVertex(x, y, z, u, v);
 			}
 
 			this.isHorizontal = this.checkIfHorizontal();
@@ -223,8 +219,8 @@ public class BlockModel {
 		private float calculateY() {
 			float sum = 0.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				sum += this.vertices[t].y;
+			for (BlockVertex vertex : this.vertices) {
+				sum += vertex.y;
 			}
 
 			return sum / this.vertices.length;
@@ -250,9 +246,9 @@ public class BlockModel {
 		public float getMinX() {
 			float minX = 1.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].x < minX) {
-					minX = this.vertices[t].x;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.x < minX) {
+					minX = vertex.x;
 				}
 			}
 
@@ -262,9 +258,9 @@ public class BlockModel {
 		public float getMaxX() {
 			float maxX = 0.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].x > maxX) {
-					maxX = this.vertices[t].x;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.x > maxX) {
+					maxX = vertex.x;
 				}
 			}
 
@@ -274,9 +270,9 @@ public class BlockModel {
 		public float getMinZ() {
 			float minZ = 1.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].z < minZ) {
-					minZ = this.vertices[t].z;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.z < minZ) {
+					minZ = vertex.z;
 				}
 			}
 
@@ -286,9 +282,9 @@ public class BlockModel {
 		public float getMaxZ() {
 			float maxZ = 0.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].z > maxZ) {
-					maxZ = this.vertices[t].z;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.z > maxZ) {
+					maxZ = vertex.z;
 				}
 			}
 
@@ -298,9 +294,9 @@ public class BlockModel {
 		public float getMinU() {
 			float minU = 1.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].u < minU) {
-					minU = this.vertices[t].u;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.u < minU) {
+					minU = vertex.u;
 				}
 			}
 
@@ -310,9 +306,9 @@ public class BlockModel {
 		public float getMaxU() {
 			float maxU = 0.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].u > maxU) {
-					maxU = this.vertices[t].u;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.u > maxU) {
+					maxU = vertex.u;
 				}
 			}
 
@@ -322,9 +318,9 @@ public class BlockModel {
 		public float getMinV() {
 			float minV = 1.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].v < minV) {
-					minV = this.vertices[t].v;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.v < minV) {
+					minV = vertex.v;
 				}
 			}
 
@@ -334,9 +330,9 @@ public class BlockModel {
 		public float getMaxV() {
 			float maxV = 0.0F;
 
-			for (int t = 0; t < this.vertices.length; t++) {
-				if (this.vertices[t].v > maxV) {
-					maxV = this.vertices[t].v;
+			for (BlockVertex vertex : this.vertices) {
+				if (vertex.v > maxV) {
+					maxV = vertex.v;
 				}
 			}
 
@@ -352,7 +348,7 @@ public class BlockModel {
 		}
 	}
 
-	private class BlockVertex {
+	private static class BlockVertex {
 		float x;
 		float y;
 		float z;

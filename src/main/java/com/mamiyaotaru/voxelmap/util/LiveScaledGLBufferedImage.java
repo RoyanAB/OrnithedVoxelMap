@@ -1,7 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
 public class LiveScaledGLBufferedImage extends LiveGLBufferedImage {
-	private int scale = 1;
+	private final int scale;
 
 	public LiveScaledGLBufferedImage(int width, int height, int imageType) {
 		super(512, 512, imageType);
@@ -11,7 +11,7 @@ public class LiveScaledGLBufferedImage extends LiveGLBufferedImage {
 	@Override
 	public void setRGB(int x, int y, int color24) {
 		int alpha = color24 >> 24 & 0xFF;
-		byte r = (byte) ((color24 >> 0 & 0xFF) * alpha / 255);
+		byte r = (byte) ((color24 & 0xFF) * alpha / 255);
 		byte g = (byte) ((color24 >> 8 & 0xFF) * alpha / 255);
 		byte b = (byte) ((color24 >> 16 & 0xFF) * alpha / 255);
 		synchronized (this.bufferLock) {

@@ -6,14 +6,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
 public class MapChunkCache {
-	private final int width;
-	private final int height;
-	private Chunk lastCenterChunk = null;
-	private final MapChunk[] mapChunks;
 	private int left = 0;
 	private int right = 0;
 	private int top = 0;
 	private int bottom = 0;
+
+	private final int width;
+	private final int height;
+
+	private Chunk lastCenterChunk;
+	private final MapChunk[] mapChunks;
 	private boolean loaded = false;
 	private final IChangeObserver changeObserver;
 

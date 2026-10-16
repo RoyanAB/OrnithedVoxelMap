@@ -7,9 +7,9 @@ import java.util.ArrayList;
 public interface IDimensionManager {
 	ArrayList<Dimension> getDimensions();
 
-	Dimension getDimensionByID(int var1);
+	Dimension getDimensionByID(int dimensionID);
 
-	void enteredDimension(int var1);
+	void enteredDimension(int dimensionID);
 
 	void populateDimensions();
 }

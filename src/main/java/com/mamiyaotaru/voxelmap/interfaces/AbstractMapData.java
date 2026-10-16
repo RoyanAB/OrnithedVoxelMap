@@ -9,7 +9,7 @@ import java.util.Collection;
 public abstract class AbstractMapData implements IMapData {
 	protected int width;
 	protected int height;
-	protected Object dataLock = new Object();
+	protected final Object dataLock = new Object();
 	private final Object labelLock = new Object();
 	public AbstractMapData.Point[][] points;
 	public ArrayList<AbstractMapData.Segment> segments;
@@ -31,7 +31,7 @@ public abstract class AbstractMapData implements IMapData {
 
 		for (int x = 0; x < this.width; x++) {
 			for (int z = 0; z < this.height; z++) {
-				this.points[x][z] = new AbstractMapData.Point(x, z, this.getBiomeID(x, z));
+				this.points[x][z] = new Point(x, z, this.getBiomeID(x, z));
 			}
 		}
 
@@ -70,7 +70,7 @@ public abstract class AbstractMapData implements IMapData {
 			if (this.segments != null) {
 				for (AbstractMapData.Segment segment : this.segments) {
 					if (segment.biomeID != -1) {
-						AbstractMapData.BiomeLabel label = new AbstractMapData.BiomeLabel();
+						AbstractMapData.BiomeLabel label = new BiomeLabel();
 						label.biomeID = segment.biomeID;
 						label.name = segment.name;
 						label.segmentSize = segment.memberPoints.size();
@@ -84,14 +84,12 @@ public abstract class AbstractMapData implements IMapData {
 	}
 
 	public ArrayList<AbstractMapData.BiomeLabel> getBiomeLabels() {
-		ArrayList<AbstractMapData.BiomeLabel> labelsToReturn = new ArrayList<>();
 		synchronized (this.labelLock) {
-			labelsToReturn.addAll(this.labels);
-			return labelsToReturn;
+			return new ArrayList<>(this.labels);
 		}
 	}
 
-	public class BiomeLabel {
+	public static class BiomeLabel {
 		public int biomeID = -1;
 		public String name = "";
 		public int segmentSize = 0;
@@ -99,13 +97,13 @@ public abstract class AbstractMapData implements IMapData {
 		public int z = 0;
 	}
 
-	private class Point {
+	public static class Point {
 		public int x;
 		public int z;
 		public boolean inSegment = false;
 		public boolean isCandidate = false;
 		public int layer = -1;
-		public int biomeID = -1;
+		public int biomeID;
 
 		public Point(int x, int z, int biomeID) {
 			this.x = x;
@@ -151,7 +149,7 @@ public abstract class AbstractMapData implements IMapData {
 			ArrayList<AbstractMapData.Point> candidatePoints = new ArrayList<>();
 			candidatePoints.add(this.memberPoints.remove(0));
 
-			while (candidatePoints.size() > 0) {
+			while (!candidatePoints.isEmpty()) {
 				AbstractMapData.Point point = candidatePoints.remove(0);
 				point.isCandidate = false;
 				if (point.biomeID == this.biomeID) {
@@ -267,11 +265,11 @@ public abstract class AbstractMapData implements IMapData {
 			float labelPadding = labelWidth / 16.0F * multi / shellWidth;
 			int layer = 0;
 
-			while (this.currentShell.size() > 0 && layer < labelPadding) {
+			while (!this.currentShell.isEmpty() && layer < labelPadding) {
 				this.currentShell = this.getNextShell(this.currentShell, ++layer, horizontalBias);
 			}
 
-			if (this.currentShell.size() > 0) {
+			if (!this.currentShell.isEmpty()) {
 				ArrayList<AbstractMapData.Point> remainingPoints = new ArrayList<>();
 
 				for (AbstractMapData.Point point : this.memberPoints) {
@@ -351,7 +349,7 @@ public abstract class AbstractMapData implements IMapData {
 				}
 			}
 
-			if (nextShell.size() > 0) {
+			if (!nextShell.isEmpty()) {
 				return nextShell;
 			}
 

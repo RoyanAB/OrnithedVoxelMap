@@ -70,7 +70,7 @@ public enum EnumMobs {
 	public ResourceLocation secondaryResourceLocation;
 	public final boolean isHostile;
 	public final boolean isNeutral;
-	public boolean enabled;
+	public final boolean enabled;
 
 	public static EnumMobs getMobByName(String par0) {
 		for (EnumMobs var4 : values()) {
@@ -88,7 +88,7 @@ public enum EnumMobs {
 		this.isTopLevelUnit = topLevelUnit;
 		this.expectedWidth = expectedWidth;
 		this.resourceLocation = new ResourceLocation(path);
-		this.secondaryResourceLocation = secondaryPath.equals("") ? null : new ResourceLocation(secondaryPath);
+		this.secondaryResourceLocation = secondaryPath.isEmpty() ? null : new ResourceLocation(secondaryPath);
 		this.isHostile = isHostile;
 		this.isNeutral = isNeutral;
 		this.enabled = true;

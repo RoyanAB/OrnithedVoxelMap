@@ -114,7 +114,7 @@ public class ImageUtils {
 				for (int y = 0; y < imageHeight; y++) {
 					int index = y * imageWidth * 4 + x * 4;
 					byte var8 = 0;
-					int color24 = var8 | (bytes[index + 2] & 255) << 0;
+					int color24 = var8 | (bytes[index + 2] & 255);
 					color24 |= (bytes[index + 1] & 255) << 8;
 					color24 |= (bytes[index] & 255) << 16;
 					color24 |= (bytes[index + 3] & 255) << 24;
@@ -170,7 +170,7 @@ public class ImageUtils {
 						for (int y = 0; y < fboHeight && startY + y < imageHeight; y++) {
 							int index = y * fboWidth * 4 + x * 4;
 							byte var8 = 0;
-							int color24 = var8 | (bytes[index + 2] & 255) << 0;
+							int color24 = var8 | (bytes[index + 2] & 255);
 							color24 |= (bytes[index + 1] & 255) << 8;
 							color24 |= (bytes[index] & 255) << 16;
 							color24 |= (bytes[index + 3] & 255) << 24;
@@ -198,10 +198,6 @@ public class ImageUtils {
 
 	public static BufferedImage blankImage(String path, int w, int h, int imageWidth, int imageHeight) {
 		return blankImage(path, w, h, imageWidth, imageHeight, 0, 0, 0, 0);
-	}
-
-	public static BufferedImage blankImage(String path, int w, int h, int r, int g, int b, int a) {
-		return blankImage(path, w, h, 64, 32, r, g, b, a);
 	}
 
 	public static BufferedImage blankImage(String path, int w, int h, int imageWidth, int imageHeight, int r, int g, int b, int a) {
@@ -307,8 +303,7 @@ public class ImageUtils {
 		h = Math.max(1, h);
 		x = Math.min(mobSkin.getWidth(null) - w, x);
 		y = Math.min(mobSkin.getHeight(null) - h, y);
-		BufferedImage base = mobSkin.getSubimage(x, y, w, h);
-		return base;
+		return mobSkin.getSubimage(x, y, w, h);
 	}
 
 	public static BufferedImage addImages(BufferedImage base, BufferedImage overlay, float x, float y, int baseWidth, int baseHeight) {
@@ -419,8 +414,8 @@ public class ImageUtils {
 						} else {
 							int red = newColor >> 16 & 0xFF;
 							int green = newColor >> 8 & 0xFF;
-							int blue = newColor >> 0 & 0xFF;
-							newColor = 0 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
+							int blue = newColor & 0xFF;
+							newColor = (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
 						}
 
 						temp.setRGB(s, t, newColor);
@@ -498,7 +493,7 @@ public class ImageUtils {
 		int top = -1;
 		int bottom = image.getHeight();
 		boolean foundColor = false;
-		int color = 0;
+		int color;
 
 		while (!foundColor && left < right - 1) {
 			left++;
@@ -561,7 +556,7 @@ public class ImageUtils {
 		int top = -1;
 		int bottom = height;
 		boolean foundColor = false;
-		int color = 0;
+		int color;
 
 		while (!foundColor && left < width / 2 - 1 && top < height / 2 - 1) {
 			left++;
@@ -604,7 +599,7 @@ public class ImageUtils {
 	public static float percentageOfEdgePixelsThatAreSolid(BufferedImage image) {
 		float edgePixels = image.getWidth() * 2 + image.getHeight() * 2 - 2;
 		float edgePixelsWithColor = 0.0F;
-		int color = 0;
+		int color;
 
 		for (int t = 0; t < image.getHeight(); t++) {
 			color = image.getRGB(0, t);

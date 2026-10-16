@@ -3,42 +3,39 @@ package com.mamiyaotaru.voxelmap.util;
 import net.minecraft.util.math.BlockPos;
 
 public class MutableBlockPos extends BlockPos {
-	public int field_177962_a;
-	public int field_177960_b;
-	public int field_177961_c;
+	public int x;
+	public int y;
+	public int z;
 
 	public MutableBlockPos(int x, int y, int z) {
 		super(0, 0, 0);
-		this.field_177962_a = x;
-		this.field_177960_b = y;
-		this.field_177961_c = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	public com.mamiyaotaru.voxelmap.util.MutableBlockPos withXYZ(int x, int y, int z) {
-		this.field_177962_a = x;
-		this.field_177960_b = y;
-		this.field_177961_c = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		return this;
 	}
 
 	public void setXYZ(int x, int y, int z) {
-		this.field_177962_a = x;
-		this.field_177960_b = y;
-		this.field_177961_c = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
-	@Override
 	public int getX() {
-		return this.field_177962_a;
+		return this.x;
 	}
 
-	@Override
 	public int getY() {
-		return this.field_177960_b;
+		return this.y;
 	}
 
-	@Override
 	public int getZ() {
-		return this.field_177961_c;
+		return this.z;
 	}
 }

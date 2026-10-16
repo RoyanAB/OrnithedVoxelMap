@@ -10,75 +10,75 @@ public interface IMapData {
 
 	int getHeight();
 
-	int getHeight(int var1, int var2);
+	int getHeight(int x, int z);
 
-	IBlockState getBlockstate(int var1, int var2);
+	IBlockState getBlockstate(int x, int z);
 
-	int getBiomeTint(int var1, int var2);
+	int getBiomeTint(int x, int z);
 
-	int getLight(int var1, int var2);
+	int getLight(int x, int z);
 
-	int getOceanFloorHeight(int var1, int var2);
+	int getOceanFloorHeight(int x, int z);
 
-	IBlockState getOceanFloorBlockstate(int var1, int var2);
+	IBlockState getOceanFloorBlockstate(int x, int z);
 
-	int getOceanFloorBiomeTint(int var1, int var2);
+	int getOceanFloorBiomeTint(int x, int z);
 
-	int getOceanFloorLight(int var1, int var2);
+	int getOceanFloorLight(int x, int z);
 
-	int getTransparentHeight(int var1, int var2);
+	int getTransparentHeight(int x, int z);
 
-	IBlockState getTransparentBlockstate(int var1, int var2);
+	IBlockState getTransparentBlockstate(int x, int z);
 
-	int getTransparentBiomeTint(int var1, int var2);
+	int getTransparentBiomeTint(int x, int z);
 
-	int getTransparentLight(int var1, int var2);
+	int getTransparentLight(int x, int z);
 
-	int getFoliageHeight(int var1, int var2);
+	int getFoliageHeight(int x, int z);
 
-	IBlockState getFoliageBlockstate(int var1, int var2);
+	IBlockState getFoliageBlockstate(int x, int z);
 
-	int getFoliageBiomeTint(int var1, int var2);
+	int getFoliageBiomeTint(int x, int z);
 
-	int getFoliageLight(int var1, int var2);
+	int getFoliageLight(int x, int z);
 
-	int getBiomeID(int var1, int var2);
+	int getBiomeID(int x, int z);
 
-	void setHeight(int var1, int var2, int var3);
+	void setHeight(int x, int z, int height);
 
-	void setBlockstate(int var1, int var2, IBlockState var3);
+	void setBlockstate(int x, int z, IBlockState blockState);
 
-	void setBiomeTint(int var1, int var2, int var3);
+	void setBiomeTint(int x, int z, int tint);
 
-	void setLight(int var1, int var2, int var3);
+	void setLight(int x, int z, int light);
 
-	void setOceanFloorHeight(int var1, int var2, int var3);
+	void setOceanFloorHeight(int x, int z, int height);
 
-	void setOceanFloorBlockstate(int var1, int var2, IBlockState var3);
+	void setOceanFloorBlockstate(int x, int z, IBlockState blockState);
 
-	void setOceanFloorBiomeTint(int var1, int var2, int var3);
+	void setOceanFloorBiomeTint(int x, int z, int tint);
 
-	void setOceanFloorLight(int var1, int var2, int var3);
+	void setOceanFloorLight(int x, int z, int light);
 
-	void setTransparentHeight(int var1, int var2, int var3);
+	void setTransparentHeight(int x, int z, int height);
 
-	void setTransparentBlockstate(int var1, int var2, IBlockState var3);
+	void setTransparentBlockstate(int x, int z, IBlockState blockState);
 
-	void setTransparentBiomeTint(int var1, int var2, int var3);
+	void setTransparentBiomeTint(int x, int z, int tint);
 
-	void setTransparentLight(int var1, int var2, int var3);
+	void setTransparentLight(int x, int z, int light);
 
-	void setFoliageHeight(int var1, int var2, int var3);
+	void setFoliageHeight(int x, int z, int height);
 
-	void setFoliageBlockstate(int var1, int var2, IBlockState var3);
+	void setFoliageBlockstate(int x, int z, IBlockState blockState);
 
-	void setFoliageBiomeTint(int var1, int var2, int var3);
+	void setFoliageBiomeTint(int x, int z, int tint);
 
-	void setFoliageLight(int var1, int var2, int var3);
+	void setFoliageLight(int x, int z, int light);
 
-	void setBiomeID(int var1, int var2, int var3);
+	void setBiomeID(int x, int z, int biomeID);
 
-	void moveX(int var1);
+	void moveX(int amount);
 
-	void moveZ(int var1);
+	void moveZ(int amount);
 }

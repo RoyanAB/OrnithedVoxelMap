@@ -27,7 +27,7 @@ public class CompressibleMapData extends AbstractMapData {
 	private static final int FOLIAGELIGHTPOS = 15;
 	private static final int BIOMEIDPOS = 16;
 	private byte[] data;
-	private boolean isCompressed = false;
+	private boolean isCompressed;
 	private BiMap<IBlockState, Integer> stateToInt = null;
 	int count = 1;
 	private static byte[] compressedEmptyData = new byte[1179648];

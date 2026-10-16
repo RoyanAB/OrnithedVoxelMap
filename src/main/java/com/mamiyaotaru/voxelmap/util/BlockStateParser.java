@@ -37,8 +37,8 @@ public class BlockStateParser {
 				String propertiesString = stateString.substring(stateString.indexOf("[") + 1, stateString.lastIndexOf("]"));
 				String[] propertiesStringParts = propertiesString.split(",");
 
-				for (int t = 0; t < propertiesStringParts.length; t++) {
-					String[] propertyStringParts = propertiesStringParts[t].split("=");
+				for (String propertiesStringPart : propertiesStringParts) {
+					String[] propertyStringParts = propertiesStringPart.split("=");
 					IProperty<?> property = block.getBlockState().getProperty(propertyStringParts[0]);
 					if (property != null) {
 						blockState = withValue(blockState, property, propertyStringParts[1]);

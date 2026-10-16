@@ -35,23 +35,23 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 			EnumOptionsMinimap.BEACONS,
 			EnumOptionsMinimap.CAVEMODE
 		};
-		int var2 = 0;
+		int buttonIndex = 0;
 		this.screenTitle = I18nUtils.getString("options.minimap.title");
 
 		for (EnumOptionsMinimap option : relevantOptions) {
-			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
+			GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
-				this.getWidth() / 2 - 155 + var2 % 2 * 160,
-				this.getHeight() / 6 + 24 * (var2 >> 1),
+				this.getWidth() / 2 - 155 + buttonIndex % 2 * 160,
+				this.getHeight() / 6 + 24 * (buttonIndex >> 1),
 				option,
 				this.options.getKeyText(option)
 			);
-			this.getButtonList().add(var7);
+			this.getButtonList().add(button);
 			if (option.equals(EnumOptionsMinimap.CAVEMODE)) {
-				var7.enabled = this.options.cavesAllowed;
+				button.enabled = this.options.cavesAllowed;
 			}
 
-			var2++;
+			buttonIndex++;
 		}
 
 		GuiOptionButtonMinimap radarOptionsButton = new GuiOptionButtonMinimap(

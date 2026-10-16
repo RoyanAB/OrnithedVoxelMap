@@ -22,9 +22,9 @@ import java.util.Collections;
 
 public class WaypointContainer {
 	private final ArrayList<Waypoint> wayPts = new ArrayList<>();
-	private Waypoint highlightedWaypoint = null;
+	private Waypoint highlightedWaypoint;
 	private final Minecraft mc;
-	public MapSettingsManager options = null;
+	public MapSettingsManager options;
 	private final String TARGETFLAG = "*&^TARget%$^";
 
 	public WaypointContainer(MapSettingsManager options) {
@@ -45,7 +45,7 @@ public class WaypointContainer {
 	}
 
 	private void sortWaypoints() {
-		Collections.sort(this.wayPts, Collections.reverseOrder());
+		this.wayPts.sort(Collections.reverseOrder());
 	}
 
 	public void renderWaypoints(float partialTicks) {
@@ -85,7 +85,7 @@ public class WaypointContainer {
 			int y = this.highlightedWaypoint.getY();
 			double distance = Math.sqrt(this.highlightedWaypoint.getDistanceSqToEntity(cameraEntity));
 			boolean isPointedAt = this.isPointedAt(this.highlightedWaypoint, distance, cameraEntity, partialTicks);
-			this.renderLabel(this.highlightedWaypoint, distance, isPointedAt, "*&^TARget%$^", x - renderPosX, y - renderPosY + 1.0, z - renderPosZ, 64);
+			this.renderLabel(this.highlightedWaypoint, distance, isPointedAt, TARGETFLAG, x - renderPosX, y - renderPosY + 1.0, z - renderPosZ, 64);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class WaypointContainer {
 
 	private void renderLabel(Waypoint pt, double distance, boolean isPointedAt, String name, double par3, double par5, double par7, int par9) {
 		GLShim.glAlphaFunc(516, 0.1F);
-		boolean target = name == "*&^TARget%$^";
+		boolean target = name.equals(TARGETFLAG);
 		if (target) {
 			if (pt.red != 2.0F && pt.green != 0.0F && pt.blue != 0.0F) {
 				isPointedAt = false;

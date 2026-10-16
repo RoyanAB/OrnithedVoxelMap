@@ -17,8 +17,8 @@ public class GuiMinimapControls extends GuiScreenMinimap {
 
 	protected String screenTitle = "Controls";
 
-	public GuiMinimapControls(GuiScreen par1GuiScreen, IVoxelMap master) {
-		this.parentScreen = par1GuiScreen;
+	public GuiMinimapControls(GuiScreen guiScreen, IVoxelMap master) {
+		this.parentScreen = guiScreen;
 		this.options = master.getMapOptions();
 	}
 
@@ -28,13 +28,13 @@ public class GuiMinimapControls extends GuiScreenMinimap {
 
 	@Override
 	public void initGui() {
-		int var2 = this.getLeftBorder();
+		int leftBorder = this.getLeftBorder();
 
-		for (int var3 = 0; var3 < this.options.keyBindings.length; var3++) {
+		for (int keyIndex = 0; keyIndex < this.options.keyBindings.length; keyIndex++) {
 			this.getButtonList()
 				.add(
 					new GuiOptionButtonMinimap(
-						var3, var2 + var3 % 2 * 160, this.getHeight() / 6 + 24 * (var3 >> 1), 70, 20, this.options.getOptionDisplayString(var3)
+						keyIndex, leftBorder + keyIndex % 2 * 160, this.getHeight() / 6 + 24 * (keyIndex >> 1), 70, 20, this.options.getOptionDisplayString(keyIndex)
 					)
 				);
 		}
@@ -95,54 +95,54 @@ public class GuiMinimapControls extends GuiScreenMinimap {
 		super.drawMap();
 		this.drawDefaultBackground();
 		this.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-		int var4 = this.getLeftBorder();
+		int leftBorder = this.getLeftBorder();
 
-		for (int var5 = 0; var5 < this.options.keyBindings.length; var5++) {
-			boolean var6 = false;
-			int var7 = 0;
+		for (int keyIndex = 0; keyIndex < this.options.keyBindings.length; keyIndex++) {
+			boolean hasConflict = false;
+			int checkIndex = 0;
 
 			while (true) {
-				if (var7 < this.options.keyBindings.length) {
-					if (this.options.keyBindings[var5].getKeyCode() == 0
-						|| (var7 == var5 || this.options.keyBindings[var5].getKeyCode() != this.options.keyBindings[var7].getKeyCode())
+				if (checkIndex < this.options.keyBindings.length) {
+					if (this.options.keyBindings[keyIndex].getKeyCode() == 0
+						|| (checkIndex == keyIndex || this.options.keyBindings[keyIndex].getKeyCode() != this.options.keyBindings[checkIndex].getKeyCode())
 						&& (
-						this.options.keyBindings[var5].getKeyCode() != this.options.game.gameSettings.keyBindings[var7].getKeyCode()
-							|| this.options.keyBindings[var5].equals(this.options.game.gameSettings.keyBindings[var7])
+						this.options.keyBindings[keyIndex].getKeyCode() != this.options.game.gameSettings.keyBindings[checkIndex].getKeyCode()
+							|| this.options.keyBindings[keyIndex].equals(this.options.game.gameSettings.keyBindings[checkIndex])
 					)) {
-						var7++;
+						checkIndex++;
 						continue;
 					}
 
-					var6 = true;
+					hasConflict = true;
 				}
 
-				if (var7 >= this.options.game.gameSettings.keyBindings.length) {
+				if (checkIndex >= this.options.game.gameSettings.keyBindings.length) {
 					break;
 				}
 
-				if (this.options.keyBindings[var5].getKeyCode() != 0
-					&& this.options.keyBindings[var5].getKeyCode() == this.options.game.gameSettings.keyBindings[var7].getKeyCode()
-					&& !this.options.keyBindings[var5].equals(this.options.game.gameSettings.keyBindings[var7])) {
-					var6 = true;
+				if (this.options.keyBindings[keyIndex].getKeyCode() != 0
+					&& this.options.keyBindings[keyIndex].getKeyCode() == this.options.game.gameSettings.keyBindings[checkIndex].getKeyCode()
+					&& !this.options.keyBindings[keyIndex].equals(this.options.game.gameSettings.keyBindings[checkIndex])) {
+					hasConflict = true;
 					break;
 				}
 
-				var7++;
+				checkIndex++;
 			}
 
-			if (this.buttonId == var5) {
-				this.getButtonList().get(var5).displayString = "§f> §e??? §f<";
-			} else if (var6) {
-				this.getButtonList().get(var5).displayString = "§c" + this.options.getOptionDisplayString(var5);
+			if (this.buttonId == keyIndex) {
+				this.getButtonList().get(keyIndex).displayString = "§f> §e??? §f<";
+			} else if (hasConflict) {
+				this.getButtonList().get(keyIndex).displayString = "§c" + this.options.getOptionDisplayString(keyIndex);
 			} else {
-				this.getButtonList().get(var5).displayString = this.options.getOptionDisplayString(var5);
+				this.getButtonList().get(keyIndex).displayString = this.options.getOptionDisplayString(keyIndex);
 			}
 
 			this.drawString(
 				this.getFontRenderer(),
-				this.options.getKeyBindingDescription(var5),
-				var4 + var5 % 2 * 160 + 70 + 6,
-				this.getHeight() / 6 + 24 * (var5 >> 1) + 7,
+				this.options.getKeyBindingDescription(keyIndex),
+				leftBorder + keyIndex % 2 * 160 + 70 + 6,
+				this.getHeight() / 6 + 24 * (keyIndex >> 1) + 7,
 				-1
 			);
 		}

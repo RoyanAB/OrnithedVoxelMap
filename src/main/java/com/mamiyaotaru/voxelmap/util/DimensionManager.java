@@ -9,11 +9,11 @@ import net.minecraft.world.WorldProvider;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class DimensionManager implements IDimensionManager {
-	IVoxelMap master;
+	private final IVoxelMap master;
+
 	public ArrayList<Dimension> dimensions;
 	private static Method providersGetDimensionMethod = null;
 
@@ -32,8 +32,8 @@ public class DimensionManager implements IDimensionManager {
 		this.dimensions.clear();
 
 		for (int t = -1; t <= 1; t++) {
-			String name = "notLoaded";
-			WorldProvider provider = null;
+			String name;
+			WorldProvider provider;
 
 			try {
 				provider = DimensionType.getById(t).createDimension();
@@ -56,8 +56,8 @@ public class DimensionManager implements IDimensionManager {
 		for (Waypoint pt : this.master.getWaypointManager().getWaypoints()) {
 			for (Integer t : pt.dimensions) {
 				if (this.getDimensionByID(t) == null) {
-					String name = "notLoaded";
-					WorldProvider provider = null;
+					String name;
+					WorldProvider provider;
 
 					try {
 						provider = DimensionType.getById(t).createDimension();
@@ -79,11 +79,7 @@ public class DimensionManager implements IDimensionManager {
 			}
 		}
 
-		Collections.sort(this.dimensions, new Comparator<Dimension>() {
-			public int compare(Dimension dim1, Dimension dim2) {
-				return dim1.ID - dim2.ID;
-			}
-		});
+		this.dimensions.sort(Comparator.comparingInt(dim -> dim.ID));
 	}
 
 	@Override
@@ -92,11 +88,7 @@ public class DimensionManager implements IDimensionManager {
 		if (dim == null) {
 			dim = new Dimension("notLoaded", ID);
 			this.dimensions.add(dim);
-			Collections.sort(this.dimensions, new Comparator<Dimension>() {
-				public int compare(Dimension dim1, Dimension dim2) {
-					return dim1.ID - dim2.ID;
-				}
-			});
+			this.dimensions.sort(Comparator.comparingInt(dim2 -> dim2.ID));
 		}
 
 		if (dim.name.equals("notLoaded") || dim.name.equals("failedToLoad")) {
@@ -120,15 +112,11 @@ public class DimensionManager implements IDimensionManager {
 	}
 
 	public static int getDimensionIDfromProvider(WorldProvider provider) {
-		int id = 0;
+		int id;
 		if (providersGetDimensionMethod != null) {
 			try {
 				id = (Integer) providersGetDimensionMethod.invoke(provider);
-			} catch (IllegalAccessException e) {
-				id = provider.getDimensionType().getId();
-			} catch (IllegalArgumentException e) {
-				id = provider.getDimensionType().getId();
-			} catch (InvocationTargetException e) {
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				id = provider.getDimensionType().getId();
 			}
 		} else {
@@ -138,15 +126,14 @@ public class DimensionManager implements IDimensionManager {
 		return id;
 	}
 
-	static {
-		try {
-			Class<?> worldProviderClass = Class.forName("net.minecraft.world.WorldProvider");
-			Class<?>[] argClasses = new Class[0];
-			providersGetDimensionMethod = worldProviderClass.getMethod("getDimension", argClasses);
-		} catch (ClassNotFoundException e) {
-			providersGetDimensionMethod = null;
-		} catch (NoSuchMethodException e) {
-			providersGetDimensionMethod = null;
-		}
-	}
+	// forge thing?
+//	static {
+//		try {
+//			Class<?> worldProviderClass = Class.forName("net.minecraft.world.WorldProvider");
+//			Class<?>[] argClasses = new Class[0];
+//			providersGetDimensionMethod = worldProviderClass.getMethod("getDimension", argClasses);
+//		} catch (ClassNotFoundException | NoSuchMethodException e) {
+//			providersGetDimensionMethod = null;
+//		}
+//	}
 }

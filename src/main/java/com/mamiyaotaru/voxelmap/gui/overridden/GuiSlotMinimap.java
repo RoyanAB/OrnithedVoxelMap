@@ -100,11 +100,11 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 
 		int maxScroll = this.getMaxScroll();
 		if (maxScroll > 0) {
-			int k1 = (this.bottom - this.top) * (this.bottom - this.top) / this.getContentHeight();
-			k1 = MathHelper.clamp(k1, 32, this.bottom - this.top - 8);
-			int l1 = (int) this.amountScrolled * (this.bottom - this.top - k1) / maxScroll + this.top;
-			if (l1 < this.top) {
-				l1 = this.top;
+			int scrollBarThumbHeight  = (this.bottom - this.top) * (this.bottom - this.top) / this.getContentHeight();
+			scrollBarThumbHeight  = MathHelper.clamp(scrollBarThumbHeight , 32, this.bottom - this.top - 8);
+			int scrollBarThumbTopY = (int) this.amountScrolled * (this.bottom - this.top - scrollBarThumbHeight ) / maxScroll + this.top;
+			if (scrollBarThumbTopY < this.top) {
+				scrollBarThumbTopY = this.top;
 			}
 
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -114,16 +114,16 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 			vertexBuffer.pos(scrollBarLeft, this.top, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
 			tessellator.draw();
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-			vertexBuffer.pos(scrollBarLeft, l1 + k1, 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
-			vertexBuffer.pos(scrollBarRight, l1 + k1, 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
-			vertexBuffer.pos(scrollBarRight, l1, 0.0).tex(1.0, 0.0).color(128, 128, 128, 255).endVertex();
-			vertexBuffer.pos(scrollBarLeft, l1, 0.0).tex(0.0, 0.0).color(128, 128, 128, 255).endVertex();
+			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY + scrollBarThumbHeight , 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
+			vertexBuffer.pos(scrollBarRight, scrollBarThumbTopY + scrollBarThumbHeight , 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
+			vertexBuffer.pos(scrollBarRight, scrollBarThumbTopY, 0.0).tex(1.0, 0.0).color(128, 128, 128, 255).endVertex();
+			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY, 0.0).tex(0.0, 0.0).color(128, 128, 128, 255).endVertex();
 			tessellator.draw();
 			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-			vertexBuffer.pos(scrollBarLeft, l1 + k1 - 1, 0.0).tex(0.0, 1.0).color(192, 192, 192, 255).endVertex();
-			vertexBuffer.pos(scrollBarRight - 1, l1 + k1 - 1, 0.0).tex(1.0, 1.0).color(192, 192, 192, 255).endVertex();
-			vertexBuffer.pos(scrollBarRight - 1, l1, 0.0).tex(1.0, 0.0).color(192, 192, 192, 255).endVertex();
-			vertexBuffer.pos(scrollBarLeft, l1, 0.0).tex(0.0, 0.0).color(192, 192, 192, 255).endVertex();
+			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY + scrollBarThumbHeight  - 1, 0.0).tex(0.0, 1.0).color(192, 192, 192, 255).endVertex();
+			vertexBuffer.pos(scrollBarRight - 1, scrollBarThumbTopY + scrollBarThumbHeight  - 1, 0.0).tex(1.0, 1.0).color(192, 192, 192, 255).endVertex();
+			vertexBuffer.pos(scrollBarRight - 1, scrollBarThumbTopY, 0.0).tex(1.0, 0.0).color(192, 192, 192, 255).endVertex();
+			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY, 0.0).tex(0.0, 0.0).color(192, 192, 192, 255).endVertex();
 			tessellator.draw();
 		}
 
@@ -151,19 +151,19 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 			int bottomFudge = this.showTopBottomBG ? 0 : this.slotHeight - 4;
 			if (slotYPos + bottomFudge <= this.bottom && slotYPos + topFudge >= this.top) {
 				if (this.showSelectionBox && this.isSelected(slotIndexIterator)) {
-					int i1 = this.left + (this.width / 2 - this.getListWidth() / 2);
-					int j1 = this.left + this.width / 2 + this.getListWidth() / 2;
+					int selectionLeftX  = this.left + (this.width / 2 - this.getListWidth() / 2);
+					int selectionRightX = this.left + this.width / 2 + this.getListWidth() / 2;
 					GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 					GLShim.glDisable(3553);
 					vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-					vertexBuffer.pos(i1, slotYPos + topFudge + 2, 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
-					vertexBuffer.pos(j1, slotYPos + topFudge + 2, 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
-					vertexBuffer.pos(j1, slotYPos - 2, 0.0).tex(1.0, 0.0).color(128, 128, 128, 255).endVertex();
-					vertexBuffer.pos(i1, slotYPos - 2, 0.0).tex(0.0, 0.0).color(128, 128, 128, 255).endVertex();
-					vertexBuffer.pos(i1 + 1, slotYPos + topFudge + 1, 0.0).tex(0.0, 1.0).color(0, 0, 0, 255).endVertex();
-					vertexBuffer.pos(j1 - 1, slotYPos + topFudge + 1, 0.0).tex(1.0, 1.0).color(0, 0, 0, 255).endVertex();
-					vertexBuffer.pos(j1 - 1, slotYPos - 1, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
-					vertexBuffer.pos(i1 + 1, slotYPos - 1, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
+					vertexBuffer.pos(selectionLeftX , slotYPos + topFudge + 2, 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
+					vertexBuffer.pos(selectionRightX , slotYPos + topFudge + 2, 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
+					vertexBuffer.pos(selectionRightX , slotYPos - 2, 0.0).tex(1.0, 0.0).color(128, 128, 128, 255).endVertex();
+					vertexBuffer.pos(selectionLeftX , slotYPos - 2, 0.0).tex(0.0, 0.0).color(128, 128, 128, 255).endVertex();
+					vertexBuffer.pos(selectionLeftX  + 1, slotYPos + topFudge + 1, 0.0).tex(0.0, 1.0).color(0, 0, 0, 255).endVertex();
+					vertexBuffer.pos(selectionRightX  - 1, slotYPos + topFudge + 1, 0.0).tex(1.0, 1.0).color(0, 0, 0, 255).endVertex();
+					vertexBuffer.pos(selectionRightX  - 1, slotYPos - 1, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
+					vertexBuffer.pos(selectionLeftX  + 1, slotYPos - 1, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
 					tessellator.draw();
 					GLShim.glEnable(3553);
 				}

@@ -12,15 +12,18 @@ import java.io.PrintWriter;
 public class PersistentMapSettingsManager implements ISubSettingsManager {
 	protected int mapX;
 	protected int mapZ;
+
 	protected float zoom = 4.0F;
 	private float minZoomPower = -1.0F;
 	private float maxZoomPower = 4.0F;
 	protected float minZoom = 0.5F;
 	protected float maxZoom = 16.0F;
 	protected int cacheSize = 500;
+
 	protected boolean outputImages = false;
 	public boolean showWaypoints = true;
 	public boolean showWaypointNames = true;
+
 	protected final int MINMINZOOMPOWER = -3;
 	protected final int MAXMAXZOOMPOWER = 5;
 	protected final int MAXCACHESIZE = 5000;
@@ -33,28 +36,36 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 			String sCurrentLine;
 			while ((sCurrentLine = in.readLine()) != null) {
 				String[] curLine = sCurrentLine.split(":");
-				if (curLine[0].equals("Worldmap Zoom")) {
-					this.zoom = Float.parseFloat(curLine[1]);
-				} else if (curLine[0].equals("Worldmap Minimum Zoom")) {
-					this.minZoom = Float.parseFloat(curLine[1]);
-				} else if (curLine[0].equals("Worldmap Maximum Zoom")) {
-					this.maxZoom = Float.parseFloat(curLine[1]);
-				} else if (curLine[0].equals("Worldmap Cache Size")) {
-					this.cacheSize = Integer.parseInt(curLine[1]);
-				} else if (curLine[0].equals("Show Worldmap Waypoints")) {
-					this.showWaypoints = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Show Worldmap Waypoint Names")) {
-					this.showWaypointNames = Boolean.parseBoolean(curLine[1]);
-				} else if (curLine[0].equals("Output Images")) {
-					this.outputImages = Boolean.parseBoolean(curLine[1]);
+				switch (curLine[0]) {
+					case "Worldmap Zoom":
+						this.zoom = Float.parseFloat(curLine[1]);
+						break;
+					case "Worldmap Minimum Zoom":
+						this.minZoom = Float.parseFloat(curLine[1]);
+						break;
+					case "Worldmap Maximum Zoom":
+						this.maxZoom = Float.parseFloat(curLine[1]);
+						break;
+					case "Worldmap Cache Size":
+						this.cacheSize = Integer.parseInt(curLine[1]);
+						break;
+					case "Show Worldmap Waypoints":
+						this.showWaypoints = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Show Worldmap Waypoint Names":
+						this.showWaypointNames = Boolean.parseBoolean(curLine[1]);
+						break;
+					case "Output Images":
+						this.outputImages = Boolean.parseBoolean(curLine[1]);
+						break;
 				}
 			}
 
 			in.close();
-		} catch (Exception var5) {
+		} catch (Exception ignored) {
 		}
 
-		for (int power = -3; power <= 5; power++) {
+		for (int power = MINMINZOOMPOWER; power <= MAXMAXZOOMPOWER; power++) {
 			if (Math.pow(2.0, power) == this.minZoom) {
 				this.minZoomPower = power;
 			}
@@ -128,14 +139,14 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 	@Override
 	public void setOptionFloatValue(EnumOptionsMinimap par1EnumOptions, float par2) {
 		if (par1EnumOptions == EnumOptionsMinimap.MINZOOM) {
-			this.minZoomPower = (int) (par2 * 8.0F) + -3;
+			this.minZoomPower = (int) (par2 * 8.0F) - 3;
 			this.minZoom = (float) Math.pow(2.0, this.minZoomPower);
 			if (this.maxZoom < this.minZoom) {
 				this.maxZoom = this.minZoom;
 				this.maxZoomPower = this.minZoomPower;
 			}
 		} else if (par1EnumOptions == EnumOptionsMinimap.MAXZOOM) {
-			this.maxZoomPower = (int) (par2 * 8.0F) + -3;
+			this.maxZoomPower = (int) (par2 * 8.0F) - 3;
 			this.maxZoom = (float) Math.pow(2.0, this.maxZoomPower);
 			if (this.minZoom > this.maxZoom) {
 				this.minZoom = this.maxZoom;

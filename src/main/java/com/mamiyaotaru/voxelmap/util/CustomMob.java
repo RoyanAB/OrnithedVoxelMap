@@ -1,7 +1,8 @@
 package com.mamiyaotaru.voxelmap.util;
 
 public class CustomMob {
-	public String id = "notLoaded";
+	public String id;
+
 	public boolean enabled = true;
 	public boolean isHostile = false;
 	public boolean isNeutral = false;

@@ -27,9 +27,9 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 
 	private ArrayList<NetworkPlayerInfo> playersFiltered;
 
-	public GuiButtonRowListPlayers(GuiSelectPlayer par1GuiSelectPlayer) {
-		super(Minecraft.getMinecraft(), par1GuiSelectPlayer.getWidth(), par1GuiSelectPlayer.getHeight(), 89, par1GuiSelectPlayer.getHeight() - 65 + 4, 25);
-		this.parentGui = par1GuiSelectPlayer;
+	public GuiButtonRowListPlayers(GuiSelectPlayer guiSelectPlayer) {
+		super(Minecraft.getMinecraft(), guiSelectPlayer.getWidth(), guiSelectPlayer.getHeight(), 89, guiSelectPlayer.getHeight() - 65 + 4, 25);
+		this.parentGui = guiSelectPlayer;
 		NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().player.connection;
 		this.players = new ArrayList<>(netHandlerPlayClient.getPlayerInfoMap());
 		this.sort();
@@ -44,7 +44,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 			: TextFormatting.getTextWithoutFormattingCodes(networkPlayerInfoIn.getGameProfile().getName());
 	}
 
-	private GuiButton createButtonFor(Minecraft mcIn, int x, int y, NetworkPlayerInfo networkPlayerInfo, int index) {
+	private GuiButton createButtonFor(Minecraft minecraft, int x, int y, NetworkPlayerInfo networkPlayerInfo, int index) {
 		if (networkPlayerInfo == null) {
 			return null;
 		}
@@ -204,7 +204,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 		}
 
 		@Override
-		public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partialTicks) {
+		public void updatePosition(int slotIndex, int x, int y, float partialTicks) {
 		}
 	}
 }

@@ -6,14 +6,17 @@ import org.lwjgl.opengl.GL11;
 import java.awt.image.BufferedImage;
 
 public class BackgroundImageInfo {
-	final BufferedImage image;
+	private final BufferedImage image;
 	public final int glid;
+
 	public final int left;
 	public final int top;
 	private final int right;
 	private final int bottom;
+
 	public final int width;
 	public final int height;
+
 	public final float scale;
 
 	public BackgroundImageInfo(BufferedImage image, int left, int top, float scale) {

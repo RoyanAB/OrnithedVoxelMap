@@ -158,18 +158,18 @@ public class GuiMobs extends GuiScreenMinimap {
 		}
 	}
 
-	protected void drawTooltip(String par1Str, int par2, int par3) {
-		if (par1Str != null) {
-			int var4 = par2 + 12;
-			int var5 = par3 - 12;
-			int var6 = this.getFontRenderer().getStringWidth(par1Str);
-			this.drawGradientRect(var4 - 3, var5 - 3, var4 + var6 + 3, var5 + 8 + 3, -1073741824, -1073741824);
-			this.getFontRenderer().drawStringWithShadow(par1Str, var4, var5, -1);
+	protected void drawTooltip(String tooltipText, int mouseX, int mouseY) {
+		if (tooltipText != null) {
+			int tooltipX = mouseX + 12;
+			int tooltipY = mouseY - 12;
+			int tooltipWidth = this.getFontRenderer().getStringWidth(tooltipText);
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + 8 + 3, -1073741824, -1073741824);
+			this.getFontRenderer().drawStringWithShadow(tooltipText, tooltipX, tooltipY, -1);
 		}
 	}
 
-	static String setTooltip(GuiMobs par0GuiWaypoints, String par1Str) {
-		return par0GuiWaypoints.tooltip = par1Str;
+	static String setTooltip(GuiMobs guiMobs, String tooltipText) {
+		return guiMobs.tooltip = tooltipText;
 	}
 
 	@Override

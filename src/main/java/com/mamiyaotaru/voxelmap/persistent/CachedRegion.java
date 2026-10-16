@@ -254,11 +254,11 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 				is.close();
 				ze = zFile.getEntry("key");
 				is = zFile.getInputStream(ze);
-				BiMap<IBlockState, Integer> var18 = HashBiMap.create();
+				BiMap<IBlockState, Integer> blockStateMap = HashBiMap.create();
 				Scanner sc = new Scanner(is);
 
 				while (sc.hasNextLine()) {
-					BlockStateParser.parseLine(sc.nextLine(), var18);
+					BlockStateParser.parseLine(sc.nextLine(), blockStateMap);
 				}
 
 				sc.close();
@@ -283,17 +283,17 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 				}
 
 				zFile.close();
-				if (total == this.data.getWidth() * this.data.getHeight() * 18 && var18 != null) {
+				if (total == this.data.getWidth() * this.data.getHeight() * 18 && blockStateMap != null) {
 					byteData = new byte[this.data.getWidth() * this.data.getHeight() * 18];
 					System.arraycopy(decompressedByteData, 0, byteData, 0, byteData.length);
-					this.data.setData(byteData, var18, version);
+					this.data.setData(byteData, blockStateMap, version);
 					this.empty = false;
 					this.dataUpdated = true;
 				} else {
 					System.out.println("failed to load data from " + cachedRegionFile.getPath());
 				}
 
-				if (var18 == null || version < 2) {
+				if (blockStateMap == null || version < 2) {
 					this.liveChunksUpdated = true;
 				}
 			}
@@ -324,9 +324,9 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 						try {
 							BiMap<IBlockState, Integer> stateToInt = CachedRegion.this.data.getStateToInt();
 							byte[] byteArray = CachedRegion.this.data.getData();
-							int var10000 = byteArray.length;
-							int var10001 = CachedRegion.this.data.getWidth() * CachedRegion.this.data.getHeight();
-							if (var10000 == var10001 * 18) {
+							int byteArrayLength = byteArray.length;
+							int expectedDataSize = CachedRegion.this.data.getWidth() * CachedRegion.this.data.getHeight();
+							if (byteArrayLength == expectedDataSize * 18) {
 								File cachedRegionFileDir = new File(
 									Minecraft.getMinecraft().gameDir,
 									"/voxelMap/cache/"

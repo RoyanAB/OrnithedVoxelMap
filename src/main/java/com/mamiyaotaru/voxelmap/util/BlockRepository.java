@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -62,8 +61,8 @@ public class BlockRepository {
 	public static HashSet<Block> shapedBlocks;
 	public static Block[] doorsArray = new Block[]{woodDoor, ironDoor, spruceDoor, birchDoor, jungleDoor, darkOakDoor, acaciaDoor};
 	public static Block[] shapedBlocksArray = new Block[]{sign, woodDoor, ladder, wallSign, ironDoor, vine};
-	private static final Reference2IntOpenHashMap<IBlockState> stateToInt = new Reference2IntOpenHashMap(1024);
-	private static final ReferenceArrayList<IBlockState> blockStates = new ReferenceArrayList(16384);
+	private static final Reference2IntOpenHashMap<IBlockState> stateToInt = new Reference2IntOpenHashMap<>(1024);
+	private static final ReferenceArrayList<IBlockState> blockStates = new ReferenceArrayList<>(16384);
 	private static int count = 1;
 	private static final ReadWriteLock incrementLock = new ReentrantReadWriteLock();
 	public static BiMap<IBlockState, Integer> defaultStorageStateIDs = HashBiMap.create(2000);
@@ -140,10 +139,8 @@ public class BlockRepository {
 			Block block = Block.REGISTRY.getObject(resourceLocation);
 			if (block != Blocks.AIR || resourceLocation.getNamespace().equals("minecraft") && resourceLocation.getPath().equals("air")) {
 				ImmutableList<IBlockState> blockStates = block.getBlockState().getValidStates();
-				Iterator<IBlockState> stateIterator = blockStates.iterator();
 
-				while (stateIterator.hasNext()) {
-					IBlockState blockState = stateIterator.next();
+				for (IBlockState blockState : blockStates) {
 					defaultStorageStateIDs.forcePut(blockState, Block.getStateId(blockState));
 				}
 			}

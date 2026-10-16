@@ -46,10 +46,10 @@ public enum EnumOptionsMinimap {
 	private final boolean isList;
 	private final String name;
 
-	public static EnumOptionsMinimap getEnumOptions(int par0) {
-		for (EnumOptionsMinimap var4 : values()) {
-			if (var4.returnEnumOrdinal() == par0) {
-				return var4;
+	public static EnumOptionsMinimap getEnumOptions(int ordinal) {
+		for (EnumOptionsMinimap option : values()) {
+			if (option.returnEnumOrdinal() == ordinal) {
+				return option;
 			}
 		}
 

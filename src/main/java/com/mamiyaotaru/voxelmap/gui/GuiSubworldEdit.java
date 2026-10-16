@@ -64,21 +64,21 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements GuiYesNoCallbac
 				this.getMinecraft().displayGuiScreen(this.parent);
 			} else if (button.id == 7) {
 				this.deleteClicked = true;
-				String var4 = I18nUtils.getString("worldmap.subworld.deleteconfirm");
-				String var5 = "'" + this.originalSubworldName + "' " + I18nUtils.getString("selectServer.deleteWarning");
-				String var6 = I18nUtils.getString("selectServer.deleteButton");
-				String var7 = I18nUtils.getString("gui.cancel");
-				GuiYesNo var8 = new GuiYesNo(this, var4, var5, var6, var7, 0);
-				this.getMinecraft().displayGuiScreen(var8);
+				String confirmTitle = I18nUtils.getString("worldmap.subworld.deleteconfirm");
+				String confirmMessage = "'" + this.originalSubworldName + "' " + I18nUtils.getString("selectServer.deleteWarning");
+				String deleteButtonText = I18nUtils.getString("selectServer.deleteButton");
+				String cancelButtonText = I18nUtils.getString("gui.cancel");
+				GuiYesNo confirmDialog = new GuiYesNo(this, confirmTitle, confirmMessage, deleteButtonText, cancelButtonText, 0);
+				this.getMinecraft().displayGuiScreen(confirmDialog);
 			}
 		}
 	}
 
 	@Override
-	public void confirmClicked(boolean par1, int id) {
+	public void confirmClicked(boolean confirmed, int id) {
 		if (this.deleteClicked) {
 			this.deleteClicked = false;
-			if (par1) {
+			if (confirmed) {
 				this.waypointManager.deleteSubworld(this.originalSubworldName);
 			}
 

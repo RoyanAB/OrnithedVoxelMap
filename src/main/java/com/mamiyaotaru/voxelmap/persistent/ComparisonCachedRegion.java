@@ -22,7 +22,6 @@ public class ComparisonCachedRegion {
 	private final IPersistentMap persistentMap;
 	private final String key;
 	private final World world;
-	private final String worldName;
 	private final String subworldName;
 	private final String worldNamePathPart;
 	private String subworldNamePathPart;
@@ -41,10 +40,9 @@ public class ComparisonCachedRegion {
 		this.persistentMap = persistentMap;
 		this.key = key;
 		this.world = world;
-		this.worldName = worldName;
 		this.subworldName = subworldName;
 		this.worldNamePathPart = TextUtils.scrubNameFile(worldName);
-		if (subworldName != "") {
+		if (!subworldName.isEmpty()) {
 			this.subworldNamePathPart = TextUtils.scrubNameFile(subworldName) + "/";
 		}
 

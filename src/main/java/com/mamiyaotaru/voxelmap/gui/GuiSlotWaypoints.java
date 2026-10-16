@@ -26,9 +26,9 @@ public class GuiSlotWaypoints extends GuiSlotMinimap {
 	private ArrayList<Waypoint> waypointsFiltered;
 	private String filterString = "";
 
-	public GuiSlotWaypoints(GuiWaypoints par1GuiWaypoints) {
-		super(par1GuiWaypoints.options.game, par1GuiWaypoints.getWidth(), par1GuiWaypoints.getHeight(), 54, par1GuiWaypoints.getHeight() - 90 + 4, 18);
-		this.parentGui = par1GuiWaypoints;
+	public GuiSlotWaypoints(GuiWaypoints guiWaypoints) {
+		super(guiWaypoints.options.game, guiWaypoints.getWidth(), guiWaypoints.getHeight(), 54, guiWaypoints.getHeight() - 90 + 4, 18);
+		this.parentGui = guiWaypoints;
 		this.waypoints = new ArrayList<>();
 
 		for (Waypoint pt : this.parentGui.waypointManager.getWaypoints()) {
@@ -46,26 +46,26 @@ public class GuiSlotWaypoints extends GuiSlotMinimap {
 	}
 
 	@Override
-	protected void elementClicked(int par1, boolean par2, int par3, int par4) {
-		this.parentGui.setSelectedWaypoint(this.waypointsFiltered.get(par1));
+	protected void elementClicked(int index, boolean doubleClick, int mouseX, int mouseY) {
+		this.parentGui.setSelectedWaypoint(this.waypointsFiltered.get(index));
 		int leftEdge = this.parentGui.getWidth() / 2 - 92 - 16;
 		byte padding = 3;
 		int width = 215;
 		if (this.mouseX >= leftEdge + width - 16 - padding && this.mouseX <= leftEdge + width + padding) {
-			if (par2) {
+			if (doubleClick) {
 				this.parentGui.setHighlightedWaypoint();
 			} else {
 				this.parentGui.toggleWaypointVisibility();
 			}
-		} else if (par2) {
+		} else if (doubleClick) {
 			Mouse.next();
 			this.parentGui.editWaypoint(this.parentGui.selectedWaypoint);
 		}
 	}
 
 	@Override
-	protected boolean isSelected(int par1) {
-		return this.waypointsFiltered.get(par1).equals(this.parentGui.selectedWaypoint);
+	protected boolean isSelected(int index) {
+		return this.waypointsFiltered.get(index).equals(this.parentGui.selectedWaypoint);
 	}
 
 	@Override

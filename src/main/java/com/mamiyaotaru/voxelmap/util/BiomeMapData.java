@@ -7,14 +7,16 @@ import java.util.Arrays;
 
 public class BiomeMapData extends AbstractMapData {
 	public static final int DATABITS = 1;
-	public static final int BYTESPERDATUM = 4;
 	private static final int BIOMEIDPOS = 0;
+
+	public static final int BYTESPERDATUM = 4;
+
 	private int[] data;
 
 	public BiomeMapData(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.data = new int[width * height];
+		this.data = new int[width * height * DATABITS];
 		Arrays.fill(this.data, 0);
 	}
 
@@ -100,7 +102,7 @@ public class BiomeMapData extends AbstractMapData {
 
 	@Override
 	public int getBiomeID(int x, int z) {
-		return this.getData(x, z, 0);
+		return this.getData(x, z, BIOMEIDPOS);
 	}
 
 	private int getData(int x, int z, int bit) {
@@ -174,7 +176,7 @@ public class BiomeMapData extends AbstractMapData {
 
 	@Override
 	public void setBiomeID(int x, int z, int value) {
-		this.setData(x, z, 0, value);
+		this.setData(x, z, BIOMEIDPOS, value);
 	}
 
 	private void setData(int x, int z, int bit, int value) {

@@ -1,9 +1,9 @@
 package com.mamiyaotaru.voxelmap.gui.overridden;
 
 public interface IPopupGuiScreen {
-	boolean overPopup(int var1, int var2);
+	boolean overPopup(int mouseX, int mouseY);
 
 	boolean popupOpen();
 
-	void popupAction(Popup var1, int var2);
+	void popupAction(Popup popup, int action);
 }

@@ -90,24 +90,22 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		this.filter.setMaxStringLength(35);
 		this.filter.setFocused(true);
 		this.getButtonList()
-			.add(this.buttonEdit = new GuiButton(-1, this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20, I18nUtils.getString("selectServer.edit")));
+			.add(this.buttonEdit = new GuiButton(EDIT, this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20, I18nUtils.getString("selectServer.edit")));
 		this.getButtonList()
-			.add(this.buttonDelete = new GuiButton(-2, this.getWidth() / 2 - 76, this.getHeight() - 52, 74, 20, I18nUtils.getString("selectServer.delete")));
+			.add(this.buttonDelete = new GuiButton(DELETE, this.getWidth() / 2 - 76, this.getHeight() - 52, 74, 20, I18nUtils.getString("selectServer.delete")));
 		this.getButtonList()
 			.add(
-				this.buttonHighlight = new GuiButton(-3, this.getWidth() / 2 + 2, this.getHeight() - 52, 74, 20, I18nUtils.getString("minimap.waypoints.highlight"))
+				this.buttonHighlight = new GuiButton(HIGHLIGHT, this.getWidth() / 2 + 2, this.getHeight() - 52, 74, 20, I18nUtils.getString("minimap.waypoints.highlight"))
 			);
 		this.getButtonList()
 			.add(
-				this.buttonTeleport = new GuiButton(
-					-4, this.getWidth() / 2 + 80, this.getHeight() - 52, 74, 20, I18nUtils.getString("minimap.waypoints.teleportto")
-				)
+				this.buttonTeleport = new GuiButton(TELEPORT, this.getWidth() / 2 + 80, this.getHeight() - 52, 74, 20, I18nUtils.getString("minimap.waypoints.teleportto"))
 			);
 		this.getButtonList()
-			.add(this.buttonShare = new GuiButton(-5, this.getWidth() / 2 - 154, this.getHeight() - 28, 74, 20, I18nUtils.getString("minimap.waypoints.share")));
+			.add(this.buttonShare = new GuiButton(SHARE, this.getWidth() / 2 - 154, this.getHeight() - 28, 74, 20, I18nUtils.getString("minimap.waypoints.share")));
 		this.getButtonList()
-			.add(new GuiButton(-6, this.getWidth() / 2 - 76, this.getHeight() - 28, 74, 20, I18nUtils.getString("minimap.waypoints.newwaypoint")));
-		this.getButtonList().add(new GuiButton(-7, this.getWidth() / 2 + 2, this.getHeight() - 28, 74, 20, I18nUtils.getString("menu.options")));
+			.add(new GuiButton(NEW, this.getWidth() / 2 - 76, this.getHeight() - 28, 74, 20, I18nUtils.getString("minimap.waypoints.newwaypoint")));
+		this.getButtonList().add(new GuiButton(OPTIONS, this.getWidth() / 2 + 2, this.getHeight() - 28, 74, 20, I18nUtils.getString("menu.options")));
 		this.getButtonList().add(new GuiButton(-200, this.getWidth() / 2 + 80, this.getHeight() - 28, 74, 20, I18nUtils.getString("gui.done")));
 		boolean isSomethingSelected = this.selectedWaypoint != null;
 		this.buttonEdit.enabled = isSomethingSelected;
@@ -157,32 +155,32 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 				this.sort();
 			}
 
-			if (button.id == -1) {
+			if (button.id == EDIT) {
 				this.editWaypoint(this.selectedWaypoint);
 			}
 
-			if (button.id == -2) {
-				String var2 = this.selectedWaypoint.name;
-				if (var2 != null) {
+			if (button.id == DELETE) {
+				String waypointName = this.selectedWaypoint.name;
+				if (waypointName != null) {
 					this.deleteClicked = true;
 					String title = I18nUtils.getString("minimap.waypoints.deleteconfirm");
-					String explanation = "'" + var2 + "' " + I18nUtils.getString("selectServer.deleteWarning");
+					String explanation = "'" + waypointName + "' " + I18nUtils.getString("selectServer.deleteWarning");
 					String affirm = I18nUtils.getString("selectServer.deleteButton");
 					String deny = I18nUtils.getString("gui.cancel");
-					GuiYesNo var8 = new GuiYesNo(this, title, explanation, affirm, deny, this.waypointManager.getWaypoints().indexOf(this.selectedWaypoint));
-					this.getMinecraft().displayGuiScreen(var8);
+					GuiYesNo confirmDialog = new GuiYesNo(this, title, explanation, affirm, deny, this.waypointManager.getWaypoints().indexOf(this.selectedWaypoint));
+					this.getMinecraft().displayGuiScreen(confirmDialog);
 				}
 			}
 
-			if (button.id == -3) {
+			if (button.id == HIGHLIGHT) {
 				this.setHighlightedWaypoint();
 			}
 
-			if (button.id == -5) {
+			if (button.id == SHARE) {
 				CommandUtils.sendWaypoint(this.selectedWaypoint);
 			}
 
-			if (button.id == -4) {
+			if (button.id == TELEPORT) {
 				boolean mp = !this.mc.isIntegratedServerRunning();
 				int y = this.selectedWaypoint.getY() > 0 ? this.selectedWaypoint.getY() : (this.options.game.player.dimension != -1 ? 128 : 64);
 				this.options
@@ -196,11 +194,11 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 				this.getMinecraft().displayGuiScreen(null);
 			}
 
-			if (button.id == -6) {
+			if (button.id == NEW) {
 				this.addWaypoint();
 			}
 
-			if (button.id == -7) {
+			if (button.id == OPTIONS) {
 				this.getMinecraft().displayGuiScreen(new GuiWaypointsOptions(this, this.options));
 			}
 
@@ -237,10 +235,10 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	}
 
 	@Override
-	public void confirmClicked(boolean par1, int id) {
+	public void confirmClicked(boolean confirmed, int id) {
 		if (this.deleteClicked) {
 			this.deleteClicked = false;
-			if (par1) {
+			if (confirmed) {
 				this.waypointManager.deleteWaypoint(this.selectedWaypoint);
 				this.selectedWaypoint = null;
 			}
@@ -250,7 +248,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 
 		if (this.editClicked) {
 			this.editClicked = false;
-			if (par1) {
+			if (confirmed) {
 				this.waypointManager.saveWaypoints();
 			}
 
@@ -259,7 +257,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 
 		if (this.addClicked) {
 			this.addClicked = false;
-			if (par1) {
+			if (confirmed) {
 				this.waypointManager.addWaypoint(this.newWaypoint);
 				this.setSelectedWaypoint(this.newWaypoint);
 			}
@@ -342,31 +340,31 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 	}
 
 	@Override
-	public void drawScreen(int par1, int par2, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.tooltip = null;
-		this.waypointList.drawScreen(par1, par2, partialTicks);
+		this.waypointList.drawScreen(mouseX, mouseY, partialTicks);
 		this.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-		super.drawScreen(par1, par2, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 		this.drawString(this.getFontRenderer(), I18nUtils.getString("minimap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 75, 10526880);
 		this.filter.drawTextBox();
 		if (this.tooltip != null) {
-			this.drawTooltip(this.tooltip, par1, par2);
+			this.drawTooltip(this.tooltip, mouseX, mouseY);
 		}
 	}
 
-	protected void drawTooltip(String par1Str, int par2, int par3) {
-		if (par1Str != null) {
-			int var4 = par2 + 12;
-			int var5 = par3 - 12;
-			int var6 = this.getFontRenderer().getStringWidth(par1Str);
-			this.drawGradientRect(var4 - 3, var5 - 3, var4 + var6 + 3, var5 + 8 + 3, -1073741824, -1073741824);
-			this.getFontRenderer().drawStringWithShadow(par1Str, var4, var5, -1);
+	protected void drawTooltip(String tooltipText, int mouseX, int mouseY) {
+		if (tooltipText != null) {
+			int tooltipX = mouseX + 12;
+			int tooltipY = mouseY - 12;
+			int tooltipWidth = this.getFontRenderer().getStringWidth(tooltipText);
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + 8 + 3, -1073741824, -1073741824);
+			this.getFontRenderer().drawStringWithShadow(tooltipText, tooltipX, tooltipY, -1);
 		}
 	}
 
-	static String setTooltip(GuiWaypoints par0GuiWaypoints, String par1Str) {
-		return par0GuiWaypoints.tooltip = par1Str;
+	static String setTooltip(GuiWaypoints guiWaypoints, String string) {
+		return guiWaypoints.tooltip = string;
 	}
 
 	public boolean canTeleport() {

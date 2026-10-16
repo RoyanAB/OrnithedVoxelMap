@@ -15,9 +15,9 @@ public class GuiSlotMobs extends GuiSlotMinimap {
 
 	private ArrayList<String> mobNamesFiltered;
 
-	public GuiSlotMobs(GuiMobs par1GuiMobs) {
-		super(par1GuiMobs.options.game, par1GuiMobs.getWidth(), par1GuiMobs.getHeight(), 32, par1GuiMobs.getHeight() - 65 + 4, 18);
-		this.parentGui = par1GuiMobs;
+	public GuiSlotMobs(GuiMobs guiMobs) {
+		super(guiMobs.options.game, guiMobs.getWidth(), guiMobs.getHeight(), 32, guiMobs.getHeight() - 65 + 4, 18);
+		this.parentGui = guiMobs;
 		RadarSettingsManager options = this.parentGui.options;
 		this.mobNames = new ArrayList<>();
 
@@ -53,22 +53,22 @@ public class GuiSlotMobs extends GuiSlotMinimap {
 	}
 
 	@Override
-	protected void elementClicked(int par1, boolean par2, int par3, int par4) {
-		this.parentGui.setSelectedMob(this.mobNamesFiltered.get(par1));
+	protected void elementClicked(int index, boolean doubleClick, int mouseX, int mouseY) {
+		this.parentGui.setSelectedMob(this.mobNamesFiltered.get(index));
 		int leftEdge = this.parentGui.getWidth() / 2 - 92 - 16;
 		byte padding = 3;
 		int width = 215;
 		if (this.mouseX >= leftEdge + width - 16 - padding && this.mouseX <= leftEdge + width + padding) {
 			this.parentGui.toggleMobVisibility();
-		} else if (par2) {
+		} else if (doubleClick) {
 			Mouse.next();
 			this.parentGui.toggleMobVisibility();
 		}
 	}
 
 	@Override
-	protected boolean isSelected(int par1) {
-		return this.mobNamesFiltered.get(par1).equals(this.parentGui.selectedMobName);
+	protected boolean isSelected(int index) {
+		return this.mobNamesFiltered.get(index).equals(this.parentGui.selectedMobName);
 	}
 
 	@Override

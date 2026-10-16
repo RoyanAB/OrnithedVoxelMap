@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 public class FullMapData extends AbstractMapData {
 	public static final int DATABITS = 17;
-	public static final int BYTESPERDATUM = 4;
 	private static final int HEIGHTPOS = 0;
 	private static final int BLOCKSTATEPOS = 1;
 	private static final int TINTPOS = 2;
@@ -25,12 +24,15 @@ public class FullMapData extends AbstractMapData {
 	private static final int FOLIAGETINTPOS = 14;
 	private static final int FOLIAGELIGHTPOS = 15;
 	private static final int BIOMEIDPOS = 16;
+
+	public static final int BYTESPERDATUM = 4;
+
 	private int[] data;
 
 	public FullMapData(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.data = new int[width * height * 17];
+		this.data = new int[width * height * DATABITS];
 		Arrays.fill(this.data, 0);
 	}
 
@@ -40,103 +42,103 @@ public class FullMapData extends AbstractMapData {
 
 	@Override
 	public int getHeight(int x, int z) {
-		return this.getData(x, z, 0);
+		return this.getData(x, z, HEIGHTPOS);
 	}
 
 	public int getBlockstateID(int x, int z) {
-		return this.getData(x, z, 1);
+		return this.getData(x, z, BLOCKSTATEPOS);
 	}
 
 	@Override
 	public IBlockState getBlockstate(int x, int z) {
-		return this.getStateFromID(this.getData(x, z, 1));
+		return this.getStateFromID(this.getData(x, z, BLOCKSTATEPOS));
 	}
 
 	@Override
 	public int getBiomeTint(int x, int z) {
-		return this.getData(x, z, 2);
+		return this.getData(x, z, TINTPOS);
 	}
 
 	@Override
 	public int getLight(int x, int z) {
-		return this.getData(x, z, 3);
+		return this.getData(x, z, LIGHTPOS);
 	}
 
 	@Override
 	public int getOceanFloorHeight(int x, int z) {
-		return this.getData(x, z, 4);
+		return this.getData(x, z, OCEANFLOORHEIGHTPOS);
 	}
 
 	public int getOceanFloorBlockstateID(int x, int z) {
-		return this.getData(x, z, 5);
+		return this.getData(x, z, OCEANFLOORBLOCKSTATEPOS);
 	}
 
 	@Override
 	public IBlockState getOceanFloorBlockstate(int x, int z) {
-		return this.getStateFromID(this.getData(x, z, 5));
+		return this.getStateFromID(this.getData(x, z, OCEANFLOORBLOCKSTATEPOS));
 	}
 
 	@Override
 	public int getOceanFloorBiomeTint(int x, int z) {
-		return this.getData(x, z, 6);
+		return this.getData(x, z, OCEANFLOORTINTPOS);
 	}
 
 	@Override
 	public int getOceanFloorLight(int x, int z) {
-		return this.getData(x, z, 7);
+		return this.getData(x, z, OCEANFLOORLIGHTPOS);
 	}
 
 	@Override
 	public int getTransparentHeight(int x, int z) {
-		return this.getData(x, z, 8);
+		return this.getData(x, z, TRANSPARENTHEIGHTPOS);
 	}
 
 	public int getTransparentBlockstateID(int x, int z) {
-		return this.getData(x, z, 9);
+		return this.getData(x, z, TRANSPARENTBLOCKSTATEPOS);
 	}
 
 	@Override
 	public IBlockState getTransparentBlockstate(int x, int z) {
-		return this.getStateFromID(this.getData(x, z, 9));
+		return this.getStateFromID(this.getData(x, z, TRANSPARENTBLOCKSTATEPOS));
 	}
 
 	@Override
 	public int getTransparentBiomeTint(int x, int z) {
-		return this.getData(x, z, 10);
+		return this.getData(x, z, TRANSPARENTTINTPOS);
 	}
 
 	@Override
 	public int getTransparentLight(int x, int z) {
-		return this.getData(x, z, 11);
+		return this.getData(x, z, TRANSPARENTLIGHTPOS);
 	}
 
 	@Override
 	public int getFoliageHeight(int x, int z) {
-		return this.getData(x, z, 12);
+		return this.getData(x, z, FOLIAGEHEIGHTPOS);
 	}
 
 	public int getFoliageBlockstateID(int x, int z) {
-		return this.getData(x, z, 13);
+		return this.getData(x, z, FOLIAGEBLOCKSTATEPOS);
 	}
 
 	@Override
 	public IBlockState getFoliageBlockstate(int x, int z) {
-		return this.getStateFromID(this.getData(x, z, 13));
+		return this.getStateFromID(this.getData(x, z, FOLIAGEBLOCKSTATEPOS));
 	}
 
 	@Override
 	public int getFoliageBiomeTint(int x, int z) {
-		return this.getData(x, z, 14);
+		return this.getData(x, z, FOLIAGETINTPOS);
 	}
 
 	@Override
 	public int getFoliageLight(int x, int z) {
-		return this.getData(x, z, 15);
+		return this.getData(x, z, FOLIAGELIGHTPOS);
 	}
 
 	@Override
 	public int getBiomeID(int x, int z) {
-		return this.getData(x, z, 16);
+		return this.getData(x, z, BIOMEIDPOS);
 	}
 
 	private int getData(int x, int z, int bit) {
@@ -146,103 +148,103 @@ public class FullMapData extends AbstractMapData {
 
 	@Override
 	public void setHeight(int x, int z, int value) {
-		this.setData(x, z, 0, value);
+		this.setData(x, z, HEIGHTPOS, value);
 	}
 
 	public void setBlockstateID(int x, int z, int id) {
-		this.setData(x, z, 1, id);
+		this.setData(x, z, BLOCKSTATEPOS, id);
 	}
 
 	@Override
 	public void setBlockstate(int x, int z, IBlockState blockState) {
-		this.setData(x, z, 1, this.getIDFromState(blockState));
+		this.setData(x, z, BLOCKSTATEPOS, this.getIDFromState(blockState));
 	}
 
 	@Override
 	public void setBiomeTint(int x, int z, int value) {
-		this.setData(x, z, 2, value);
+		this.setData(x, z, TINTPOS, value);
 	}
 
 	@Override
 	public void setLight(int x, int z, int value) {
-		this.setData(x, z, 3, value);
+		this.setData(x, z, LIGHTPOS, value);
 	}
 
 	@Override
 	public void setOceanFloorHeight(int x, int z, int value) {
-		this.setData(x, z, 4, value);
+		this.setData(x, z, OCEANFLOORHEIGHTPOS, value);
 	}
 
 	public void setOceanFloorBlockstateID(int x, int z, int id) {
-		this.setData(x, z, 5, id);
+		this.setData(x, z, OCEANFLOORBLOCKSTATEPOS, id);
 	}
 
 	@Override
 	public void setOceanFloorBlockstate(int x, int z, IBlockState blockState) {
-		this.setData(x, z, 5, this.getIDFromState(blockState));
+		this.setData(x, z, OCEANFLOORBLOCKSTATEPOS, this.getIDFromState(blockState));
 	}
 
 	@Override
 	public void setOceanFloorBiomeTint(int x, int z, int value) {
-		this.setData(x, z, 6, value);
+		this.setData(x, z, OCEANFLOORTINTPOS, value);
 	}
 
 	@Override
 	public void setOceanFloorLight(int x, int z, int value) {
-		this.setData(x, z, 7, value);
+		this.setData(x, z, OCEANFLOORLIGHTPOS, value);
 	}
 
 	@Override
 	public void setTransparentHeight(int x, int z, int value) {
-		this.setData(x, z, 8, value);
+		this.setData(x, z, TRANSPARENTHEIGHTPOS, value);
 	}
 
 	public void setTransparentBlockstateID(int x, int z, int id) {
-		this.setData(x, z, 9, id);
+		this.setData(x, z, TRANSPARENTBLOCKSTATEPOS, id);
 	}
 
 	@Override
 	public void setTransparentBlockstate(int x, int z, IBlockState blockState) {
-		this.setData(x, z, 9, this.getIDFromState(blockState));
+		this.setData(x, z, TRANSPARENTBLOCKSTATEPOS, this.getIDFromState(blockState));
 	}
 
 	@Override
 	public void setTransparentBiomeTint(int x, int z, int value) {
-		this.setData(x, z, 10, value);
+		this.setData(x, z, TRANSPARENTTINTPOS, value);
 	}
 
 	@Override
 	public void setTransparentLight(int x, int z, int value) {
-		this.setData(x, z, 11, value);
+		this.setData(x, z, TRANSPARENTLIGHTPOS, value);
 	}
 
 	@Override
 	public void setFoliageHeight(int x, int z, int value) {
-		this.setData(x, z, 12, value);
+		this.setData(x, z, FOLIAGEHEIGHTPOS, value);
 	}
 
 	public void setFoliageBlockstateID(int x, int z, int id) {
-		this.setData(x, z, 13, id);
+		this.setData(x, z, FOLIAGEBLOCKSTATEPOS, id);
 	}
 
 	@Override
 	public void setFoliageBlockstate(int x, int z, IBlockState blockState) {
-		this.setData(x, z, 13, this.getIDFromState(blockState));
+		this.setData(x, z, FOLIAGEBLOCKSTATEPOS, this.getIDFromState(blockState));
 	}
 
 	@Override
 	public void setFoliageBiomeTint(int x, int z, int value) {
-		this.setData(x, z, 14, value);
+		this.setData(x, z, FOLIAGETINTPOS, value);
 	}
 
 	@Override
 	public void setFoliageLight(int x, int z, int value) {
-		this.setData(x, z, 15, value);
+		this.setData(x, z, FOLIAGELIGHTPOS, value);
 	}
 
 	@Override
 	public void setBiomeID(int x, int z, int value) {
-		this.setData(x, z, 16, value);
+		this.setData(x, z, BIOMEIDPOS, value);
 	}
 
 	private void setData(int x, int z, int bit, int value) {

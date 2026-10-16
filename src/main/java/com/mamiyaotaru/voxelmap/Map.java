@@ -1331,8 +1331,8 @@ public class Map implements Runnable, IMap {
 					if (transparentHeight != surfaceHeight + 1) {
 						foliageHeight = surfaceHeight + 1;
 						this.blockPos.setXYZ(startX + imageX, foliageHeight - 1, startZ + imageY);
-						IBlockState var63 = world.getBlockState(this.blockPos);
-						foliageBlockState = var63.getActualState(world, this.blockPos);
+						IBlockState blockStateAtPos = world.getBlockState(this.blockPos);
+						foliageBlockState = blockStateAtPos.getActualState(world, this.blockPos);
 						Material material = foliageBlockState.getMaterial();
 						if (material == Material.SNOW || material == Material.AIR || material == Material.LAVA) {
 							foliageHeight = -1;
@@ -1346,8 +1346,8 @@ public class Map implements Runnable, IMap {
 					if (foliageHeight == -1 && this.options.waterTransparency && seafloorHeight > 0 && transparentHeight != seafloorHeight) {
 						foliageHeight = seafloorHeight + 1;
 						this.blockPos.setXYZ(startX + imageX, foliageHeight - 1, startZ + imageY);
-						IBlockState var64 = world.getBlockState(this.blockPos);
-						foliageBlockState = var64.getActualState(world, this.blockPos);
+						IBlockState blockStateAtPos = world.getBlockState(this.blockPos);
+						foliageBlockState = blockStateAtPos.getActualState(world, this.blockPos);
 						Material material = foliageBlockState.getMaterial();
 						if (material == Material.AIR || material == Material.LAVA || material == Material.WATER || material == Material.ICE) {
 							foliageHeight = -1;
@@ -1696,7 +1696,7 @@ public class Map implements Runnable, IMap {
 			GLShim.glColorMask(true, true, true, true);
 			GLUtils.img(new ResourceLocation("voxelmap", this.options.squareMap ? "images/square.png" : "images/circle.png"));
 			GLUtils.drawPre();
-			GLUtils.setMap(x, y, 128);
+			GLUtils.setMap(x, y);
 			GLUtils.drawPost();
 			GLShim.glBlendFunc(772, 773);
 			synchronized (this.coordinateLock) {
@@ -2122,7 +2122,7 @@ public class Map implements Runnable, IMap {
 			GLShim.glTexParameteri(3553, 10242, 10496);
 			GLShim.glTexParameteri(3553, 10243, 10496);
 			GLUtils.drawPre();
-			GLUtils.setMap(x, y, 128);
+			GLUtils.setMap(x, y);
 			GLUtils.drawPost();
 		} catch (Exception localException) {
 			this.error = "error: minimap overlay not found!";
@@ -2169,7 +2169,7 @@ public class Map implements Runnable, IMap {
 			GLShim.glTexParameteri(3553, 10241, 9729);
 			GLShim.glTexParameteri(3553, 10240, 9729);
 			GLUtils.drawPre();
-			GLUtils.setMap(x, y, 128);
+			GLUtils.setMap(x, y);
 			GLUtils.drawPost();
 		} catch (Exception localException) {
 			this.error = "Error: minimap overlay not found!";

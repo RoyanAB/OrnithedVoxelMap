@@ -362,10 +362,10 @@ public class ColorManager implements IColorManager {
 			this.blockColors[blockStateID] = 0;
 		}
 
-		Iterator<IBlockState> var12 = BlockRepository.barrier.getBlockState().getValidStates().iterator();
+		Iterator<IBlockState> barrierStatesIterator = BlockRepository.barrier.getBlockState().getValidStates().iterator();
 
-		while (var12.hasNext()) {
-			IBlockState blockState = var12.next();
+		while (barrierStatesIterator.hasNext()) {
+			IBlockState blockState = barrierStatesIterator.next();
 			int blockStateID = BlockRepository.getStateId(blockState);
 			this.blockColors[blockStateID] = 0;
 		}
@@ -410,12 +410,12 @@ public class ColorManager implements IColorManager {
 					gfx.drawImage(waterColor, 0, 0, null);
 					gfx.dispose();
 					Biome biome = Biomes.FOREST;
-					double var1 = MathHelper.clamp(biome.getTemperature(new BlockPos(0, 64, 0)), 0.0F, 1.0F);
-					double var2 = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
-					var2 *= var1;
-					var1 = 1.0 - var1;
-					var2 = 1.0 - var2;
-					waterMult = waterColorBuff.getRGB((int) ((waterColorBuff.getWidth() - 1) * var1), (int) ((waterColorBuff.getHeight() - 1) * var2)) & 16777215;
+					double temperature = MathHelper.clamp(biome.getTemperature(new BlockPos(0, 64, 0)), 0.0F, 1.0F);
+					double rainfall = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
+					rainfall *= temperature;
+					temperature = 1.0 - temperature;
+					rainfall = 1.0 - rainfall;
+					waterMult = waterColorBuff.getRGB((int) ((waterColorBuff.getWidth() - 1) * temperature), (int) ((waterColorBuff.getHeight() - 1) * rainfall)) & 16777215;
 				} catch (Exception var14) {
 				}
 			}
@@ -891,9 +891,9 @@ public class ColorManager implements IColorManager {
 		}
 
 		if (colorResolver != null) {
-			int var3 = 0;
-			int var4 = 0;
-			int var5 = 0;
+			int totalRed = 0;
+			int totalGreen = 0;
+			int totalBlue = 0;
 
 			for (int t = blockPos.getX() - 1; t <= blockPos.getX() + 1; t++) {
 				for (int s = blockPos.getZ() - 1; s <= blockPos.getZ() + 1; s++) {
@@ -912,14 +912,14 @@ public class ColorManager implements IColorManager {
 						biome = Biomes.FOREST;
 					}
 
-					int var8 = colorResolver.getColorAtPos(biome, loopBlockPos.withXYZ(t, blockPos.getY(), s));
-					var3 += (var8 & 0xFF0000) >> 16;
-					var4 += (var8 & 0xFF00) >> 8;
-					var5 += var8 & 0xFF;
+					int biomeTintColor = colorResolver.getColorAtPos(biome, loopBlockPos.withXYZ(t, blockPos.getY(), s));
+					totalRed += (biomeTintColor & 0xFF0000) >> 16;
+					totalGreen += (biomeTintColor & 0xFF00) >> 8;
+					totalBlue += biomeTintColor & 0xFF;
 				}
 			}
 
-			tint = (var3 / 9 & 0xFF) << 16 | (var4 / 9 & 0xFF) << 8 | var5 / 9 & 0xFF;
+			tint = (totalRed / 9 & 0xFF) << 16 | (totalGreen / 9 & 0xFF) << 8 | totalBlue / 9 & 0xFF;
 		} else if (this.biomeTintsAvailable.contains(blockStateID)) {
 			tint = this.getCustomBlockBiomeTintFromUnloadedChunk(mapData, world, blockState, blockPos, loopBlockPos, startX, startZ);
 		}
@@ -1390,10 +1390,10 @@ public class ColorManager implements IColorManager {
 			}
 
 			if (valuePairs.size() > 0) {
-				UnmodifiableIterator var22 = block.getBlockState().getValidStates().iterator();
+				UnmodifiableIterator blockStatesIterator = block.getBlockState().getValidStates().iterator();
 
-				while (var22.hasNext()) {
-					IBlockState blockState = (IBlockState) var22.next();
+				while (blockStatesIterator.hasNext()) {
+					IBlockState blockState = (IBlockState) blockStatesIterator.next();
 					boolean matches = true;
 
 					for (String pair : valuePairs) {
@@ -1777,12 +1777,12 @@ public class ColorManager implements IColorManager {
 					if (grid) {
 						tintMult = tintColorsBuff.getRGB(t, Math.min(Math.max(0, s * heightMultiplier - yOffset), tintColorsBuff.getHeight() - 1)) & 16777215;
 					} else {
-						double var1 = MathHelper.clamp(biome.getTemperature(new BlockPos(0, 64, 0)), 0.0F, 1.0F);
-						double var2 = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
-						var2 *= var1;
-						var1 = 1.0 - var1;
-						var2 = 1.0 - var2;
-						tintMult = tintColorsBuff.getRGB((int) ((tintColorsBuff.getWidth() - 1) * var1), (int) ((tintColorsBuff.getHeight() - 1) * var2)) & 16777215;
+						double temperature = MathHelper.clamp(biome.getTemperature(new BlockPos(0, 64, 0)), 0.0F, 1.0F);
+						double rainfall = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
+						rainfall *= temperature;
+						temperature = 1.0 - temperature;
+						rainfall = 1.0 - rainfall;
+						tintMult = tintColorsBuff.getRGB((int) ((tintColorsBuff.getWidth() - 1) * temperature), (int) ((tintColorsBuff.getHeight() - 1) * rainfall)) & 16777215;
 					}
 
 					if (tintMult != 0 && (!swamp || t == 6)) {
@@ -1847,6 +1847,6 @@ public class ColorManager implements IColorManager {
 	}
 
 	interface ColorResolver {
-		int getColorAtPos(Biome var1, BlockPos var2);
+		int getColorAtPos(Biome biome, BlockPos pos);
 	}
 }

@@ -15,21 +15,22 @@ import java.util.HashMap;
 import java.util.zip.DataFormatException;
 
 public class CompressibleGLBufferedImage implements IGLBufferedImage {
-	private byte[] bytes;
-	private int index = 0;
-	private final int width;
-	private final int height;
-	private final int imageType;
-	private final Object bufferLock = new Object();
-	private boolean isCompressed = false;
 	private static final HashMap<Integer, ByteBuffer> byteBuffers = new HashMap<>(4);
 	private static final ByteBuffer defaultSizeBuffer = ByteBuffer.allocateDirect(262144).order(ByteOrder.nativeOrder());
-	private boolean compressNotDelete = false;
+
+	private final int width;
+	private final int height;
+	private final Object bufferLock = new Object();
+
+	private final boolean compressNotDelete;
+
+	private byte[] bytes;
+	private int index = 0;
+	private boolean isCompressed = false;
 
 	public CompressibleGLBufferedImage(int width, int height, int imageType) {
 		this.width = width;
 		this.height = height;
-		this.imageType = imageType;
 		this.bytes = new byte[width * height * 4];
 		this.compressNotDelete = VoxelMap.getInstance().getPersistentMapOptions().outputImages;
 	}
@@ -121,7 +122,7 @@ public class CompressibleGLBufferedImage implements IGLBufferedImage {
 		synchronized (this.bufferLock) {
 			int alpha = color24 >> 24 & 0xFF;
 			this.bytes[index] = -1;
-			this.bytes[index + 1] = (byte) ((color24 >> 0 & 0xFF) * alpha / 255);
+			this.bytes[index + 1] = (byte) ((color24 & 0xFF) * alpha / 255);
 			this.bytes[index + 2] = (byte) ((color24 >> 8 & 0xFF) * alpha / 255);
 			this.bytes[index + 3] = (byte) ((color24 >> 16 & 0xFF) * alpha / 255);
 		}
@@ -154,7 +155,7 @@ public class CompressibleGLBufferedImage implements IGLBufferedImage {
 			if (this.compressNotDelete) {
 				try {
 					this.bytes = CompressionUtils.compress(this.bytes);
-				} catch (IOException var2) {
+				} catch (IOException ignored) {
 				}
 			} else {
 				this.bytes = null;
@@ -169,8 +170,7 @@ public class CompressibleGLBufferedImage implements IGLBufferedImage {
 			if (this.compressNotDelete) {
 				try {
 					this.bytes = CompressionUtils.decompress(this.bytes);
-				} catch (IOException var2) {
-				} catch (DataFormatException var3) {
+				} catch (IOException | DataFormatException ignored) {
 				}
 			} else {
 				this.bytes = new byte[this.width * this.height * 4];

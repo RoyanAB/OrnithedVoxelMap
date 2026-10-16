@@ -51,7 +51,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	public void initGui() {
 		ArrayList<String> knownSubworldNames = new ArrayList<>(this.waypointManager.getKnownSubworldNames());
 		if (!this.multiworld && !this.waypointManager.isMultiworld()) {
-			GuiYesNo var8 = new GuiYesNo(
+			GuiYesNo confirmDialog = new GuiYesNo(
 				this,
 				I18nUtils.getString("worldmap.multiworld.isthismultiworld"),
 				I18nUtils.getString("worldmap.multiworld.explanation"),
@@ -59,7 +59,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 				I18nUtils.getString("gui.no"),
 				0
 			);
-			this.getMinecraft().displayGuiScreen(var8);
+			this.getMinecraft().displayGuiScreen(confirmDialog);
 		} else {
 			this.getMinecraft().gameSettings.thirdPersonView = 0;
 			this.getMinecraft().setRenderViewEntity(this.camera);
@@ -155,8 +155,8 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	}
 
 	@Override
-	public void confirmClicked(boolean par1, int id) {
-		if (!par1) {
+	public void confirmClicked(boolean confirmed, int id) {
+		if (!confirmed) {
 			this.getMinecraft().displayGuiScreen(this.parent);
 		} else {
 			this.multiworld = true;
@@ -165,18 +165,18 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	}
 
 	@Override
-	protected void mouseClicked(int var1, int var2, int mouseButton) {
-		super.mouseClicked(var1, var2, mouseButton);
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (this.newWorld) {
-			this.newNameField.mouseClicked(var1, var2, mouseButton);
+			this.newNameField.mouseClicked(mouseX, mouseY, mouseButton);
 		}
 	}
 
 	@Override
-	protected void keyTyped(char var1, int keyCode) {
-		super.keyTyped(var1, keyCode);
+	protected void keyTyped(char character, int keyCode) {
+		super.keyTyped(character, keyCode);
 		if (this.newNameField.isFocused()) {
-			this.newNameField.textboxKeyTyped(var1, keyCode);
+			this.newNameField.textboxKeyTyped(character, keyCode);
 			if (keyCode == 28) {
 				String newName = this.newNameField.getText();
 				if (newName != null && !newName.isEmpty()) {
@@ -193,7 +193,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	}
 
 	@Override
-	public void drawScreen(int var1, int var2, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		int titleStringWidth = this.getFontRenderer().getStringWidth(this.title);
 		titleStringWidth = Math.max(titleStringWidth, this.getFontRenderer().getStringWidth(this.select));
 		drawRect(this.width / 2 - titleStringWidth / 2 - 5, 0, this.width / 2 + titleStringWidth / 2 + 5, 27, -1073741824);
@@ -201,17 +201,17 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 		this.drawCenteredString(this.getFontRenderer(), this.select, this.width / 2, 15, 16711680);
 		this.camera.prevRotationPitch = this.camera.rotationPitch = 0.0F;
 		this.camera.prevRotationYaw = this.camera.rotationYaw = this.yaw;
-		float var4 = 0.475F;
+		float cameraDistance = 0.475F;
 		this.camera.lastTickPosY = this.camera.prevPosY = this.camera.posY = this.thePlayer.posY;
-		this.camera.lastTickPosX = this.camera.prevPosX = this.camera.posX = this.thePlayer.posX - var4 * Math.sin(this.yaw / 180.0 * Math.PI);
-		this.camera.lastTickPosZ = this.camera.prevPosZ = this.camera.posZ = this.thePlayer.posZ + var4 * Math.cos(this.yaw / 180.0 * Math.PI);
-		float var5 = 1.0F;
-		this.yaw = (float) (this.yaw + var5 * (1.0 + 0.7F * Math.cos((this.yaw + 45.0F) / 45.0 * Math.PI)));
+		this.camera.lastTickPosX = this.camera.prevPosX = this.camera.posX = this.thePlayer.posX - cameraDistance * Math.sin(this.yaw / 180.0 * Math.PI);
+		this.camera.lastTickPosZ = this.camera.prevPosZ = this.camera.posZ = this.thePlayer.posZ + cameraDistance * Math.cos(this.yaw / 180.0 * Math.PI);
+		float yawIncrement = 1.0F;
+		this.yaw = (float) (this.yaw + yawIncrement * (1.0 + 0.7F * Math.cos((this.yaw + 45.0F) / 45.0 * Math.PI)));
 		if (this.newWorld) {
 			this.newNameField.drawTextBox();
 		}
 
-		super.drawScreen(var1, var2, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
 	@Override

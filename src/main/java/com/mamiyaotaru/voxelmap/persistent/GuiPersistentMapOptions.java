@@ -29,23 +29,23 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 		this.screenTitle = I18nUtils.getString("options.worldmap.title");
 		this.cacheSettings = I18nUtils.getString("options.worldmap.cachesettings");
 		this.warning = I18nUtils.getString("options.worldmap.warning");
-		int var2 = 0;
+		int buttonIndex = 0;
 
 		for (int t = 0; t < relevantOptions.length; t++) {
 			EnumOptionsMinimap option = relevantOptions[t];
-			GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
+			GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
-				this.getWidth() / 2 - 155 + var2 % 2 * 160,
-				this.getHeight() / 6 + 24 * (var2 >> 1),
+				this.getWidth() / 2 - 155 + buttonIndex % 2 * 160,
+				this.getHeight() / 6 + 24 * (buttonIndex >> 1),
 				option,
 				this.options.getKeyText(option)
 			);
-			this.getButtonList().add(var7);
-			var2++;
+			this.getButtonList().add(button);
+			buttonIndex++;
 		}
 
 		relevantOptions2 = new EnumOptionsMinimap[]{EnumOptionsMinimap.MINZOOM, EnumOptionsMinimap.MAXZOOM, EnumOptionsMinimap.CACHESIZE};
-		var2 += 2;
+		buttonIndex += 2;
 
 		for (int t = 0; t < relevantOptions2.length; t++) {
 			EnumOptionsMinimap option = relevantOptions2[t];
@@ -72,25 +72,25 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 					.add(
 						new GuiOptionSliderMinimap(
 							option.returnEnumOrdinal(),
-							this.getWidth() / 2 - 155 + var2 % 2 * 160,
-							this.getHeight() / 6 + 24 * (var2 >> 1),
+							this.getWidth() / 2 - 155 + buttonIndex % 2 * 160,
+							this.getHeight() / 6 + 24 * (buttonIndex >> 1),
 							option,
 							fValue,
 							this.options
 						)
 					);
 			} else {
-				GuiOptionButtonMinimap var7 = new GuiOptionButtonMinimap(
+				GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
 					option.returnEnumOrdinal(),
-					this.getWidth() / 2 - 155 + var2 % 2 * 160,
-					this.getHeight() / 6 + 24 * (var2 >> 1),
+					this.getWidth() / 2 - 155 + buttonIndex % 2 * 160,
+					this.getHeight() / 6 + 24 * (buttonIndex >> 1),
 					option,
 					this.options.getKeyText(option)
 				);
-				this.getButtonList().add(var7);
+				this.getButtonList().add(button);
 			}
 
-			var2++;
+			buttonIndex++;
 		}
 
 		this.getButtonList().add(new GuiButton(200, this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, I18nUtils.getString("gui.done")));

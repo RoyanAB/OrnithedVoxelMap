@@ -16,7 +16,7 @@ public class I18nUtils {
 
 		try {
 			mcLocale = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
-		} catch (NullPointerException var3) {
+		} catch (NullPointerException ignored) {
 		}
 
 		String[] bits = mcLocale.split("_");

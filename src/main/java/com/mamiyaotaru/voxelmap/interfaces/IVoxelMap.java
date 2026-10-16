@@ -23,15 +23,15 @@ public interface IVoxelMap {
 
 	IPersistentMap getPersistentMap();
 
-	void setPermissions(boolean var1, boolean var2, boolean var3, boolean var4);
+	void setPermissions(boolean caveMode, boolean waypointSharing, boolean radarPlayers, boolean radarMobs);
 
-	void newSubWorldName(String var1, boolean var2);
+	void newSubWorldName(String subworldName, boolean vanilla);
 
-	void newSubWorldHash(String var1);
+	void newSubWorldHash(String subworldHash);
 
 	ISettingsAndLightingChangeNotifier getSettingsAndLightingChangeNotifier();
 
 	String getWorldSeed();
 
-	void setWorldSeed(String var1);
+	void setWorldSeed(String seed);
 }

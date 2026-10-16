@@ -13,7 +13,6 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 	private final GuiScreen parentScreen;
 	private final boolean sharingWaypoint;
 	private final String locInfo;
-	private final int maxMessageLength = 78;
 
 	protected String screenTitle = "Players";
 	private GuiButtonRowListPlayers playerList;
@@ -42,6 +41,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 		this.playerList.registerScrollButtons(7, 8);
 		int messageStringWidth = this.getFontRenderer().getStringWidth(I18nUtils.getString("minimap.waypointshare.sharemessage") + ":");
 		this.message = new GuiTextField(1, this.getFontRenderer(), this.getWidth() / 2 - 153 + messageStringWidth + 5, 34, 305 - messageStringWidth - 5, 20);
+		int maxMessageLength = 78;
 		this.message.setMaxStringLength(maxMessageLength);
 		int filterStringWidth = this.getFontRenderer().getStringWidth(I18nUtils.getString("minimap.waypoints.filter") + ":");
 		this.filter = new GuiTextField(
@@ -77,10 +77,10 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 	}
 
 	@Override
-	public void confirmClicked(boolean par1, int id) {
+	public void confirmClicked(boolean confirmed, int id) {
 		if (this.allClicked) {
 			this.allClicked = false;
-			if (par1) {
+			if (confirmed) {
 				String combined = this.message.getText() + " " + this.locInfo;
 				if (combined.length() > 100) {
 					this.mc.player.sendChatMessage(this.message.getText());
@@ -117,34 +117,34 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
 	}
 
 	@Override
-	public void drawScreen(int par1, int par2, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.tooltip = null;
-		this.playerList.drawScreen(par1, par2, partialTicks);
+		this.playerList.drawScreen(mouseX, mouseY, partialTicks);
 		this.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-		super.drawScreen(par1, par2, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 		this.drawString(this.getFontRenderer(), I18nUtils.getString("minimap.waypointshare.sharemessage") + ":", this.getWidth() / 2 - 153, 39, 10526880);
 		this.message.drawTextBox();
 		this.drawCenteredString(this.getFontRenderer(), I18nUtils.getString("minimap.waypointshare.sharewith"), this.getWidth() / 2, 75, 16777215);
 		this.drawString(this.getFontRenderer(), I18nUtils.getString("minimap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 50, 10526880);
 		this.filter.drawTextBox();
 		if (this.tooltip != null) {
-			this.drawTooltip(this.tooltip, par1, par2);
+			this.drawTooltip(this.tooltip, mouseX, mouseY);
 		}
 	}
 
-	protected void drawTooltip(String par1Str, int par2, int par3) {
-		if (par1Str != null) {
-			int var4 = par2 + 12;
-			int var5 = par3 - 12;
-			int var6 = this.getFontRenderer().getStringWidth(par1Str);
-			this.drawGradientRect(var4 - 3, var5 - 3, var4 + var6 + 3, var5 + 8 + 3, -1073741824, -1073741824);
-			this.getFontRenderer().drawStringWithShadow(par1Str, var4, var5, -1);
+	protected void drawTooltip(String tooltipText, int mouseX, int mouseY) {
+		if (tooltipText != null) {
+			int tooltipX = mouseX + 12;
+			int tooltipY = mouseY - 12;
+			int tooltipWidth = this.getFontRenderer().getStringWidth(tooltipText);
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + 8 + 3, -1073741824, -1073741824);
+			this.getFontRenderer().drawStringWithShadow(tooltipText, tooltipX, tooltipY, -1);
 		}
 	}
 
-	static String setTooltip(GuiSelectPlayer par0GuiWaypoints, String par1Str) {
-		return par0GuiWaypoints.tooltip = par1Str;
+	static String setTooltip(GuiSelectPlayer guiSelectPlayer, String tooltipText) {
+		return guiSelectPlayer.tooltip = tooltipText;
 	}
 
 	@Override
