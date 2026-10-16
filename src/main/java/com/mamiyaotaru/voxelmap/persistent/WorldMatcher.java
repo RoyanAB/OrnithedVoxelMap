@@ -31,10 +31,10 @@ public class WorldMatcher {
          ArrayList<ComparisonCachedRegion> candidateRegions = new ArrayList<>();
          ComparisonCachedRegion region;
          String worldName = WorldMatcher.this.master.getWaypointManager().getCurrentWorldName();
-         String worldNamePathPart = TextUtils.scrubNameFile(WorldMatcher.super.worldName);
+         String worldNamePathPart = TextUtils.scrubNameFile(this.worldName);
          String dimensionName = WorldMatcher.this.world.provider.getDimensionType().getName();
-         String dimensionNamePathPart = TextUtils.scrubNameFile(WorldMatcher.super.dimensionName);
-         File cachedRegionFileDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/cache/" + WorldMatcher.super.worldNamePathPart + "/");
+         String dimensionNamePathPart = TextUtils.scrubNameFile(this.dimensionName);
+         File cachedRegionFileDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/cache/" + this.worldNamePathPart + "/");
 
          @Override
          public void run() {

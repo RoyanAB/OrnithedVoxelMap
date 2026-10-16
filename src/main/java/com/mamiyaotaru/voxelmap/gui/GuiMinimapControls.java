@@ -57,7 +57,7 @@ public class GuiMinimapControls extends GuiScreenMinimap {
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
       if (this.buttonId >= 0) {
          this.options.setKeyBinding(this.options.keyBindings[this.buttonId], -100 + mouseButton);
          this.getButtonList().get(this.buttonId).displayString = this.options.getOptionDisplayString(this.buttonId);
@@ -69,7 +69,7 @@ public class GuiMinimapControls extends GuiScreenMinimap {
    }
 
    @Override
-   protected void keyTyped(char typedChar, int keyCode) throws IOException {
+   protected void keyTyped(char typedChar, int keyCode) {
       if (this.buttonId >= 0) {
          if (keyCode == 1) {
             if (this.options.keyBindings[this.buttonId] != this.options.keyBindMenu) {

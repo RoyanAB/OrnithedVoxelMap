@@ -401,7 +401,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
    }
 
    @Override
-   public void handleMouseInput() throws IOException {
+   public void handleMouseInput() {
       this.timeOfLastMouseInput = System.currentTimeMillis();
       this.switchToMouseInput();
       super.handleMouseInput();
@@ -438,7 +438,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton)   {
       super.mouseClicked(mouseX, mouseY, mouseButton);
       if (!this.popupOpen()) {
          this.coordinates.mouseClicked(mouseX, mouseY, mouseButton);
@@ -463,7 +463,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
    }
 
    @Override
-   public void handleKeyboardInput() throws IOException {
+   public void handleKeyboardInput()   {
       int i = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
       boolean down = Keyboard.getEventKeyState();
       if (down) {
@@ -477,7 +477,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
    }
 
    @Override
-   protected void keyTyped(char typedChar, int keyCode) throws IOException {
+   protected void keyTyped(char typedChar, int keyCode)   {
       if (!this.editingCoordinates && (keyCode == this.mc.gameSettings.keyBindJump.getKeyCode() || keyCode == this.mc.gameSettings.keyBindSneak.getKeyCode())) {
          if (keyCode == this.mc.gameSettings.keyBindJump.getKeyCode()) {
             this.zoomGoal /= 1.26F;

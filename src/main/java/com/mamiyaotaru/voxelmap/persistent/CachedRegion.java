@@ -321,100 +321,96 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
       if (this.liveChunksUpdated && !this.worldNamePathPart.equals("")) {
          ThreadManager.executorService
             .execute(
-               new Runnable() {
-                  @Override
-                  public void run() {
-                     CachedRegion.this.threadLock.lock();
+				() -> {
+				   CachedRegion.this.threadLock.lock();
 
-                     try {
-                        BiMap<IBlockState, Integer> stateToInt = CachedRegion.this.data.getStateToInt();
-                        byte[] byteArray = CachedRegion.this.data.getData();
-                        int var10000 = byteArray.length;
-                        int var10001 = CachedRegion.this.data.getWidth() * CachedRegion.this.data.getHeight();
-                        CachedRegion.this.data;
-                        if (var10000 == var10001 * 18) {
-                           File cachedRegionFileDir = new File(
-                              Minecraft.getMinecraft().gameDir,
-                              "/voxelMap/cache/"
-                                 + CachedRegion.this.worldNamePathPart
-                                 + "/"
-                                 + CachedRegion.this.subworldNamePathPart
-                                 + CachedRegion.this.dimensionNamePathPart
-                           );
-                           cachedRegionFileDir.mkdirs();
-                           File cachedRegionFile = new File(cachedRegionFileDir, "/" + CachedRegion.this.key + ".zip");
-                           FileOutputStream fos = new FileOutputStream(cachedRegionFile);
-                           ZipOutputStream zos = new ZipOutputStream(fos);
-                           ZipEntry ze = new ZipEntry("data");
-                           ze.setSize(byteArray.length);
-                           zos.putNextEntry(ze);
-                           zos.write(byteArray);
-                           zos.closeEntry();
-                           if (stateToInt != null) {
-                              Iterator<Entry<IBlockState, Integer>> iterator = stateToInt.entrySet().iterator();
-                              StringBuffer stringBuffer = new StringBuffer();
+				   try {
+					  BiMap<IBlockState, Integer> stateToInt = CachedRegion.this.data.getStateToInt();
+					  byte[] byteArray = CachedRegion.this.data.getData();
+					  int var10000 = byteArray.length;
+					  int var10001 = CachedRegion.this.data.getWidth() * CachedRegion.this.data.getHeight();
+					  if (var10000 == var10001 * 18) {
+						 File cachedRegionFileDir = new File(
+							Minecraft.getMinecraft().gameDir,
+							"/voxelMap/cache/"
+							   + CachedRegion.this.worldNamePathPart
+							   + "/"
+							   + CachedRegion.this.subworldNamePathPart
+							   + CachedRegion.this.dimensionNamePathPart
+						 );
+						 cachedRegionFileDir.mkdirs();
+						 File cachedRegionFile = new File(cachedRegionFileDir, "/" + CachedRegion.this.key + ".zip");
+						 FileOutputStream fos = new FileOutputStream(cachedRegionFile);
+						 ZipOutputStream zos = new ZipOutputStream(fos);
+						 ZipEntry ze = new ZipEntry("data");
+						 ze.setSize(byteArray.length);
+						 zos.putNextEntry(ze);
+						 zos.write(byteArray);
+						 zos.closeEntry();
+						 if (stateToInt != null) {
+							Iterator<Entry<IBlockState, Integer>> iterator = stateToInt.entrySet().iterator();
+							StringBuffer stringBuffer = new StringBuffer();
 
-                              while (iterator.hasNext()) {
-                                 Entry<IBlockState, Integer> entry = iterator.next();
-                                 String nextLine = entry.getValue() + " " + entry.getKey().toString() + "\r\n";
-                                 stringBuffer.append(nextLine);
-                              }
+							while (iterator.hasNext()) {
+							   Entry<IBlockState, Integer> entry = iterator.next();
+							   String nextLine = entry.getValue() + " " + entry.getKey().toString() + "\r\n";
+							   stringBuffer.append(nextLine);
+							}
 
-                              byte[] keyByteArray = String.valueOf(stringBuffer).getBytes();
-                              ze = new ZipEntry("key");
-                              ze.setSize(keyByteArray.length);
-                              zos.putNextEntry(ze);
-                              zos.write(keyByteArray);
-                              zos.closeEntry();
-                           }
+							byte[] keyByteArray = String.valueOf(stringBuffer).getBytes();
+							ze = new ZipEntry("key");
+							ze.setSize(keyByteArray.length);
+							zos.putNextEntry(ze);
+							zos.write(keyByteArray);
+							zos.closeEntry();
+						 }
 
-                           StringBuffer stringBuffer = new StringBuffer();
-                           String nextLine = "version:2\r\n";
-                           stringBuffer.append(nextLine);
-                           byte[] keyByteArray = String.valueOf(stringBuffer).getBytes();
-                           ze = new ZipEntry("control");
-                           ze.setSize(keyByteArray.length);
-                           zos.putNextEntry(ze);
-                           zos.write(keyByteArray);
-                           zos.closeEntry();
-                           zos.close();
-                           fos.close();
-                        } else {
-                           System.err
-                              .println(
-                                 "Data array wrong size: "
-                                    + byteArray.length
-                                    + "for "
-                                    + CachedRegion.this.x
-                                    + ","
-                                    + CachedRegion.this.z
-                                    + " in "
-                                    + CachedRegion.this.worldNamePathPart
-                                    + "/"
-                                    + CachedRegion.this.subworldNamePathPart
-                                    + CachedRegion.this.dimensionNamePathPart
-                              );
-                        }
-                     } catch (IOException e) {
-                        System.err
-                           .println(
-                              "Failed to save region file for "
-                                 + CachedRegion.this.x
-                                 + ","
-                                 + CachedRegion.this.z
-                                 + " in "
-                                 + CachedRegion.this.worldNamePathPart
-                                 + "/"
-                                 + CachedRegion.this.subworldNamePathPart
-                                 + CachedRegion.this.dimensionNamePathPart
-                           );
-                        e.printStackTrace();
-                     } finally {
-                        CachedRegion.this.threadLock.unlock();
-                     }
-                  }
-               }
-            );
+						 StringBuffer stringBuffer = new StringBuffer();
+						 String nextLine = "version:2\r\n";
+						 stringBuffer.append(nextLine);
+						 byte[] keyByteArray = String.valueOf(stringBuffer).getBytes();
+						 ze = new ZipEntry("control");
+						 ze.setSize(keyByteArray.length);
+						 zos.putNextEntry(ze);
+						 zos.write(keyByteArray);
+						 zos.closeEntry();
+						 zos.close();
+						 fos.close();
+					  } else {
+						 System.err
+							.println(
+							   "Data array wrong size: "
+								  + byteArray.length
+								  + "for "
+								  + CachedRegion.this.x
+								  + ","
+								  + CachedRegion.this.z
+								  + " in "
+								  + CachedRegion.this.worldNamePathPart
+								  + "/"
+								  + CachedRegion.this.subworldNamePathPart
+								  + CachedRegion.this.dimensionNamePathPart
+							);
+					  }
+				   } catch (IOException e) {
+					  System.err
+						 .println(
+							"Failed to save region file for "
+							   + CachedRegion.this.x
+							   + ","
+							   + CachedRegion.this.z
+							   + " in "
+							   + CachedRegion.this.worldNamePathPart
+							   + "/"
+							   + CachedRegion.this.subworldNamePathPart
+							   + CachedRegion.this.dimensionNamePathPart
+						 );
+					  e.printStackTrace();
+				   } finally {
+					  CachedRegion.this.threadLock.unlock();
+				   }
+				}
+			);
          this.liveChunksUpdated = false;
       }
    }

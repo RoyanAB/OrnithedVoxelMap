@@ -53,7 +53,7 @@ public class BlockStateParser {
    private static <T extends Comparable<T>> IBlockState withValue(IBlockState blockState, IProperty<T> property, String valueString) {
       Optional<T> value = property.parseValue(valueString);
       if (value.isPresent()) {
-         blockState = blockState.withProperty(property, (Comparable)value.get());
+         blockState = blockState.withProperty(property, value.get());
       }
 
       return blockState;

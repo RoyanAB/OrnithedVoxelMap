@@ -60,7 +60,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
    }
 
    @Override
-   protected void keyTyped(char character, int keyCode) throws IOException {
+   protected void keyTyped(char character, int keyCode)   {
       super.keyTyped(character, keyCode);
       this.message.textboxKeyTyped(character, keyCode);
       if (this.filter.textboxKeyTyped(character, keyCode)) {
@@ -69,7 +69,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
       super.mouseClicked(mouseX, mouseY, mouseButton);
       this.message.mouseClicked(mouseX, mouseY, mouseButton);
       this.filter.mouseClicked(mouseX, mouseY, mouseButton);
@@ -109,7 +109,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements GuiYesNoCallbac
    }
 
    @Override
-   public void handleMouseInput() throws IOException {
+   public void handleMouseInput()   {
       super.handleMouseInput();
       if (this.playerList != null) {
          this.playerList.handleMouseInput();

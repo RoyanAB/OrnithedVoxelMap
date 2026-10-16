@@ -68,7 +68,7 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
    }
 
    @Override
-   protected void mouseClicked(int par1, int par2, int mouseButton) throws IOException {
+   protected void mouseClicked(int par1, int par2, int mouseButton)   {
       if (!this.clickedPopup(par1, par2)) {
          super.mouseClicked(par1, par2, mouseButton);
       }

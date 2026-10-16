@@ -129,7 +129,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
    }
 
    @Override
-   protected void keyTyped(char character, int keyCode) throws IOException {
+   protected void keyTyped(char character, int keyCode)   {
       if (character == '\r' && this.worldSeedButton.isFocused()) {
          String newSeed = this.worldSeedButton.getText();
          this.master.setWorldSeed(newSeed);

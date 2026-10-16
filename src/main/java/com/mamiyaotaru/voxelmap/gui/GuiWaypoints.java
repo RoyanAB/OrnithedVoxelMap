@@ -206,7 +206,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
    }
 
    @Override
-   protected void keyTyped(char character, int keyCode) throws IOException {
+   protected void keyTyped(char character, int keyCode)   {
       super.keyTyped(character, keyCode);
       if (this.filter.textboxKeyTyped(character, keyCode)) {
          this.waypointList.updateFilter(this.filter.getText().toLowerCase());
@@ -214,7 +214,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton)   {
       super.mouseClicked(mouseX, mouseY, mouseButton);
       this.filter.mouseClicked(mouseX, mouseY, mouseButton);
       this.waypointList.mouseClicked(mouseX, mouseY, mouseButton);
@@ -329,7 +329,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
    }
 
    @Override
-   public void handleMouseInput() throws IOException {
+   public void handleMouseInput()   {
       super.handleMouseInput();
       if (this.waypointList != null) {
          this.waypointList.handleMouseInput();

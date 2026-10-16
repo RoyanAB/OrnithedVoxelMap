@@ -175,7 +175,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
    }
 
    @Override
-   protected void mouseClicked(int var1, int var2, int mouseButton) throws IOException {
+   protected void mouseClicked(int var1, int var2, int mouseButton)  {
       super.mouseClicked(var1, var2, mouseButton);
       if (this.newWorld) {
          this.newNameField.mouseClicked(var1, var2, mouseButton);
@@ -183,7 +183,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
    }
 
    @Override
-   protected void keyTyped(char var1, int keyCode) throws IOException {
+   protected void keyTyped(char var1, int keyCode)   {
       super.keyTyped(var1, keyCode);
       if (this.newNameField.isFocused()) {
          this.newNameField.textboxKeyTyped(var1, keyCode);

@@ -160,7 +160,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
    }
 
    @Override
-   protected void keyTyped(char character, int keyCode) throws IOException {
+   protected void keyTyped(char character, int keyCode)   {
       if (keyCode == 1) {
          this.waypoint.red = this.red;
          this.waypoint.green = this.green;
@@ -218,7 +218,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton)   {
       if (!this.popupOpen()) {
          super.mouseClicked(mouseX, mouseY, mouseButton);
          this.waypointName.mouseClicked(mouseX, mouseY, mouseButton);
@@ -289,7 +289,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
    }
 
    @Override
-   public void handleMouseInput() throws IOException {
+   public void handleMouseInput()   {
       super.handleMouseInput();
       if (!this.popupOpen() && this.dimensionList != null) {
          this.dimensionList.handleMouseInput();

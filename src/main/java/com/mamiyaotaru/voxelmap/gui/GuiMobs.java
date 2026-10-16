@@ -79,7 +79,7 @@ public class GuiMobs extends GuiScreenMinimap {
    }
 
    @Override
-   protected void keyTyped(char character, int keyCode) throws IOException {
+   protected void keyTyped(char character, int keyCode)   {
       super.keyTyped(character, keyCode);
       if (this.filter.textboxKeyTyped(character, keyCode)) {
          this.mobsList.updateFilter(this.filter.getText().toLowerCase());
@@ -87,7 +87,7 @@ public class GuiMobs extends GuiScreenMinimap {
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton)   {
       super.mouseClicked(mouseX, mouseY, mouseButton);
       this.filter.mouseClicked(mouseX, mouseY, mouseButton);
    }
@@ -133,7 +133,7 @@ public class GuiMobs extends GuiScreenMinimap {
    }
 
    @Override
-   public void handleMouseInput() throws IOException {
+   public void handleMouseInput()   {
       super.handleMouseInput();
       if (this.mobsList != null) {
          this.mobsList.handleMouseInput();

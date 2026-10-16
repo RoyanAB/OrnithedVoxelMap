@@ -90,7 +90,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements GuiYesNoCallbac
    }
 
    @Override
-   protected void keyTyped(char character, int keyCode) throws IOException {
+   protected void keyTyped(char character, int keyCode)   {
       super.keyTyped(character, keyCode);
       this.subworldNameField.textboxKeyTyped(character, keyCode);
       boolean acceptable = this.isNameAcceptable();
@@ -103,7 +103,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements GuiYesNoCallbac
    }
 
    @Override
-   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+   protected void mouseClicked(int mouseX, int mouseY, int mouseButton)   {
       super.mouseClicked(mouseX, mouseY, mouseButton);
       this.subworldNameField.mouseClicked(mouseX, mouseY, mouseButton);
    }

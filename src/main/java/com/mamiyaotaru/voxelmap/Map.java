@@ -459,7 +459,7 @@ public class Map implements Runnable, IMap {
             this.zCalcTicker++;
             if (this.zCalcTicker > 200) {
                this.zCalcTicker = 0;
-               this.zCalc.stop();
+               this.zCalc.interrupt();
             } else {
                synchronized (this.zCalc) {
                   this.zCalc.notify();
