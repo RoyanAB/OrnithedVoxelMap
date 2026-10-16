@@ -6,78 +6,79 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
 public class GuiOptionSliderMinimap extends GuiButton {
-   private ISettingsManager options;
-   public float sliderValue = 1.0F;
-   public boolean dragging = false;
-   private EnumOptionsMinimap enumOptions = null;
+	private final ISettingsManager options;
+	private final EnumOptionsMinimap enumOptions;
 
-   public GuiOptionSliderMinimap(int buttonId, int x, int y, EnumOptionsMinimap optionIn, float sliderValue, ISettingsManager options) {
-      super(buttonId, x, y, 150, 20, "");
-      this.options = options;
-      this.enumOptions = optionIn;
-      this.sliderValue = sliderValue;
-      this.displayString = this.options.getKeyText(optionIn);
-   }
+	public boolean dragging = false;
+	public float sliderValue;
 
-   @Override
-   public int getHoverState(boolean mouseOver) {
-      return 0;
-   }
+	public GuiOptionSliderMinimap(int buttonId, int x, int y, EnumOptionsMinimap optionIn, float sliderValue, ISettingsManager options) {
+		super(buttonId, x, y, 150, 20, "");
+		this.options = options;
+		this.enumOptions = optionIn;
+		this.sliderValue = sliderValue;
+		this.displayString = this.options.getKeyText(optionIn);
+	}
 
-   @Override
-   protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
-      if (this.visible) {
-         if (this.dragging) {
-            this.sliderValue = (float)(mouseX - (this.x + 4)) / (this.width - 8);
-            if (this.sliderValue < 0.0F) {
-               this.sliderValue = 0.0F;
-            }
+	@Override
+	public int getHoverState(boolean mouseOver) {
+		return 0;
+	}
 
-            if (this.sliderValue > 1.0F) {
-               this.sliderValue = 1.0F;
-            }
+	@Override
+	protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
+		if (this.visible) {
+			if (this.dragging) {
+				this.sliderValue = (float) (mouseX - (this.x + 4)) / (this.width - 8);
+				if (this.sliderValue < 0.0F) {
+					this.sliderValue = 0.0F;
+				}
 
-            this.options.setOptionFloatValue(this.enumOptions, this.sliderValue);
-            this.displayString = this.options.getKeyText(this.enumOptions);
-         }
+				if (this.sliderValue > 1.0F) {
+					this.sliderValue = 1.0F;
+				}
 
-         GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-         this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (this.width - 8)), this.y, 0, 66, 4, 20);
-         this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
-      }
-   }
+				this.options.setOptionFloatValue(this.enumOptions, this.sliderValue);
+				this.displayString = this.options.getKeyText(this.enumOptions);
+			}
 
-   @Override
-   public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-      if (super.mousePressed(mc, mouseX, mouseY)) {
-         this.sliderValue = (float)(mouseX - (this.x + 4)) / (this.width - 8);
-         if (this.sliderValue < 0.0F) {
-            this.sliderValue = 0.0F;
-         }
+			GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			this.drawTexturedModalRect(this.x + (int) (this.sliderValue * (this.width - 8)), this.y, 0, 66, 4, 20);
+			this.drawTexturedModalRect(this.x + (int) (this.sliderValue * (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+		}
+	}
 
-         if (this.sliderValue > 1.0F) {
-            this.sliderValue = 1.0F;
-         }
+	@Override
+	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+		if (super.mousePressed(mc, mouseX, mouseY)) {
+			this.sliderValue = (float) (mouseX - (this.x + 4)) / (this.width - 8);
+			if (this.sliderValue < 0.0F) {
+				this.sliderValue = 0.0F;
+			}
 
-         this.options.setOptionFloatValue(this.enumOptions, this.sliderValue);
-         this.displayString = this.options.getKeyText(this.enumOptions);
-         this.dragging = true;
-         return true;
-      } else {
-         return false;
-      }
-   }
+			if (this.sliderValue > 1.0F) {
+				this.sliderValue = 1.0F;
+			}
 
-   @Override
-   public void mouseReleased(int mouseX, int mouseY) {
-      this.dragging = false;
-   }
+			this.options.setOptionFloatValue(this.enumOptions, this.sliderValue);
+			this.displayString = this.options.getKeyText(this.enumOptions);
+			this.dragging = true;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-   public void resetText() {
-      this.displayString = this.options.getKeyText(this.enumOptions);
-   }
+	@Override
+	public void mouseReleased(int mouseX, int mouseY) {
+		this.dragging = false;
+	}
 
-   public EnumOptionsMinimap returnEnumOptions() {
-      return this.enumOptions;
-   }
+	public void resetText() {
+		this.displayString = this.options.getKeyText(this.enumOptions);
+	}
+
+	public EnumOptionsMinimap returnEnumOptions() {
+		return this.enumOptions;
+	}
 }

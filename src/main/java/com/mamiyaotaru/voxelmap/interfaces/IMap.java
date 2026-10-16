@@ -4,21 +4,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
 public interface IMap extends IChangeObserver {
-   void forceFullRender(boolean var1);
+	void forceFullRender(boolean var1);
 
-   void drawMinimap(Minecraft var1);
+	void drawMinimap(Minecraft var1);
 
-   float getPercentX();
+	float getPercentX();
 
-   float getPercentY();
+	float getPercentY();
 
-   void newWorld(World var1);
+	void newWorld(World var1);
 
-   void onTick(Minecraft var1, boolean var2);
+	void onTick(Minecraft var1, boolean var2);
 
-   void onTickInGame(Minecraft var1);
+	void onTickInGame(Minecraft var1);
 
-   int[] getLightmapArray();
+	int[] getLightmapArray();
 
-   void getFogColor();
+	void getFogColor();
 }

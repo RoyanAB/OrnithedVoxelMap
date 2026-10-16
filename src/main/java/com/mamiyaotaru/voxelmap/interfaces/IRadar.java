@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 
 public interface IRadar {
-   void onResourceManagerReload(IResourceManager var1);
+	void onResourceManagerReload(IResourceManager var1);
 
-   void OnTickInGame(Minecraft var1, LayoutVariables var2);
+	void OnTickInGame(Minecraft var1, LayoutVariables var2);
 }
