@@ -22,7 +22,7 @@ public class MinecraftMixin {
 	@Inject(
 		method = "init",
 		at = @At(
-			value = "RETURN"
+			value = "TAIL"
 		)
 	)
 	private void ready(CallbackInfo ci) {

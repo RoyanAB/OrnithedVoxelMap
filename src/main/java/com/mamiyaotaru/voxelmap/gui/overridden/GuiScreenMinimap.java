@@ -12,9 +12,11 @@ import java.util.List;
 
 public class GuiScreenMinimap extends GuiScreen {
 	public void drawMap() {
-		if (!VoxelMap.instance.getMapOptions().showUnderMenus) {
-			VoxelMap.instance.getMap().drawMinimap(this.mc);
-			GLShim.glClear(256);
+		if (this.mc.world != null && this.mc.player != null) {
+			if (!VoxelMap.instance.getMapOptions().showUnderMenus) {
+				VoxelMap.instance.getMap().drawMinimap(this.mc);
+				GLShim.glClear(GLShim.GL11_GL_DEPTH_BUFFER_BIT);
+			}
 		}
 	}
 

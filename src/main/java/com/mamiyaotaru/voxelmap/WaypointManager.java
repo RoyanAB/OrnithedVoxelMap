@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap;
 import com.google.common.collect.Lists;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
+import com.mamiyaotaru.voxelmap.ornithe.mixins.BuiltInModResourcePackAccessor;
 import com.mamiyaotaru.voxelmap.textures.IIconCreator;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
@@ -17,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.ornithemc.osl.resource.loader.impl.BuiltInModResourcePack;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -76,7 +78,7 @@ public class WaypointManager implements IWaypointManager {
 		IIconCreator iconCreator = new IIconCreator() {
 			@Override
 			public void addIcons(TextureAtlas textureAtlas) {
-				Minecraft mc = VoxelConstants.getMinecraft();
+				Minecraft mc = Minecraft.getMinecraft();
 				List<IResourcePack> packs = Lists.newArrayList();
 				Object defaultResourcePacksObj = ReflectionUtils.getPrivateFieldValueByType(mc, Minecraft.class, List.class, 1);
 				if (defaultResourcePacksObj != null) {
@@ -84,7 +86,7 @@ public class WaypointManager implements IWaypointManager {
 					packs.addAll(defaultResourcePacks);
 				}
 
-				List<ResourcePackRepository.Entry> packEntries = mc.getResourcePackRepository().getRepositoryEntries();
+				List<net.minecraft.client.resources.ResourcePackRepository.Entry> packEntries = mc.getResourcePackRepository().getRepositoryEntries();
 
 				for (ResourcePackRepository.Entry packEntry : packEntries) {
 					IResourcePack pack = packEntry.getResourcePack();
@@ -98,22 +100,25 @@ public class WaypointManager implements IWaypointManager {
 				for (IResourcePack pack : packs) {
 					if (pack instanceof FileResourcePack) {
 						FileResourcePack filePack = (FileResourcePack) pack;
-						this.addImagesFromFilePack(filePack, images);
+						this.addImagesFromFilePack(filePack);
 					} else if (pack instanceof FolderResourcePack) {
 						FolderResourcePack folderPack = (FolderResourcePack) pack;
-						this.addImagesFromFolderPack(folderPack, images);
+						this.addImagesFromFolderPack(folderPack);
+					} else if (pack instanceof BuiltInModResourcePack) {
+						BuiltInModResourcePack builtInModResourcePack = (BuiltInModResourcePack) pack;
+						this.addImagesFromBuiltInModResourcePack(builtInModResourcePack);
 					}
 				}
 
 				Sprite markerIcon = textureAtlas.registerIconForResource(
-					new ResourceLocation("voxelmap", "images/waypoints/marker.png"), VoxelConstants.getMinecraft().getResourceManager()
+					new ResourceLocation("voxelmap", "images/waypoints/marker.png"), Minecraft.getMinecraft().getResourceManager()
 				);
 				Sprite markerIconSmall = textureAtlas.registerIconForResource(
-					new ResourceLocation("voxelmap", "images/waypoints/markersmall.png"), VoxelConstants.getMinecraft().getResourceManager()
+					new ResourceLocation("voxelmap", "images/waypoints/markersmall.png"), Minecraft.getMinecraft().getResourceManager()
 				);
 
 				for (ResourceLocation resourceLocation : images) {
-					Sprite icon = textureAtlas.registerIconForResource(resourceLocation, VoxelConstants.getMinecraft().getResourceManager());
+					Sprite icon = textureAtlas.registerIconForResource(resourceLocation, Minecraft.getMinecraft().getResourceManager());
 					String name = resourceLocation.toString();
 					if (name.toLowerCase().contains("waypoints/waypoint") && !name.toLowerCase().contains("small")) {
 						textureAtlas.registerMaskedIcon(name.replace(".png", "Small.png"), icon);
@@ -125,37 +130,60 @@ public class WaypointManager implements IWaypointManager {
 				}
 			}
 
-			void addImagesFromFilePack(FileResourcePack filePack, List<ResourceLocation> images) {
+			void addImagesFromFilePack(FileResourcePack filePack) {
 				Object zipFileObj = ReflectionUtils.getPrivateFieldValueByType(filePack, FileResourcePack.class, ZipFile.class);
 				if (zipFileObj != null) {
 					ZipFile zipFile = (ZipFile) zipFileObj;
-					ZipEntry waypointsFolder = zipFile.getEntry("assets/voxelmap/images/waypoints");
-					if (waypointsFolder != null) {
-						Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-						while (entries.hasMoreElements()) {
-							ZipEntry zipEntry = entries.nextElement();
-							String name = zipEntry.getName();
-							if (name.startsWith("assets/voxelmap/images/waypoints") && name.toLowerCase().endsWith(".png")) {
-								name = name.replaceFirst("assets/voxelmap/", "");
-								images.add(new ResourceLocation("voxelmap", name));
-							}
-						}
-					}
+					this.addImagesFromFile(zipFile);
 				}
 			}
 
-			void addImagesFromFolderPack(FolderResourcePack folderPack, List<ResourceLocation> images) {
+			void addImagesFromFolderPack(FolderResourcePack folderPack) {
 				Object rootFolderObj = ReflectionUtils.getPrivateFieldValueByType(folderPack, AbstractResourcePack.class, File.class);
 				if (rootFolderObj != null) {
 					File rootFolder = (File) rootFolderObj;
-					File assetsDir = new File(rootFolder, "assets/voxelmap/images/waypoints");
-					if (assetsDir.isDirectory()) {
-						for (File file : assetsDir.listFiles()) {
-							if (file.getName().toLowerCase().endsWith(".png")) {
-								String name = "images/waypoints/" + file.getName();
-								images.add(new ResourceLocation("voxelmap", name));
-							}
+					this.addImagesFromFolder(rootFolder);
+				}
+			}
+
+			void addImagesFromBuiltInModResourcePack(BuiltInModResourcePack builtInModResourcePack) {
+				try {
+					File path = new File(((BuiltInModResourcePackAccessor) builtInModResourcePack).getMod().getOrigin().toString());
+					if (path.isFile()) {
+						ZipFile zipFile = new ZipFile(((BuiltInModResourcePackAccessor) builtInModResourcePack).getMod().getOrigin().toString());
+						this.addImagesFromFile(zipFile);
+					} else if (path.isDirectory()) {
+						this.addImagesFromFolder(path);
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			void addImagesFromFile(ZipFile zipFile) {
+				ZipEntry waypointsFolder = zipFile.getEntry("assets/voxelmap/images/waypoints");
+				if (waypointsFolder != null) {
+					Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+					while (entries.hasMoreElements()) {
+						ZipEntry zipEntry = entries.nextElement();
+						String name = zipEntry.getName();
+						if (name.startsWith("assets/voxelmap/images/waypoints") && name.toLowerCase().endsWith(".png")) {
+							name = name.replaceFirst("assets/voxelmap/", "");
+							images.add(new ResourceLocation("voxelmap", name));
+						}
+					}
+
+				}
+			}
+
+			void addImagesFromFolder(File rootFolder) {
+				File assetsDir = new File(rootFolder, "assets/voxelmap/images/waypoints");
+				if (assetsDir.isDirectory()) {
+					for (File file : Objects.requireNonNull(assetsDir.listFiles())) {
+						if (file.getName().toLowerCase().endsWith(".png")) {
+							String name = "images/waypoints/" + file.getName();
+							images.add(new ResourceLocation("voxelmap", name));
 						}
 					}
 				}
@@ -1037,7 +1065,7 @@ public class WaypointManager implements IWaypointManager {
 			}
 
 			this.old2dWayPts.removeAll(updatedPts);
-			VoxelConstants.getLogger().info("Remaining old 2d waypoints: {}", this.old2dWayPts.size());
+			MessageUtils.printDebug("Remaining old 2d waypoints: " + this.old2dWayPts.size());
 		}
 	}
 

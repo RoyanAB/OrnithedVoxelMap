@@ -950,9 +950,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					GLShim.glTranslatef(-(ptX * this.mapToGui), -(ptZ * this.mapToGui), 0.0F);
 				}
 
-				GLShim.glPushMatrix();
-				GLShim.glTranslatef(this.centerX, this.top + this.centerY, 0.0F);
-
 				this.drawTexturedModalRect(
 					-16.0F / this.scScale + (ptX - this.mapCenterX) * this.mapToGui, -16.0F / this.scScale + (ptZ - this.mapCenterZ) * this.mapToGui, icon, 32.0F / this.scScale, 32.0F / this.scScale
 				);
@@ -981,8 +978,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					GLUtils.disp(0);
 					GLShim.glPopMatrix();
 				}
-
-				GLShim.glPopMatrix();
 			}
 		}
 	}

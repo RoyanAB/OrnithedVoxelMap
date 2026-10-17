@@ -6,6 +6,7 @@
   "mixins": [
   ],
   "client": [
+    "BuiltInModResourcePackAccessor",
     "EntityPlayerSPMixin",
     "EntityRendererMixin",
     "MinecraftMixin",
