@@ -670,7 +670,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		}
 
 		GLShim.glColor3f(1.0F, 1.0F, 1.0F);
-		GLShim.glTranslatef(this.centerX - this.mapCenterX * this.mapToGui, this.top + this.centerY - this.mapCenterZ * this.mapToGui, 0.0F);
+		GLShim.glTranslatef(this.centerX, this.top + this.centerY, 0.0F);
 		if (this.oldNorth) {
 			GLShim.glRotatef(90.0F, 0.0F, 0.0F, 1.0F);
 		}
@@ -679,8 +679,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		if (this.backGroundImageInfo != null) {
 			GLUtils.disp(this.backGroundImageInfo.glid);
 			this.drawTexturedModalRect(
-				this.backGroundImageInfo.left * this.mapToGui,
-				this.backGroundImageInfo.top * this.mapToGui,
+				(this.backGroundImageInfo.left - this.mapCenterX) * this.mapToGui,
+				(this.backGroundImageInfo.top - this.mapCenterZ) * this.mapToGui,
 				this.backGroundImageInfo.width * this.mapToGui,
 				this.backGroundImageInfo.height * this.mapToGui
 			);
@@ -709,7 +709,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 
 				this.drawTexturedModalRect(
-					region.getX() * 256 * this.mapToGui, region.getZ() * 256 * this.mapToGui, region.getWidth() * this.mapToGui, region.getWidth() * this.mapToGui
+					(region.getX() * 256 - this.mapCenterX) * this.mapToGui, (region.getZ() * 256 - this.mapCenterZ) * this.mapToGui, region.getWidth() * this.mapToGui, region.getWidth() * this.mapToGui
 				);
 			}
 		}
@@ -767,17 +767,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		}
 
 		this.drawTexturedModalRect(
-			-10.0F / this.scScale + playerX * this.mapToGui, -10.0F / this.scScale + playerZ * this.mapToGui, 20.0F / this.scScale, 20.0F / this.scScale
+			-10.0F / this.scScale + (playerX - this.mapCenterX) * this.mapToGui, -10.0F / this.scScale + (playerZ - this.mapCenterZ) * this.mapToGui, 20.0F / this.scScale, 20.0F / this.scScale
 		);
-		if (this.oldNorth) {
-			GLShim.glPopMatrix();
-		}
 
 		if (this.oldNorth) {
+			GLShim.glPopMatrix();
 			GLShim.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
 		}
 
-		GLShim.glTranslatef(-(this.centerX - this.mapCenterX * this.mapToGui), -(this.top + this.centerY - this.mapCenterZ * this.mapToGui), 0.0F);
+		GLShim.glTranslatef(-this.centerX, -(this.top + this.centerY), 0.0F);
 		if (this.mapOptions.biomeOverlay != MapSettingsManager.OFF) {
 			float biomeScaleX = this.mapPixelsX / 760.0F;
 			float biomeScaleY = this.mapPixelsY / 360.0F;
@@ -951,9 +949,13 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					GLShim.glTranslatef(-(ptX * this.mapToGui), -(ptZ * this.mapToGui), 0.0F);
 				}
 
+				GLShim.glPushMatrix();
+				GLShim.glTranslatef(this.centerX, this.top + this.centerY, 0.0F);
+
 				this.drawTexturedModalRect(
-					-16.0F / this.scScale + ptX * this.mapToGui, -16.0F / this.scScale + ptZ * this.mapToGui, icon, 32.0F / this.scScale, 32.0F / this.scScale
+					-16.0F / this.scScale + (ptX - this.mapCenterX) * this.mapToGui, -16.0F / this.scScale + (ptZ - this.mapCenterZ) * this.mapToGui, icon, 32.0F / this.scScale, 32.0F / this.scScale
 				);
+
 				if (this.oldNorth) {
 					GLShim.glPopMatrix();
 				}
@@ -971,13 +973,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 					this.write(
 						name,
-						ptX * this.mapToGui / fontScale - m,
-						ptZ * this.mapToGui / fontScale + 16.0F / this.scScale / fontScale,
+						(ptX - this.mapCenterX) * this.mapToGui / fontScale - m,
+						(ptZ - this.mapCenterZ) * this.mapToGui / fontScale + 16.0F / this.scScale / fontScale,
 						!pt.enabled && !target && !hover ? 1442840575 : 16777215
 					);
 					GLUtils.disp(0);
 					GLShim.glPopMatrix();
 				}
+
+				GLShim.glPopMatrix();
 			}
 		}
 	}
