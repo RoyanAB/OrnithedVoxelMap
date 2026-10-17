@@ -435,7 +435,7 @@ public class CompressibleMapData extends AbstractMapData {
 		try {
 			compressedEmptyData = CompressionUtils.compress(compressedEmptyData);
 		} catch (IOException e) {
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed to compress empty data", e);
 		}
 	}
 }

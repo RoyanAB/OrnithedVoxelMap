@@ -287,7 +287,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 					this.empty = false;
 					this.dataUpdated = true;
 				} else {
-					System.out.println("failed to load data from " + cachedRegionFile.getPath());
+					VoxelConstants.getLogger().error("Failed to load data from {}", cachedRegionFile.getPath());
 				}
 
 				if (version < 2) {
@@ -295,19 +295,15 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 				}
 			}
 		} catch (Exception e) {
-			System.err
-				.println(
-					"Failed to load region file for "
-						+ this.x
-						+ ","
-						+ this.z
-						+ " in "
-						+ this.worldNamePathPart
-						+ "/"
-						+ this.subworldNamePathPart
-						+ this.dimensionNamePathPart
-				);
-			e.printStackTrace();
+			VoxelConstants.getLogger().error(
+				"Failed to load region file for {},{} in {}/{}{}",
+				this.x,
+				this.z,
+				this.worldNamePathPart,
+				this.subworldNamePathPart,
+				this.dimensionNamePathPart,
+				e
+			);
 		}
 	}
 
@@ -385,19 +381,15 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 									);
 							}
 						} catch (IOException e) {
-							System.err
-								.println(
-									"Failed to save region file for "
-										+ CachedRegion.this.x
-										+ ","
-										+ CachedRegion.this.z
-										+ " in "
-										+ CachedRegion.this.worldNamePathPart
-										+ "/"
-										+ CachedRegion.this.subworldNamePathPart
-										+ CachedRegion.this.dimensionNamePathPart
-								);
-							e.printStackTrace();
+							VoxelConstants.getLogger().error(
+								"Failed to save region file for {},{} in {}/{}{}",
+								CachedRegion.this.x,
+								CachedRegion.this.z,
+								CachedRegion.this.worldNamePathPart,
+								CachedRegion.this.subworldNamePathPart,
+								CachedRegion.this.dimensionNamePathPart,
+								e
+							);
 						} finally {
 							CachedRegion.this.threadLock.unlock();
 						}
@@ -448,7 +440,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 						System.arraycopy(CachedRegion.this.image.getData(), 0, dstArray, 0, CachedRegion.this.image.getData().length);
 						ImageIO.write(realBufferedImage, "png", imageFile);
 					} catch (IOException exception) {
-						exception.printStackTrace();
+						VoxelConstants.getLogger().error("Failed to write region image", exception);
 					} finally {
 						CachedRegion.this.threadLock.unlock();
 					}
@@ -638,8 +630,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 					CachedRegion.this.compressData();
 				}
 			} catch (Exception e) {
-				System.out.println("Exception loading chunk: " + e.getLocalizedMessage());
-				e.printStackTrace();
+				VoxelConstants.getLogger().error("Exception loading chunk: {}", e.getLocalizedMessage(), e);
 			} finally {
 				CachedRegion.this.threadLock.unlock();
 			}

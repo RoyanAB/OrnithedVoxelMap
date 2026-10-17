@@ -50,23 +50,16 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 				return;
 			}
 
-			System.out
-				.println(
-					"mousex: "
-						+ this.mouseX
-						+ ", leftEdge: "
-						+ leftEdge
-						+ ", width: "
-						+ width
-						+ ", iw: "
-						+ iconWidth
-						+ ", pad: "
-						+ padding
-						+ ", le: "
-						+ (leftEdge + width - iconWidth - padding)
-						+ ", re: "
-						+ (leftEdge + width)
-				);
+			VoxelConstants.getLogger().debug(
+				"mousex: {}, leftEdge: {}, width: {}, iw: {}, pad: {}, le: {}, re: {}",
+				this.mouseX,
+				leftEdge,
+				width,
+				iconWidth,
+				padding,
+				leftEdge + width - iconWidth - padding,
+				leftEdge + width
+			);
 		}
 	}
 

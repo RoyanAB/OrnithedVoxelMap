@@ -122,7 +122,7 @@ public class ImageUtils {
 				}
 			}
 		} else if (!GLUtils.fboEnabled) {
-			System.err.println("Resource Pack too big for minimap");
+			VoxelConstants.getLogger().error("Resource Pack too big for minimap");
 			image = new BufferedImage(8, 8, 6);
 		} else {
 			while (size > 2147483647L) {
@@ -211,8 +211,7 @@ public class ImageUtils {
 			g2.dispose();
 			return temp;
 		} catch (Exception e) {
-			System.err.println("Failed getting mob: " + path + " - " + e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed getting mob: {} - {}", path, e.getLocalizedMessage(), e);
 			return null;
 		}
 	}
@@ -275,7 +274,7 @@ public class ImageUtils {
 			is.close();
 			return loadImage(mobSkin, x, y, w, h, imageWidth, imageHeight);
 		} catch (Exception e) {
-			System.err.println("Failed getting mob: " + resourceLocation.toString() + " - " + e.getLocalizedMessage());
+			VoxelConstants.getLogger().error("Failed getting mob: {} - {}", resourceLocation.toString(), e.getLocalizedMessage(), e);
 			return null;
 		}
 	}

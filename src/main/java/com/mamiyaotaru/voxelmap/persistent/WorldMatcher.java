@@ -43,7 +43,7 @@ public class WorldMatcher {
 				try {
 					Thread.sleep(500L);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					VoxelConstants.getLogger().error("Thread interrupted", e);
 				}
 
 				this.cachedRegionFileDir.mkdirs();
@@ -65,7 +65,7 @@ public class WorldMatcher {
 					try {
 						Thread.sleep(1000L);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						VoxelConstants.getLogger().error("Thread interrupted", e);
 					}
 
 					if (this.x != (int) Math.floor(player.posX / 256.0) || this.z != (int) Math.floor(player.posZ / 256.0)) {

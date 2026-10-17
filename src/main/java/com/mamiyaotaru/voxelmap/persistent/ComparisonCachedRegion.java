@@ -138,7 +138,7 @@ public class ComparisonCachedRegion {
 					this.empty = false;
 					this.loaded = true;
 				} else {
-					System.out.println("failed to load data from " + cachedRegionFile.getPath());
+					VoxelConstants.getLogger().error("Failed to load data from {}", cachedRegionFile.getPath());
 				}
 
 				sc.close();
@@ -146,19 +146,15 @@ public class ComparisonCachedRegion {
 				fis.close();
 			}
 		} catch (IOException e) {
-			System.err
-				.println(
-					"Failed to load region file for "
-						+ this.x
-						+ ","
-						+ this.z
-						+ " in "
-						+ this.worldNamePathPart
-						+ "/"
-						+ this.subworldNamePathPart
-						+ this.dimensionNamePathPart
-				);
-			e.printStackTrace();
+			VoxelConstants.getLogger().error(
+				"Failed to load region file for {},{} in {}/{}{}",
+				this.x,
+				this.z,
+				this.worldNamePathPart,
+				this.subworldNamePathPart,
+				this.dimensionNamePathPart,
+				e
+			);
 		}
 	}
 

@@ -70,8 +70,7 @@ public class RadarSimple implements IRadar {
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
-			System.err.println("Failed getting mobs " + e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed getting mobs: {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -159,8 +158,7 @@ public class RadarSimple implements IRadar {
 					}
 				}
 			} catch (Exception e) {
-				System.err.println(e.getLocalizedMessage());
-				e.printStackTrace();
+				VoxelConstants.getLogger().error("Error processing radar entities: {}", e.getLocalizedMessage(), e);
 			}
 		}
 
@@ -287,7 +285,7 @@ public class RadarSimple implements IRadar {
 						GLUtils.drawPost();
 					}
 				} catch (Exception localException) {
-					System.err.println("Error rendering mob icon! " + localException.getLocalizedMessage() + " contact type " + contact.type);
+					VoxelConstants.getLogger().error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type, localException);
 				} finally {
 					GLShim.glPopMatrix();
 				}

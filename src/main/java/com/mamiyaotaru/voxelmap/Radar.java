@@ -251,7 +251,7 @@ public class Radar implements IRadar {
 						EnumMobs.values()[t], EnumMobs.values()[t].resourceLocation, EnumMobs.values()[t].secondaryResourceLocation
 					);
 					if (image == null) {
-						System.err.println("Failed getting mob " + t);
+						VoxelConstants.getLogger().error("Failed getting mob {}", t);
 						image = new BufferedImage(2, 2, 6);
 					}
 
@@ -359,8 +359,7 @@ public class Radar implements IRadar {
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
-			System.err.println("Failed getting mobs " + e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed getting mobs: {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -1230,8 +1229,7 @@ public class Radar implements IRadar {
 					}
 				}
 			} catch (Exception e) {
-				System.err.println(e.getLocalizedMessage());
-				e.printStackTrace();
+				VoxelConstants.getLogger().error("Error processing radar entities: {}", e.getLocalizedMessage(), e);
 			}
 		}
 
@@ -1239,7 +1237,7 @@ public class Radar implements IRadar {
 			try {
 				this.textureAtlas.stitchNew();
 			} catch (StitcherException e) {
-				System.err.println("Stitcher exception!  Resetting mobs texture atlas.");
+				VoxelConstants.getLogger().error("Stitcher exception! Resetting mobs texture atlas.", e);
 				this.loadTexturePackIcons();
 			}
 		}
@@ -2171,7 +2169,7 @@ public class Radar implements IRadar {
 		}
 
 		if (icon0 == null || icon1 == null) {
-			System.out.println("can't get texture for custom armor type: " + helmet.getClass());
+			VoxelConstants.getLogger().warn("Can't get texture for custom armor type: {}", helmet.getClass());
 			this.textureAtlas.registerFailedIcon("armor " + helmet.getTranslationKey() + " 0");
 		}
 
@@ -2599,7 +2597,7 @@ public class Radar implements IRadar {
 						this.write(contact.name, x * scaleFactor - m, (y + 3) * scaleFactor, 16777215);
 					}
 				} catch (Exception localException) {
-					System.err.println("Error rendering mob icon! " + localException.getLocalizedMessage() + " contact type " + contact.type);
+					VoxelConstants.getLogger().error("Error rendering mob icon! {} contact type {}", localException.getLocalizedMessage(), contact.type, localException);
 				} finally {
 					GLShim.glPopMatrix();
 				}

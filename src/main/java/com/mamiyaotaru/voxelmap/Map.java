@@ -163,8 +163,7 @@ public class Map implements Runnable, IMap {
 		try {
 			NetworkUtils.enumerateInterfaces();
 		} catch (SocketException e) {
-			System.err.println("could not get network interface addresses");
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Could not get network interface addresses", e);
 		}
 
 		ArrayList<KeyBinding> tempBindings = new ArrayList<>();
@@ -174,7 +173,7 @@ public class Map implements Runnable, IMap {
 		java.util.Map<String, Integer> categoryOrder = (java.util.Map<String, Integer>) ReflectionUtils.getPrivateFieldValueByType(
 			null, KeyBinding.class, java.util.Map.class, 1
 		);
-		System.out.println("CATEGORY ORDER IS " + categoryOrder.size());
+		VoxelConstants.getLogger().debug("Category order size: {}", categoryOrder.size());
 		Integer categoryPlace = categoryOrder.get("controls.minimap.title");
 		if (categoryPlace == null) {
 			int currentSize = categoryOrder.size();
@@ -840,11 +839,11 @@ public class Map implements Runnable, IMap {
 			UUID playerUUID = this.game.player.getUniqueID();
 			Object guiNewChat = this.game.ingameGUI.getChatGUI();
 			if (guiNewChat == null) {
-				System.out.println("failed to get guiNewChat");
+				VoxelConstants.getLogger().warn("Failed to get guiNewChat");
 			} else {
 				Object chatListObj = ReflectionUtils.getPrivateFieldValueByType(guiNewChat, GuiNewChat.class, List.class, 1);
 				if (chatListObj == null) {
-					System.out.println("could not get chatlist");
+					VoxelConstants.getLogger().warn("Could not get chatlist");
 				} else {
 					List<ChatLine> chatList = (List<ChatLine>) chatListObj;
 					boolean killRadar = false;
@@ -2147,7 +2146,7 @@ public class Map implements Runnable, IMap {
 				gfx.dispose();
 				this.mapImageInt = GLUtils.tex(mapImage);
 			} catch (Exception f) {
-				System.err.println("Error loading texture pack's map image: " + f.getLocalizedMessage());
+				VoxelConstants.getLogger().error("Error loading texture pack's map image: {}", f.getLocalizedMessage(), f);
 			}
 		}
 	}

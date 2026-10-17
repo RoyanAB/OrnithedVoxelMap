@@ -162,30 +162,27 @@ public class ColorManager implements IColorManager {
 				try {
 					this.processCTM();
 				} catch (Exception e) {
-					System.err.println("error loading CTM " + e.getLocalizedMessage());
-					e.printStackTrace();
+					VoxelConstants.getLogger().error("Error loading CTM: {}", e.getLocalizedMessage(), e);
 				}
 			}
 
 			try {
 				this.loadWaterColor();
 			} catch (Exception e) {
-				System.err.println("error getting water color " + e.getLocalizedMessage());
+				VoxelConstants.getLogger().error("Error getting water color: {}", e.getLocalizedMessage(), e);
 			}
 
 			if (this.optifineInstalled) {
 				try {
 					this.processColorProperties();
 				} catch (Exception e) {
-					System.err.println("error loading custom color properties " + e.getLocalizedMessage());
-					e.printStackTrace();
+					VoxelConstants.getLogger().error("Error loading custom color properties: {}", e.getLocalizedMessage(), e);
 				}
 			}
 
 			this.master.getMap().forceFullRender(true);
 		} catch (Exception e) {
-			System.err.println("error loading pack");
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Error loading pack", e);
 		}
 
 		this.loaded = true;
@@ -215,16 +212,13 @@ public class ColorManager implements IColorManager {
 
 			return blockImage;
 		} catch (Exception e) {
-			System.out
-				.println(
-					"error getting block armor image for "
-						+ Block.getIdFromBlock(blockState.getBlock())
-						+ ","
-						+ blockState.getBlock().getMetaFromState(blockState)
-						+ ": "
-						+ e.getLocalizedMessage()
-				);
-			e.printStackTrace();
+			VoxelConstants.getLogger().error(
+				"Error getting block armor image for block {} with meta {}: {}",
+				Block.getIdFromBlock(blockState.getBlock()),
+				blockState.getBlock().getMetaFromState(blockState),
+				e.getLocalizedMessage(),
+				e
+			);
 			return null;
 		}
 	}
@@ -302,7 +296,7 @@ public class ColorManager implements IColorManager {
 			gfx.drawImage(picker, 0, 0, null);
 			gfx.dispose();
 		} catch (Exception e) {
-			System.err.println("Error loading color picker: " + e.getLocalizedMessage());
+			VoxelConstants.getLogger().error("Error loading color picker: {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -321,8 +315,7 @@ public class ColorManager implements IColorManager {
 			gfx.drawImage(terrainStitched, 0, 0, null);
 			gfx.dispose();
 		} catch (Exception e) {
-			System.err.println("Error processing new resource pack: " + e.getLocalizedMessage());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Error processing new resource pack: {}", e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -348,7 +341,7 @@ public class ColorManager implements IColorManager {
 			Field material2 = ReflectionUtils.getFieldByType(BlockRepository.chorusFlower, Block.class, Material.class);
 			material2.set(BlockRepository.chorusFlower, Material.WOOD);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Error setting chorus material", e);
 		}
 	}
 
@@ -503,8 +496,7 @@ public class ColorManager implements IColorManager {
 
 			return color;
 		} catch (Exception e) {
-			System.err.println("failed getting color: " + blockState.getBlock().getLocalizedName());
-			e.printStackTrace();
+			VoxelConstants.getLogger().error("Failed getting color: {}", blockState.getBlock().getLocalizedName(), e);
 			return COLOR_FAILED_LOAD;
 		}
 	}
@@ -601,8 +593,8 @@ public class ColorManager implements IColorManager {
 				gfx.dispose();
 				color = singlePixelBuff.getRGB(0, 0);
 			} catch (RasterFormatException e) {
-				System.out.println("error getting color");
-				System.out.println(left + " " + right + " " + top + " " + bottom);
+				VoxelConstants.getLogger().error("Error getting color");
+				VoxelConstants.getLogger().error("Coordinates: left={}, right={}, top={}, bottom={}", left, right, top, bottom);
 			}
 		}
 
@@ -1157,18 +1149,14 @@ public class ColorManager implements IColorManager {
 							}
 						}
 					} catch (IOException e) {
-						System.err
-							.println(
-								"error getting CTM block from "
-									+ propertiesFile.getPath()
-									+ ": "
-									+ filePath
-									+ " "
-									+ Block.REGISTRY.getNameForObject(blockStates.iterator().next().getBlock())
-									+ " "
-									+ tilePath
-							);
-						e.printStackTrace();
+						VoxelConstants.getLogger().error(
+							"Error getting CTM block from {}: {} {} {}",
+							propertiesFile.getPath(),
+							filePath,
+							Block.REGISTRY.getNameForObject(blockStates.iterator().next().getBlock()),
+							tilePath,
+							e
+						);
 					}
 				}
 			}
@@ -1620,7 +1608,7 @@ public class ColorManager implements IColorManager {
 					Path path = Paths.get("optifine/colormap/blocks/", source);
 					path = path.normalize();
 					resourcePNG = new ResourceLocation(resource.getNamespace(), path.toString().replace(File.separatorChar, '/'));
-					System.out.println("trying " + resourcePNG);
+					VoxelConstants.getLogger().debug("Trying resource: {}", resourcePNG);
 				}
 			} else {
 				resourcePNG = new ResourceLocation(resource.getNamespace(), resource.getPath().replace(".properties", ".png"));

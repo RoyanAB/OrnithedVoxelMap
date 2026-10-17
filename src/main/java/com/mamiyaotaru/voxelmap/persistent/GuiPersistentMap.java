@@ -1311,7 +1311,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 				break;
 			default:
-				System.out.println("unimplemented command");
+				VoxelConstants.getLogger().warn("Unimplemented command");
 		}
 	}
 

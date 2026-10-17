@@ -12,7 +12,7 @@ public class MessageUtils {
 
 	public static void printDebug(String line) {
 		if (debug) {
-			System.out.println(line);
+			VoxelConstants.getLogger().debug(line);
 		}
 	}
 }
