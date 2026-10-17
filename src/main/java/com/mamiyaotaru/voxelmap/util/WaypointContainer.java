@@ -1,6 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
@@ -29,7 +30,7 @@ public class WaypointContainer {
 	private final String TARGETFLAG = "*&^TARget%$^";
 
 	public WaypointContainer(MapSettingsManager options) {
-		this.mc = Minecraft.getMinecraft();
+		this.mc = VoxelConstants.getMinecraft();
 		this.options = options;
 	}
 

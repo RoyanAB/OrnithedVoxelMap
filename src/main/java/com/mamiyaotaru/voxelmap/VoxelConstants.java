@@ -1,5 +1,7 @@
 package com.mamiyaotaru.voxelmap;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
@@ -20,6 +22,15 @@ public final class VoxelConstants {
 
 	@Contract(pure = true)
 	private VoxelConstants() {
+	}
+
+	@NotNull
+	public static Minecraft getMinecraft() {
+		return Minecraft.getMinecraft();
+	}
+
+	public static WorldClient getClientWorld() {
+		return getMinecraft().world;
 	}
 
 	@NotNull

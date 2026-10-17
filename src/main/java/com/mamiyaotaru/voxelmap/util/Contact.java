@@ -1,7 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 
 import java.util.UUID;
@@ -18,7 +18,7 @@ public class Contact {
 	public EnumMobs type;
 	public UUID uuid;
 	public String name = "_";
-	public Entity entity ;
+	public Entity entity;
 
 	public Sprite[] icons = null;
 	public Sprite[] armorIcons = new Sprite[]{null, null};
@@ -47,8 +47,8 @@ public class Contact {
 	}
 
 	public void updateLocation() {
-		this.x = this.entity.prevPosX + (this.entity.posX - this.entity.prevPosX) * Minecraft.getMinecraft().getRenderPartialTicks();
+		this.x = this.entity.prevPosX + (this.entity.posX - this.entity.prevPosX) * VoxelConstants.getMinecraft().getRenderPartialTicks();
 		this.y = (int) this.entity.posY + this.yFudge;
-		this.z = this.entity.prevPosZ + (this.entity.posZ - this.entity.prevPosZ) * Minecraft.getMinecraft().getRenderPartialTicks();
+		this.z = this.entity.prevPosZ + (this.entity.posZ - this.entity.prevPosZ) * VoxelConstants.getMinecraft().getRenderPartialTicks();
 	}
 }

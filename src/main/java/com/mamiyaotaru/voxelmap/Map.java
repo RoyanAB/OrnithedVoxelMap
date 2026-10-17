@@ -154,7 +154,7 @@ public class Map implements Runnable, IMap {
 
 	public Map(IVoxelMap master) {
 		this.master = master;
-		this.game = GameVariableAccessShim.getMinecraft();
+		this.game = VoxelConstants.getMinecraft();
 		this.options = master.getMapOptions();
 		this.colorManager = master.getColorManager();
 		this.waypointManager = master.getWaypointManager();
@@ -833,7 +833,7 @@ public class Map implements Runnable, IMap {
 	}
 
 	private void checkPermissionMessages() {
-		if (GameVariableAccessShim.getWorld() != null
+		if (VoxelConstants.getClientWorld() != null
 			&& this.game.player != null
 			&& this.game.ingameGUI != null
 			&& System.currentTimeMillis() - this.newServerTime < 5000L) {

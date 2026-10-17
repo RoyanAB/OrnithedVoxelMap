@@ -1,6 +1,7 @@
 package com.mamiyaotaru.voxelmap.persistent;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.*;
 import com.mamiyaotaru.voxelmap.gui.overridden.Popup;
 import com.mamiyaotaru.voxelmap.gui.overridden.PopupGuiButton;
@@ -136,7 +137,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private final int TPTOWP = 8;
 
 	public GuiPersistentMap(GuiScreen parent, IVoxelMap master) {
-		this.mc = Minecraft.getMinecraft();
+		this.mc = VoxelConstants.getMinecraft();
 		this.parent = parent;
 		this.master = master;
 		this.waypointManager = master.getWaypointManager();

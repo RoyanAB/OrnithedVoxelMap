@@ -1,24 +1,10 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.World;
-
-import java.io.File;
 
 public class GameVariableAccessShim {
-	private static final Minecraft minecraft = Minecraft.getMinecraft();
-
-	public static Minecraft getMinecraft() {
-		return minecraft;
-	}
-
-	public static World getWorld() {
-		return minecraft.world;
-	}
-
-	public static File getDataDir() {
-		return minecraft.gameDir;
-	}
+	private static final Minecraft minecraft = VoxelConstants.getMinecraft();
 
 	public static int xCoord() {
 		return (int) (minecraft.getRenderViewEntity().posX < 0.0 ? minecraft.getRenderViewEntity().posX - 1.0 : minecraft.getRenderViewEntity().posX);

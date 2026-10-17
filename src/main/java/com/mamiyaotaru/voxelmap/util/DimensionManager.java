@@ -1,8 +1,8 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.IDimensionManager;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 
@@ -15,7 +15,7 @@ public class DimensionManager implements IDimensionManager {
 	private final IVoxelMap master;
 
 	public ArrayList<Dimension> dimensions;
-	private static Method providersGetDimensionMethod = null;
+	private static final Method providersGetDimensionMethod = null;
 
 	public DimensionManager(IVoxelMap master) {
 		this.master = master;
@@ -93,9 +93,9 @@ public class DimensionManager implements IDimensionManager {
 
 		if (dim.name.equals("notLoaded") || dim.name.equals("failedToLoad")) {
 			try {
-				dim.name = Minecraft.getMinecraft().world.provider.getDimensionType().getName() + " " + ID;
+				dim.name = VoxelConstants.getMinecraft().world.provider.getDimensionType().getName() + " " + ID;
 			} catch (Exception e) {
-				dim.name = "dimension " + ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")";
+				dim.name = "dimension " + ID + "(" + VoxelConstants.getMinecraft().world.provider.getClass().getSimpleName() + ")";
 			}
 		}
 	}

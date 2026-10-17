@@ -1,6 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
-import net.minecraft.client.Minecraft;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 
@@ -17,7 +17,7 @@ public class BiomeRepository {
 	private static boolean dirty = false;
 
 	public static void loadBiomeColors() {
-		File saveDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/");
+		File saveDir = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/");
 		File settingsFile = new File(saveDir, "biomeColors.txt");
 		if (settingsFile.exists()) {
 			try {
@@ -51,7 +51,7 @@ public class BiomeRepository {
 		}
 
 		try {
-			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("voxelmap", "conf/biomecolors.txt")).getInputStream();
+			InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(new ResourceLocation("voxelmap", "conf/biomecolors.txt")).getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
 			String sCurrentLine;
@@ -85,7 +85,7 @@ public class BiomeRepository {
 
 	public static void saveBiomeColors() {
 		if (dirty) {
-			File saveDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/");
+			File saveDir = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/");
 			if (!saveDir.exists()) {
 				saveDir.mkdirs();
 			}

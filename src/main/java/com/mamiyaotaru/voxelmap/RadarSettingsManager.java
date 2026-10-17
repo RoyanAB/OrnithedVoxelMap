@@ -39,7 +39,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
 	public static final int FULL = 2;
 
 	public RadarSettingsManager() {
-		this.game = Minecraft.getMinecraft();
+		this.game = VoxelConstants.getMinecraft();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.gui;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.IPopupGuiScreen;
 import com.mamiyaotaru.voxelmap.gui.overridden.Popup;
@@ -10,7 +11,6 @@ import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
@@ -417,7 +417,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 	public void toggleDimensionSelected() {
 		if (this.waypoint.dimensions.size() > 1
 			&& this.waypoint.dimensions.contains(this.selectedDimension.ID)
-			&& this.selectedDimension.ID != Minecraft.getMinecraft().player.dimension) {
+			&& this.selectedDimension.ID != VoxelConstants.getMinecraft().player.dimension) {
 			this.waypoint.dimensions.remove(this.selectedDimension.ID);
 		} else this.waypoint.dimensions.add(this.selectedDimension.ID);
 	}

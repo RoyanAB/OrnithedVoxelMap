@@ -1,12 +1,12 @@
 package com.mamiyaotaru.voxelmap.gui;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiSlotMinimap;
 import com.mamiyaotaru.voxelmap.interfaces.IDimensionManager;
 import com.mamiyaotaru.voxelmap.util.Dimension;
 import com.mamiyaotaru.voxelmap.util.GLShim;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.I18nUtils;
-import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Mouse;
 
 public class GuiSlotDimensions extends GuiSlotMinimap {
@@ -15,7 +15,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 
 	public GuiSlotDimensions(GuiAddWaypoint guiAddWaypoint) {
 		super(
-			Minecraft.getMinecraft(), 101, guiAddWaypoint.getHeight(), guiAddWaypoint.getHeight() / 6 + 82 + 6, guiAddWaypoint.getHeight() / 6 + 164 + 3, 18
+			VoxelConstants.getMinecraft(), 101, guiAddWaypoint.getHeight(), guiAddWaypoint.getHeight() / 6 + 82 + 6, guiAddWaypoint.getHeight() / 6 + 164 + 3, 18
 		);
 		this.parentGui = guiAddWaypoint;
 		this.setSlotWidth(88);
@@ -88,7 +88,7 @@ public class GuiSlotDimensions extends GuiSlotMinimap {
 		Dimension dim = this.dimensionManager.getDimensions().get(slotIndex);
 		String name = dim.name;
 		if (name.equals("notLoaded") || name.equals("failedToLoad")) {
-			name = "dimension " + dim.ID + "(" + Minecraft.getMinecraft().world.provider.getClass().getSimpleName() + ")";
+			name = "dimension " + dim.ID + "(" + VoxelConstants.getMinecraft().world.provider.getClass().getSimpleName() + ")";
 		}
 
 		this.parentGui.drawCenteredString(this.parentGui.getFontRenderer(), name, this.parentGui.getWidth() / 2 + this.slotWidth / 2, slotYPos + 3, 16777215);

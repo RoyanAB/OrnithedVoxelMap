@@ -1,11 +1,11 @@
 package com.mamiyaotaru.voxelmap.persistent;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.IPersistentMap;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.world.World;
 
@@ -36,7 +36,7 @@ public class WorldMatcher {
 			final String worldNamePathPart = TextUtils.scrubNameFile(this.worldName);
 			final String dimensionName = WorldMatcher.this.world.provider.getDimensionType().getName();
 			final String dimensionNamePathPart = TextUtils.scrubNameFile(this.dimensionName);
-			final File cachedRegionFileDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/cache/" + this.worldNamePathPart + "/");
+			final File cachedRegionFileDir = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/cache/" + this.worldNamePathPart + "/");
 
 			@Override
 			public void run() {
@@ -50,7 +50,7 @@ public class WorldMatcher {
 				ArrayList<String> knownSubworldNames = new ArrayList<>(WorldMatcher.this.master.getWaypointManager().getKnownSubworldNames());
 				String[] subworldNamesArray = new String[knownSubworldNames.size()];
 				knownSubworldNames.toArray(subworldNamesArray);
-				EntityPlayerSP player = Minecraft.getMinecraft().player;
+				EntityPlayerSP player = VoxelConstants.getMinecraft().player;
 				MessageUtils.printDebug(
 					"player coords " + player.posX + " " + player.posZ + " in world " + WorldMatcher.this.master.getWaypointManager().getCurrentWorldName()
 				);
@@ -145,7 +145,7 @@ public class WorldMatcher {
 				}
 
 				this.region = new ComparisonCachedRegion(
-					WorldMatcher.this.map, this.x + "," + this.z, Minecraft.getMinecraft().world, this.worldName, "", this.x, this.z
+					WorldMatcher.this.map, this.x + "," + this.z, VoxelConstants.getMinecraft().world, this.worldName, "", this.x, this.z
 				);
 				MessageUtils.printDebug("going to load current region");
 				this.region.loadCurrent();

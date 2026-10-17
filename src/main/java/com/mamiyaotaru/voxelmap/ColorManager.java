@@ -89,7 +89,7 @@ public class ColorManager implements IColorManager {
 
 	public ColorManager(IVoxelMap master) {
 		this.master = master;
-		this.game = Minecraft.getMinecraft();
+		this.game = VoxelConstants.getMinecraft();
 		this.optifineInstalled = false;
 		Field ofProfiler = null;
 
@@ -278,7 +278,7 @@ public class ColorManager implements IColorManager {
 			GLShim.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
 		}
 
-		Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
+		VoxelConstants.getMinecraft().getRenderItem().renderItem(stack, model);
 		GLShim.glPopMatrix();
 		GLShim.glEnable(GLShim.GL11_GL_CULL_FACE);
 		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
@@ -546,7 +546,7 @@ public class ColorManager implements IColorManager {
 		BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShapes();
 		TextureAtlasSprite icon = blockModelShapes.getTexture(blockState);
 		if (icon == blockModelShapes.getModelManager().getMissingModel().getParticleTexture()) {
-			TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
+			TextureMap textureMap = VoxelConstants.getMinecraft().getTextureMapBlocks();
 			Block block = blockState.getBlock();
 			Material material = blockState.getMaterial();
 			if (block instanceof BlockDynamicLiquid) {

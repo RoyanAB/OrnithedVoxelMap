@@ -3,13 +3,13 @@ package com.mamiyaotaru.voxelmap.util;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockPistonMoving;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
@@ -150,7 +150,7 @@ public class BlockRepository {
 	public static void loadBlockIDs() {
 		try {
 			String filename = "conf/blockIDs.txt";
-			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("voxelmap", filename)).getInputStream();
+			InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(new ResourceLocation("voxelmap", filename)).getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
 			String sCurrentLine;

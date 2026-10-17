@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.gui;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
@@ -21,16 +22,16 @@ import java.util.Iterator;
 public class GuiButtonRowListPlayers extends GuiListExtended {
 	private final GuiSelectPlayer parentGui;
 	private final ArrayList<GuiButtonRowListPlayers.Row> rows = new ArrayList<>();
-	private final Minecraft mc = Minecraft.getMinecraft();
+	private final Minecraft mc = VoxelConstants.getMinecraft();
 	private final ArrayList<NetworkPlayerInfo> players;
 	private final GuiButtonRowListPlayers.Row everyoneRow;
 
 	private ArrayList<NetworkPlayerInfo> playersFiltered;
 
 	public GuiButtonRowListPlayers(GuiSelectPlayer guiSelectPlayer) {
-		super(Minecraft.getMinecraft(), guiSelectPlayer.getWidth(), guiSelectPlayer.getHeight(), 89, guiSelectPlayer.getHeight() - 65 + 4, 25);
+		super(VoxelConstants.getMinecraft(), guiSelectPlayer.getWidth(), guiSelectPlayer.getHeight(), 89, guiSelectPlayer.getHeight() - 65 + 4, 25);
 		this.parentGui = guiSelectPlayer;
-		NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().player.connection;
+		NetHandlerPlayClient netHandlerPlayClient = VoxelConstants.getMinecraft().player.connection;
 		this.players = new ArrayList<>(netHandlerPlayClient.getPlayerInfoMap());
 		this.sort();
 		GuiButton everyoneButton = new GuiButton(-1, this.parentGui.getWidth() / 2 - 75, 0, 150, 20, I18nUtils.getString("minimap.waypointshare.all"));
@@ -123,7 +124,7 @@ public class GuiButtonRowListPlayers extends GuiListExtended {
 	}
 
 	public class Row implements GuiListExtended.IGuiListEntry {
-		private final Minecraft client = Minecraft.getMinecraft();
+		private final Minecraft client = VoxelConstants.getMinecraft();
 		private GuiButton button = null;
 		private GuiButton button1 = null;
 		private GuiButton button2 = null;

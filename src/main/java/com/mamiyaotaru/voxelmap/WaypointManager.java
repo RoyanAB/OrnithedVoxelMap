@@ -76,7 +76,7 @@ public class WaypointManager implements IWaypointManager {
 		IIconCreator iconCreator = new IIconCreator() {
 			@Override
 			public void addIcons(TextureAtlas textureAtlas) {
-				Minecraft mc = Minecraft.getMinecraft();
+				Minecraft mc = VoxelConstants.getMinecraft();
 				List<IResourcePack> packs = Lists.newArrayList();
 				Object defaultResourcePacksObj = ReflectionUtils.getPrivateFieldValueByType(mc, Minecraft.class, List.class, 1);
 				if (defaultResourcePacksObj != null) {
@@ -106,14 +106,14 @@ public class WaypointManager implements IWaypointManager {
 				}
 
 				Sprite markerIcon = textureAtlas.registerIconForResource(
-					new ResourceLocation("voxelmap", "images/waypoints/marker.png"), Minecraft.getMinecraft().getResourceManager()
+					new ResourceLocation("voxelmap", "images/waypoints/marker.png"), VoxelConstants.getMinecraft().getResourceManager()
 				);
 				Sprite markerIconSmall = textureAtlas.registerIconForResource(
-					new ResourceLocation("voxelmap", "images/waypoints/markersmall.png"), Minecraft.getMinecraft().getResourceManager()
+					new ResourceLocation("voxelmap", "images/waypoints/markersmall.png"), VoxelConstants.getMinecraft().getResourceManager()
 				);
 
 				for (ResourceLocation resourceLocation : images) {
-					Sprite icon = textureAtlas.registerIconForResource(resourceLocation, Minecraft.getMinecraft().getResourceManager());
+					Sprite icon = textureAtlas.registerIconForResource(resourceLocation, VoxelConstants.getMinecraft().getResourceManager());
 					String name = resourceLocation.toString();
 					if (name.toLowerCase().contains("waypoints/waypoint") && !name.toLowerCase().contains("small")) {
 						textureAtlas.registerMaskedIcon(name.replace(".png", "Small.png"), icon);
@@ -176,7 +176,7 @@ public class WaypointManager implements IWaypointManager {
 					bufferedImage = ImageUtils.scaleImage(bufferedImage, scale);
 					this.textureAtlasChooser.registerIconForBufferedImage(name, bufferedImage);
 				} catch (IOException e) {
-					this.textureAtlasChooser.registerIconForResource(resourceLocation, Minecraft.getMinecraft().getResourceManager());
+					this.textureAtlasChooser.registerIconForResource(resourceLocation, VoxelConstants.getMinecraft().getResourceManager());
 				}
 			}
 		}
@@ -204,7 +204,7 @@ public class WaypointManager implements IWaypointManager {
 		if (world == null) {
 			this.currentDimension = 0.5F;
 		} else {
-			this.game = Minecraft.getMinecraft();
+			this.game = VoxelConstants.getMinecraft();
 			String mapName;
 			if (this.game.isIntegratedServerRunning()) {
 				mapName = this.getMapName();
@@ -310,9 +310,9 @@ public class WaypointManager implements IWaypointManager {
 		}
 
 		if (this.options.deathpoints != MapSettingsManager.OFF) {
-			EntityPlayerSP thePlayer = Minecraft.getMinecraft().player;
+			EntityPlayerSP thePlayer = VoxelConstants.getMinecraft().player;
 			TreeSet<Integer> dimensions = new TreeSet<>();
-			dimensions.add(Minecraft.getMinecraft().player.dimension);
+			dimensions.add(VoxelConstants.getMinecraft().player.dimension);
 			this.addWaypoint(
 				new Waypoint(
 					"Latest Death",
@@ -474,12 +474,12 @@ public class WaypointManager implements IWaypointManager {
 			String worldNamePathPart = TextUtils.scrubNameFile(worldName);
 			String subWorldNamePathPart = TextUtils.scrubNameFile(oldName) + "/";
 			File oldCachedRegionFileDir = new File(
-				Minecraft.getMinecraft().gameDir, "/mods/VoxelMods/voxelMap/cache/" + worldNamePathPart + "/" + subWorldNamePathPart
+				VoxelConstants.getMinecraft().gameDir, "/mods/VoxelMods/voxelMap/cache/" + worldNamePathPart + "/" + subWorldNamePathPart
 			);
 			if (oldCachedRegionFileDir.exists() && oldCachedRegionFileDir.isDirectory()) {
 				subWorldNamePathPart = TextUtils.scrubNameFile(newName) + "/";
 				File newCachedRegionFileDir = new File(
-					Minecraft.getMinecraft().gameDir, "/mods/VoxelMods/voxelMap/cache/" + worldNamePathPart + "/" + subWorldNamePathPart
+					VoxelConstants.getMinecraft().gameDir, "/mods/VoxelMods/voxelMap/cache/" + worldNamePathPart + "/" + subWorldNamePathPart
 				);
 				boolean success = oldCachedRegionFileDir.renameTo(newCachedRegionFileDir);
 				if (!success) {
@@ -556,7 +556,7 @@ public class WaypointManager implements IWaypointManager {
 		}
 
 		worldNameSave = TextUtils.scrubNameFile(worldNameSave);
-		File saveDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/");
+		File saveDir = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/");
 		if (!saveDir.exists()) {
 			saveDir.mkdirs();
 		}
@@ -688,8 +688,8 @@ public class WaypointManager implements IWaypointManager {
 	}
 
 	private boolean loadWaypointsExtensible(String worldNameStandard) {
-		File settingsFileNew = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/" + worldNameStandard + ".points");
-		File settingsFileOld = new File(Minecraft.getMinecraft().gameDir, "/mods/mamiyaotaru/voxelmap/" + worldNameStandard + ".points");
+		File settingsFileNew = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/" + worldNameStandard + ".points");
+		File settingsFileOld = new File(VoxelConstants.getMinecraft().gameDir, "/mods/mamiyaotaru/voxelmap/" + worldNameStandard + ".points");
 		if (!settingsFileOld.exists() && !settingsFileNew.exists()) {
 			return false;
 		}
@@ -946,7 +946,7 @@ public class WaypointManager implements IWaypointManager {
 		boolean foundSome = false;
 		this.settingsFile = new File(FilesystemUtils.getAppDir("minecraft/mods/rei_minimap", false), worldNameWithoutPort + ".points");
 		if (!this.settingsFile.exists()) {
-			this.settingsFile = new File(Minecraft.getMinecraft().gameDir, "/mods/rei_minimap/" + worldNameWithoutPort + ".points");
+			this.settingsFile = new File(VoxelConstants.getMinecraft().gameDir, "/mods/rei_minimap/" + worldNameWithoutPort + ".points");
 		}
 
 		if (this.settingsFile.exists()) {
@@ -956,7 +956,7 @@ public class WaypointManager implements IWaypointManager {
 			for (int t = -25; t < 25; t++) {
 				this.settingsFile = new File(FilesystemUtils.getAppDir("minecraft/mods/rei_minimap", false), worldNameWithoutPort + ".DIM" + t + ".points");
 				if (!this.settingsFile.exists()) {
-					this.settingsFile = new File(Minecraft.getMinecraft().gameDir, "/mods/rei_minimap/" + worldNameWithoutPort + ".DIM" + t + ".points");
+					this.settingsFile = new File(VoxelConstants.getMinecraft().gameDir, "/mods/rei_minimap/" + worldNameWithoutPort + ".DIM" + t + ".points");
 				}
 
 				if (this.settingsFile.exists()) {
@@ -1024,12 +1024,12 @@ public class WaypointManager implements IWaypointManager {
 
 	@Override
 	public void check2dWaypoints() {
-		if (Minecraft.getMinecraft().player.dimension == 0 && !this.old2dWayPts.isEmpty()) {
+		if (VoxelConstants.getMinecraft().player.dimension == 0 && !this.old2dWayPts.isEmpty()) {
 			ArrayList<Waypoint> updatedPts = new ArrayList<>();
 
 			for (Waypoint pt : this.old2dWayPts) {
 				BlockPos blockPos = new BlockPos(pt.getX(), 0, pt.getZ());
-				Chunk chunk = Minecraft.getMinecraft().player.world.getChunk(blockPos);
+				Chunk chunk = VoxelConstants.getMinecraft().player.world.getChunk(blockPos);
 				if (Math.abs(pt.getX() - GameVariableAccessShim.xCoord()) < 400 && Math.abs(pt.getZ() - GameVariableAccessShim.zCoord()) < 400 && chunk.isLoaded()) {
 					pt.setY(chunk.getHeight(blockPos));
 					updatedPts.add(pt);

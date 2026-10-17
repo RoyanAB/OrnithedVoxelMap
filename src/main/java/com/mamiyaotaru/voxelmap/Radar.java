@@ -59,7 +59,6 @@ public class Radar implements IRadar {
 	private final TextureAtlas textureAtlas;
 	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 
-
 	private int timer = 500;
 	private float direction = 0.0F;
 	private final ArrayList<Contact> contacts = new ArrayList<>(40);
@@ -104,7 +103,7 @@ public class Radar implements IRadar {
 		this.master = master;
 		this.minimapOptions = master.getMapOptions();
 		this.options = master.getRadarOptions();
-		this.game = Minecraft.getMinecraft();
+		this.game = VoxelConstants.getMinecraft();
 		this.textureAtlas = new TextureAtlas("mobs");
 		this.textureAtlas.setBlurMipmapDirect(false, false);
 
@@ -153,7 +152,8 @@ public class Radar implements IRadar {
 				Class<?>[] argClasses2 = new Class[]{ResourceLocation.class, iRandomEntityClass};
 				this.getEntityTextureMethod = this.randomEntitiesPropertiesClass.getDeclaredMethod("getTextureLocation", argClasses2);
 				this.randomobsOptifineNew = true;
-			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | SecurityException | NoSuchFieldException | NoSuchMethodException e) {
+			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | SecurityException |
+					 NoSuchFieldException | NoSuchMethodException e) {
 				this.randomobsOptifineNew = false;
 			}
 		}
@@ -1101,13 +1101,13 @@ public class Radar implements IRadar {
 	}
 
 	private int chkLen(String paramStr) {
-		return Minecraft.getMinecraft().fontRenderer.getStringWidth(paramStr);
+		return VoxelConstants.getMinecraft().fontRenderer.getStringWidth(paramStr);
 	}
 
 	private void write(String paramStr, float x, float y, int color) {
 		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
 		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
-		Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(paramStr, x, y, color);
+		VoxelConstants.getMinecraft().fontRenderer.drawStringWithShadow(paramStr, x, y, color);
 	}
 
 	private boolean isEntityShown(Entity entity) {
@@ -2033,7 +2033,7 @@ public class Radar implements IRadar {
 
 							if (gameProfile != null) {
 								ResourceLocation resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
-								Minecraft minecraft = Minecraft.getMinecraft();
+								Minecraft minecraft = VoxelConstants.getMinecraft();
 								java.util.Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(gameProfile);
 								if (map.containsKey(Type.SKIN)) {
 									resourcelocation = minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);

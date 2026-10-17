@@ -1,6 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
-import net.minecraft.client.Minecraft;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.entity.Entity;
 
 import java.io.Serializable;
@@ -50,11 +50,11 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	}
 
 	public int getX() {
-		return Minecraft.getMinecraft().player.dimension == -1 ? this.x / 8 : this.x;
+		return VoxelConstants.getMinecraft().player.dimension == -1 ? this.x / 8 : this.x;
 	}
 
 	public int getZ() {
-		return Minecraft.getMinecraft().player.dimension == -1 ? this.z / 8 : this.z;
+		return VoxelConstants.getMinecraft().player.dimension == -1 ? this.z / 8 : this.z;
 	}
 
 	public int getY() {
@@ -62,11 +62,11 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	}
 
 	public void setX(int x) {
-		this.x = Minecraft.getMinecraft().player.dimension == -1 ? x * 8 : x;
+		this.x = VoxelConstants.getMinecraft().player.dimension == -1 ? x * 8 : x;
 	}
 
 	public void setZ(int z) {
-		this.z = Minecraft.getMinecraft().player.dimension == -1 ? z * 8 : z;
+		this.z = VoxelConstants.getMinecraft().player.dimension == -1 ? z * 8 : z;
 	}
 
 	public void setY(int y) {
@@ -74,8 +74,8 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 	}
 
 	public int compareTo(Waypoint arg0) {
-		double myDistance = this.getDistanceSqToEntity(Minecraft.getMinecraft().player);
-		double comparedDistance = arg0.getDistanceSqToEntity(Minecraft.getMinecraft().player);
+		double myDistance = this.getDistanceSqToEntity(VoxelConstants.getMinecraft().player);
+		double comparedDistance = arg0.getDistanceSqToEntity(VoxelConstants.getMinecraft().player);
 		return Double.compare(myDistance, comparedDistance);
 	}
 

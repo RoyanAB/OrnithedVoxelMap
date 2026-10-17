@@ -3,7 +3,10 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.interfaces.*;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMap;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMapSettingsManager;
-import com.mamiyaotaru.voxelmap.util.*;
+import com.mamiyaotaru.voxelmap.util.BiomeRepository;
+import com.mamiyaotaru.voxelmap.util.DimensionManager;
+import com.mamiyaotaru.voxelmap.util.GLUtils;
+import com.mamiyaotaru.voxelmap.util.WorldUpdateListener;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import net.minecraft.client.Minecraft;
@@ -34,7 +37,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 	}
 
 	public void lateInit(boolean showUnderMenus, boolean isFair) {
-		GLUtils.textureManager = Minecraft.getMinecraft().getTextureManager();
+		GLUtils.textureManager = VoxelConstants.getMinecraft().getTextureManager();
 		this.mapOptions = new MapSettingsManager();
 		this.mapOptions.showUnderMenus = showUnderMenus;
 		this.radarOptions = new RadarSettingsManager();
@@ -73,7 +76,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 		this.worldUpdateListener = new WorldUpdateListener();
 		this.worldUpdateListener.addListener(this.map);
 		this.worldUpdateListener.addListener(this.persistentMap);
-		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager();
+		IReloadableResourceManager resourceManager = (IReloadableResourceManager) VoxelConstants.getMinecraft().getResourceManager();
 		resourceManager.registerReloadListener(this);
 	}
 
@@ -100,13 +103,13 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 	}
 
 	public void onTick(Minecraft mc, boolean clock) {
-		if (GameVariableAccessShim.getWorld() != null && !GameVariableAccessShim.getWorld().equals(this.world)
-			|| this.world != null && !this.world.equals(GameVariableAccessShim.getWorld())) {
+		if (VoxelConstants.getClientWorld() != null && !VoxelConstants.getClientWorld().equals(this.world)
+			|| this.world != null && !this.world.equals(VoxelConstants.getClientWorld())) {
 			if (this.world != null) {
 				this.world.removeEventListener(this.worldUpdateListener);
 			}
 
-			this.world = GameVariableAccessShim.getWorld();
+			this.world = VoxelConstants.getClientWorld();
 			if (this.world != null) {
 				this.newSubWorldName("", false);
 //				ForgeModVoxelMap.WORLD_ID.sendToServer(new WorldIDPacket());
@@ -200,7 +203,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 
 		try {
 			UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
-			UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
+			UUID playerUUID = VoxelConstants.getMinecraft().player.getUniqueID();
 			override = playerUUID.equals(devUUID);
 		} catch (Exception ignored) {
 		}
@@ -223,14 +226,14 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 
 	@Override
 	public String getWorldSeed() {
-		return Minecraft.getMinecraft().isIntegratedServerRunning()
-			? Long.toString(Minecraft.getMinecraft().getIntegratedServer().getEntityWorld().getSeed())
+		return VoxelConstants.getMinecraft().isIntegratedServerRunning()
+			? Long.toString(VoxelConstants.getMinecraft().getIntegratedServer().getEntityWorld().getSeed())
 			: this.waypointManager.getWorldSeed();
 	}
 
 	@Override
 	public void setWorldSeed(String newSeed) {
-		if (!Minecraft.getMinecraft().isIntegratedServerRunning()) {
+		if (!VoxelConstants.getMinecraft().isIntegratedServerRunning()) {
 			this.waypointManager.setWorldSeed(newSeed);
 		}
 	}

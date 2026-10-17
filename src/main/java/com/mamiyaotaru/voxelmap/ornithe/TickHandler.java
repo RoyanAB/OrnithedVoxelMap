@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.ornithe;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
 import com.mamiyaotaru.voxelmap.util.ReflectionUtils;
@@ -20,15 +21,15 @@ public class TickHandler {
 
 	public void onTick() {
 		if (this.timer == null) {
-			this.timer = (Timer) ReflectionUtils.getPrivateFieldValueByType(Minecraft.getMinecraft(), Minecraft.class, Timer.class);
+			this.timer = (Timer) ReflectionUtils.getPrivateFieldValueByType(VoxelConstants.getMinecraft(), Minecraft.class, Timer.class);
 		}
 
 		boolean clock = this.timer.elapsedTicks > 0;
-		this.voxelMap.onTick(Minecraft.getMinecraft(), clock);
+		this.voxelMap.onTick(VoxelConstants.getMinecraft(), clock);
 	}
 
 	public void onRenderOverlay() {
-		this.voxelMap.onTickInGame(Minecraft.getMinecraft());
+		this.voxelMap.onTickInGame(VoxelConstants.getMinecraft());
 	}
 
 	public void onRenderHand(float partialTicks) {

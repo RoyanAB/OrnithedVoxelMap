@@ -2,12 +2,12 @@ package com.mamiyaotaru.voxelmap.persistent;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.IPersistentMap;
 import com.mamiyaotaru.voxelmap.interfaces.ISettingsAndLightingChangeListener;
 import com.mamiyaotaru.voxelmap.interfaces.ISettingsAndLightingChangeNotifier;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -88,12 +88,12 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 		boolean knownUnderground = false;
 		knownUnderground = knownUnderground || dimensionName.equalsIgnoreCase("erebus");
 		this.underground = !world.provider.isSurfaceWorld() && !world.provider.hasSkyLight() && dimensionID != 1 || knownUnderground;
-		this.remoteWorld = !Minecraft.getMinecraft().isIntegratedServerRunning();
+		this.remoteWorld = !VoxelConstants.getMinecraft().isIntegratedServerRunning();
 		persistentMap.getSettingsAndLightingChangeNotifier().addObserver(this);
 		this.x = x;
 		this.z = z;
 		if (!this.remoteWorld) {
-			WorldServer worldServer = Minecraft.getMinecraft().getIntegratedServer().getWorld(dimensionID);
+			WorldServer worldServer = VoxelConstants.getMinecraft().getIntegratedServer().getWorld(dimensionID);
 			this.chunkLoader = worldServer.getSaveHandler().getChunkLoader(worldServer.provider);
 		}
 
@@ -231,7 +231,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	private void loadCachedData() {
 		try {
 			File cachedRegionFileDir = new File(
-				Minecraft.getMinecraft().gameDir, "/voxelmap/cache/" + this.worldNamePathPart + "/" + this.subworldNamePathPart + this.dimensionNamePathPart
+				VoxelConstants.getMinecraft().gameDir, "/voxelmap/cache/" + this.worldNamePathPart + "/" + this.subworldNamePathPart + this.dimensionNamePathPart
 			);
 			cachedRegionFileDir.mkdirs();
 			File cachedRegionFile = new File(cachedRegionFileDir, "/" + this.key + ".zip");
@@ -325,7 +325,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 							int expectedDataSize = CachedRegion.this.data.getWidth() * CachedRegion.this.data.getHeight();
 							if (byteArrayLength == expectedDataSize * 18) {
 								File cachedRegionFileDir = new File(
-									Minecraft.getMinecraft().gameDir,
+									VoxelConstants.getMinecraft().gameDir,
 									"/voxelMap/cache/"
 										+ CachedRegion.this.worldNamePathPart
 										+ "/"
@@ -433,7 +433,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	private void saveImage() {
 		if (!this.empty) {
 			File imageFileDir = new File(
-				Minecraft.getMinecraft().gameDir,
+				VoxelConstants.getMinecraft().gameDir,
 				"/voxelMap/cache/" + this.worldNamePathPart + "/" + this.subworldNamePathPart + this.dimensionNamePathPart + "/images/z1"
 			);
 			imageFileDir.mkdirs();

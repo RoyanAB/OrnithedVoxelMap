@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
@@ -57,7 +58,7 @@ public class ImageUtils {
 	public static BufferedImage getFaceForGameProfile(GameProfile gameProfile) {
 		BufferedImage image = blankImage("textures/entity/bat.png", 2, 2);
 		ResourceLocation resourcelocation = null;
-		Minecraft minecraft = Minecraft.getMinecraft();
+		Minecraft minecraft = VoxelConstants.getMinecraft();
 		Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(gameProfile);
 		if (map.containsKey(Type.SKIN)) {
 			resourcelocation = minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
@@ -75,7 +76,7 @@ public class ImageUtils {
 
 	public static BufferedImage createBufferedImageFromResourceLocation(ResourceLocation resourceLocation) {
 		try {
-			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
+			InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
 			BufferedImage image = ImageIO.read(is);
 			is.close();
 			if (image.getType() != 6) {
@@ -184,7 +185,7 @@ public class ImageUtils {
 			GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 			GLShim.glPopMatrix();
 			GLShim.glPopAttrib();
-			GLShim.glViewport(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+			GLShim.glViewport(0, 0, VoxelConstants.getMinecraft().displayWidth, VoxelConstants.getMinecraft().displayHeight);
 		}
 
 		return image;
@@ -200,7 +201,7 @@ public class ImageUtils {
 
 	public static BufferedImage blankImage(String path, int w, int h, int imageWidth, int imageHeight, int r, int g, int b, int a) {
 		try {
-			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(path)).getInputStream();
+			InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(new ResourceLocation(path)).getInputStream();
 			BufferedImage mobSkin = ImageIO.read(is);
 			is.close();
 			BufferedImage temp = new BufferedImage(w * mobSkin.getWidth() / imageWidth, h * mobSkin.getWidth() / imageWidth, 6);
@@ -269,7 +270,7 @@ public class ImageUtils {
 
 	public static BufferedImage loadImage(ResourceLocation resourceLocation, int x, int y, int w, int h, int imageWidth, int imageHeight) {
 		try {
-			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
+			InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream();
 			BufferedImage mobSkin = ImageIO.read(is);
 			is.close();
 			return loadImage(mobSkin, x, y, w, h, imageWidth, imageHeight);

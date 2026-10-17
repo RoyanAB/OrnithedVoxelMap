@@ -92,7 +92,7 @@ public class MapSettingsManager implements ISettingsManager {
 
 	public MapSettingsManager() {
 		instance = this;
-		this.game = Minecraft.getMinecraft();
+		this.game = VoxelConstants.getMinecraft();
 		this.keyBindings = new KeyBinding[]{
 			this.keyBindMenu,
 			this.keyBindWaypointMenu,

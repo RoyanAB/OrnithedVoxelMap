@@ -369,7 +369,7 @@ public class CompressibleMapData extends AbstractMapData {
 						newMap.put(blockState, id);
 					}
 
-					this.setData(x, z, BLOCKSTATEPOS , (byte) (id >> 8));
+					this.setData(x, z, BLOCKSTATEPOS, (byte) (id >> 8));
 					this.setData(x, z, 2, (byte) id.intValue());
 				}
 

@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.gui.overridden;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.util.GLShim;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,7 +22,7 @@ public class Popup {
 	private int x;
 	private int y;
 	private int w;
-	private int h;
+	private final int h;
 
 	public int clickedX;
 	public int clickedY;
@@ -31,7 +32,7 @@ public class Popup {
 	private boolean shouldClose = false;
 
 	public Popup(int x, int y, int directX, int directY, ArrayList<Popup.PopupEntry> entries, PopupGuiScreen parentGui) {
-		this.mc = Minecraft.getMinecraft();
+		this.mc = VoxelConstants.getMinecraft();
 		this.fontRendererObj = this.mc.fontRenderer;
 		this.parentGui = parentGui;
 		this.clickedX = x;

@@ -19,7 +19,10 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 public class RadarSimple implements IRadar {
 	private final TextureAtlas textureAtlas;
@@ -40,7 +43,7 @@ public class RadarSimple implements IRadar {
 	public RadarSimple(IVoxelMap master) {
 		this.minimapOptions = master.getMapOptions();
 		this.options = master.getRadarOptions();
-		this.game = Minecraft.getMinecraft();
+		this.game = VoxelConstants.getMinecraft();
 		this.textureAtlas = new TextureAtlas("pings");
 		this.textureAtlas.setBlurMipmapDirect(false, false);
 	}

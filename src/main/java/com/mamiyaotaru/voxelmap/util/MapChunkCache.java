@@ -1,7 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.IChangeObserver;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
@@ -27,7 +27,7 @@ public class MapChunkCache {
 	}
 
 	public void centerChunks(BlockPos blockPos) {
-		Chunk currentChunk = Minecraft.getMinecraft().world.getChunk(blockPos);
+		Chunk currentChunk = VoxelConstants.getMinecraft().world.getChunk(blockPos);
 		if (currentChunk != this.lastCenterChunk) {
 			if (this.lastCenterChunk == null) {
 				this.fillAllChunks(blockPos);
@@ -67,7 +67,7 @@ public class MapChunkCache {
 	}
 
 	private void fillAllChunks(BlockPos blockPos) {
-		Chunk currentChunk = Minecraft.getMinecraft().world.getChunk(blockPos);
+		Chunk currentChunk = VoxelConstants.getMinecraft().world.getChunk(blockPos);
 		int middleX = this.width / 2;
 		int middleZ = this.height / 2;
 

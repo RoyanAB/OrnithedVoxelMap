@@ -1,6 +1,7 @@
 package com.mamiyaotaru.voxelmap.persistent;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.*;
 import com.mamiyaotaru.voxelmap.util.*;
 import net.minecraft.block.Block;
@@ -113,9 +114,9 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 
 	private void newWorldStuff() {
 		String worldName = TextUtils.scrubNameFile(this.master.getWaypointManager().getCurrentWorldName());
-		File oldCacheDir = new File(Minecraft.getMinecraft().gameDir, "/mods/mamiyaotaru/voxelmap/cache/" + worldName + "/");
+		File oldCacheDir = new File(VoxelConstants.getMinecraft().gameDir, "/mods/mamiyaotaru/voxelmap/cache/" + worldName + "/");
 		if (oldCacheDir.exists() && oldCacheDir.isDirectory()) {
-			File newCacheDir = new File(Minecraft.getMinecraft().gameDir, "/voxelmap/cache/" + worldName + "/");
+			File newCacheDir = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/cache/" + worldName + "/");
 			newCacheDir.getParentFile().mkdirs();
 			boolean success = oldCacheDir.renameTo(newCacheDir);
 			if (!success) {
@@ -126,7 +127,7 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 		}
 
 		if (this.master.getWaypointManager().isMultiworld()
-			&& !Minecraft.getMinecraft().isIntegratedServerRunning()
+			&& !VoxelConstants.getMinecraft().isIntegratedServerRunning()
 			&& !this.master.getWaypointManager().receivedAutoSubworldName()) {
 			this.worldMatcher = new WorldMatcher(this.master, this, this.world);
 			this.worldMatcher.findMatch();
@@ -906,7 +907,7 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 			}
 
 			if (isChunk) {
-				if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof GuiPersistentMap) {
+				if (VoxelConstants.getMinecraft().currentScreen != null && VoxelConstants.getMinecraft().currentScreen instanceof GuiPersistentMap) {
 					cachedRegion.registerChangeAt(pos1.getX(), pos1.getZ());
 					cachedRegion.refresh(false);
 				} else {

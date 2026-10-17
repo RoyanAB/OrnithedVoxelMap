@@ -1,10 +1,10 @@
 package com.mamiyaotaru.voxelmap.gui;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
 import com.mamiyaotaru.voxelmap.util.I18nUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.util.RecipeBookClient;
@@ -32,7 +32,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements GuiYesNoCall
 	private float yaw;
 
 	public GuiSubworldsSelect(GuiScreen parent, IVoxelMap master) {
-		this.mc = Minecraft.getMinecraft();
+		this.mc = VoxelConstants.getMinecraft();
 		this.parent = parent;
 		this.thePlayer = this.getMinecraft().player;
 		this.camera = new EntityPlayerSP(
