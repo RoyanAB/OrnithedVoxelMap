@@ -142,7 +142,7 @@ public class FullMapData extends AbstractMapData {
 	}
 
 	private int getData(int x, int z, int bit) {
-		int index = (x + z * this.width) * 17 + bit;
+		int index = (x + z * this.width) * DATABITS + bit;
 		return this.data[index];
 	}
 
@@ -248,7 +248,7 @@ public class FullMapData extends AbstractMapData {
 	}
 
 	private void setData(int x, int z, int bit, int value) {
-		int index = (x + z * this.width) * 17 + bit;
+		int index = (x + z * this.width) * DATABITS + bit;
 		this.data[index] = value;
 	}
 
@@ -256,9 +256,9 @@ public class FullMapData extends AbstractMapData {
 	public void moveX(int offset) {
 		synchronized (this.dataLock) {
 			if (offset > 0) {
-				System.arraycopy(this.data, offset * 17, this.data, 0, this.data.length - offset * 17);
+				System.arraycopy(this.data, offset * DATABITS, this.data, 0, this.data.length - offset * DATABITS);
 			} else if (offset < 0) {
-				System.arraycopy(this.data, 0, this.data, -offset * 17, this.data.length + offset * 17);
+				System.arraycopy(this.data, 0, this.data, -offset * DATABITS, this.data.length + offset * DATABITS);
 			}
 		}
 	}
@@ -267,9 +267,9 @@ public class FullMapData extends AbstractMapData {
 	public void moveZ(int offset) {
 		synchronized (this.dataLock) {
 			if (offset > 0) {
-				System.arraycopy(this.data, offset * this.width * 17, this.data, 0, this.data.length - offset * this.width * 17);
+				System.arraycopy(this.data, offset * this.width * DATABITS, this.data, 0, this.data.length - offset * this.width * DATABITS);
 			} else if (offset < 0) {
-				System.arraycopy(this.data, 0, this.data, -offset * this.width * 17, this.data.length + offset * this.width * 17);
+				System.arraycopy(this.data, 0, this.data, -offset * this.width * DATABITS, this.data.length + offset * this.width * DATABITS);
 			}
 		}
 	}

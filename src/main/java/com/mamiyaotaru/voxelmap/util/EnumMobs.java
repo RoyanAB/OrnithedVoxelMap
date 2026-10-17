@@ -70,12 +70,12 @@ public enum EnumMobs {
 	public ResourceLocation secondaryResourceLocation;
 	public final boolean isHostile;
 	public final boolean isNeutral;
-	public final boolean enabled;
+	public boolean enabled;
 
 	public static EnumMobs getMobByName(String par0) {
-		for (EnumMobs var4 : values()) {
-			if (var4.id.equals(par0)) {
-				return var4;
+		for (EnumMobs enumMobs : values()) {
+			if (enumMobs.id.equals(par0)) {
+				return enumMobs;
 			}
 		}
 

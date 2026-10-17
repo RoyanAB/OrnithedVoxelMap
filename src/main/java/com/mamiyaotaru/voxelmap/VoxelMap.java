@@ -1,7 +1,5 @@
 package com.mamiyaotaru.voxelmap;
 
-import com.mamiyaotaru.voxelmap.forgemod.ForgeModVoxelMap;
-import com.mamiyaotaru.voxelmap.forgemod.WorldIDPacket;
 import com.mamiyaotaru.voxelmap.interfaces.*;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMap;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMapSettingsManager;
@@ -17,18 +15,18 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReloadListener {
-	private MapSettingsManager mapOptions = null;
-	private RadarSettingsManager radarOptions = null;
-	private PersistentMapSettingsManager persistentMapOptions = null;
-	private IMap map = null;
-	private IRadar radar = null;
-	private IRadar radarSimple = null;
-	private PersistentMap persistentMap = null;
-	private ISettingsAndLightingChangeNotifier settingsAndLightingChangeNotifier = null;
-	private WorldUpdateListener worldUpdateListener = null;
-	private IColorManager colorManager = null;
-	private IWaypointManager waypointManager = null;
-	private IDimensionManager dimensionManager = null;
+	private MapSettingsManager mapOptions;
+	private RadarSettingsManager radarOptions;
+	private PersistentMapSettingsManager persistentMapOptions;
+	private IMap map;
+	private IRadar radar;
+	private IRadar radarSimple;
+	private PersistentMap persistentMap;
+	private ISettingsAndLightingChangeNotifier settingsAndLightingChangeNotifier;
+	private WorldUpdateListener worldUpdateListener;
+	private IColorManager colorManager;
+	private IWaypointManager waypointManager;
+	private IDimensionManager dimensionManager;
 	private World world;
 
 	public VoxelMap() {
@@ -111,7 +109,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 			this.world = GameVariableAccessShim.getWorld();
 			if (this.world != null) {
 				this.newSubWorldName("", false);
-				ForgeModVoxelMap.WORLD_ID.sendToServer(new WorldIDPacket());
+//				ForgeModVoxelMap.WORLD_ID.sendToServer(new WorldIDPacket());
 				mc.player.getLocationSkin();
 				java.util.Map<Type, MinecraftProfileTexture> skinMap = mc.getSkinManager().loadSkinFromCache(mc.player.getGameProfile());
 				if (skinMap.containsKey(Type.SKIN)) {
@@ -162,11 +160,11 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 	@Override
 	public IRadar getRadar() {
 		if (this.radarOptions.showRadar) {
-			if (this.radarOptions.radarMode == 1) {
+			if (this.radarOptions.radarMode == RadarSettingsManager.SIMPLE) {
 				return this.radarSimple;
 			}
 
-			if (this.radarOptions.radarMode == 2) {
+			if (this.radarOptions.radarMode == RadarSettingsManager.FULL) {
 				return this.radar;
 			}
 		}
@@ -204,7 +202,7 @@ public class VoxelMap extends AbstractVoxelMap implements IResourceManagerReload
 			UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 			UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
 			override = playerUUID.equals(devUUID);
-		} catch (Exception var8) {
+		} catch (Exception ignored) {
 		}
 
 		this.radarOptions.radarAllowed = hasFullRadarPermission || override;

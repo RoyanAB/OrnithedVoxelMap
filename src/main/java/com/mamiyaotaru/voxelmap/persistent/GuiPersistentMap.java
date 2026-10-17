@@ -44,19 +44,27 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private final GuiScreen parent;
 	private final MapSettingsManager mapOptions;
 	private final PersistentMapSettingsManager options;
-	protected String screenTitle = "World Map";
+	private final BiomeMapData biomeMapData = new BiomeMapData(760, 360);
+	private final Object closedLock = new Object();
+
 	protected String worldNameDisplay = "";
 	protected int worldNameDisplayLength = 0;
 	protected int maxWorldNameDisplayLength = 0;
 	private String subworldName = "";
 	private PopupGuiButton buttonMultiworld;
-	private int top;
-	private int bottom;
 	private boolean oldNorth = false;
 	private boolean lastStill = false;
 	private boolean editingCoordinates = false;
 	private boolean lastEditingCoordinates = false;
 	private GuiTextField coordinates;
+	private ScaledResolution scRes;
+	private CachedRegion[] regions = new CachedRegion[0];
+	private BackgroundImageInfo backGroundImageInfo;
+	private Waypoint newWaypoint;
+	private Waypoint selectedWaypoint;
+
+	private int top;
+	private int bottom;
 	int centerX = 0;
 	int centerY = 0;
 	float mapCenterX = 0.0F;
@@ -66,48 +74,56 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	float deltaXonRelease = 0.0F;
 	float deltaYonRelease = 0.0F;
 	long timeOfRelease = 0L;
-	boolean mouseCursorShown = true;
 	long timeAtLastTick = 0L;
 	long timeOfLastKBInput = 0L;
 	long timeOfLastMouseInput = 0L;
 	float timeConstant = 350.0F;
 	int lastMouseX = 0;
 	int lastMouseY = 0;
+	boolean mouseCursorShown = true;
+	boolean leftMouseButtonDown = false;
 	protected int mouseX;
 	protected int mouseY;
-	boolean leftMouseButtonDown = false;
-	float zoom = 4.0F;
-	float zoomStart = 4.0F;
-	float zoomGoal = 4.0F;
+	float zoom;
+	float zoomStart;
+	float zoomGoal;
 	long timeOfZoom = 0L;
 	int zoomDirectX = 0;
 	int zoomDirectY = 0;
-	private ScaledResolution scRes;
+	private float mapPixelsX = 0.0F;
+	private float mapPixelsY = 0.0F;
 	private float scScale = 2.0F;
 	private float guiToMap = 2.0F;
 	private float mapToGui = 0.5F;
 	private float mouseDirectToMap = 1.0F;
 	private float guiToDirectMouse = 2.0F;
+	int sideMargin = 10;
+	int buttonCount = 5;
+	int buttonSeparation = 4;
+	int buttonWidth = 66;
+
 	private static int playerGLID = 0;
 	private static boolean gotSkin = false;
 	private static int skinTries = 0;
+
 	private boolean closed = false;
-	private CachedRegion[] regions = new CachedRegion[0];
-	BackgroundImageInfo backGroundImageInfo = null;
-	private final BiomeMapData biomeMapData = new BiomeMapData(760, 360);
-	private float mapPixelsX = 0.0F;
-	private float mapPixelsY = 0.0F;
-	private final Object closedLock = new Object();
-	private final KeyBinding keyBindForward = new KeyBinding("key.forward.fake", 17, "key.categories.movement");
-	private final KeyBinding keyBindLeft = new KeyBinding("key.left.fake", 30, "key.categories.movement");
-	private final KeyBinding keyBindBack = new KeyBinding("key.back.fake", 31, "key.categories.movement");
-	private final KeyBinding keyBindRight = new KeyBinding("key.right.fake", 32, "key.categories.movement");
-	private final KeyBinding keyBindSprint = new KeyBinding("key.sprint.fake", 29, "key.categories.movement");
+	public boolean editClicked = false;
+	public boolean deleteClicked = false;
+	public boolean addClicked = false;
+
 	private int forwardCode = 0;
 	private int leftCode = 0;
 	private int backCode = 0;
 	private int rightCode = 0;
 	private int sprintCode = 0;
+	private final KeyBinding keyBindForward = new KeyBinding("key.forward.fake", 17, "key.categories.movement");
+	private final KeyBinding keyBindLeft = new KeyBinding("key.left.fake", 30, "key.categories.movement");
+	private final KeyBinding keyBindBack = new KeyBinding("key.back.fake", 31, "key.categories.movement");
+	private final KeyBinding keyBindRight = new KeyBinding("key.right.fake", 32, "key.categories.movement");
+	private final KeyBinding keyBindSprint = new KeyBinding("key.sprint.fake", 29, "key.categories.movement");
+
+	protected String screenTitle = "World Map";
+
 	private final int NEW = 0;
 	private final int HIGHLIGHTPOINT = 1;
 	private final int SHAREPOINT = 2;
@@ -117,15 +133,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	private final int HIGHLIGHTWP = 6;
 	private final int SHAREWP = 7;
 	private final int TPTOWP = 8;
-	int sideMargin = 10;
-	int buttonCount = 5;
-	int buttonSeparation = 4;
-	int buttonWidth = 66;
-	public boolean editClicked = false;
-	public boolean deleteClicked = false;
-	public boolean addClicked = false;
-	Waypoint newWaypoint;
-	Waypoint selectedWaypoint;
 
 	public GuiPersistentMap(GuiScreen parent, IVoxelMap master) {
 		this.mc = Minecraft.getMinecraft();
@@ -159,7 +166,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			if (skinLocation != DefaultPlayerSkin.getDefaultSkin(this.mc.player.getUniqueID())) {
 				imageData = AbstractClientPlayer.getDownloadImageSkin(skinLocation, TextFormatting.getTextWithoutFormattingCodes(this.mc.player.getName()));
 			}
-		} catch (Exception var6) {
+		} catch (Exception ignored) {
 		}
 
 		if (imageData != null) {
@@ -207,7 +214,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			.add(
 				new PopupGuiButton(
 					100,
-					this.sideMargin + 0,
+					this.sideMargin,
 					this.getHeight() - 28,
 					this.buttonWidth,
 					20,
@@ -292,7 +299,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		String worldName = "";
 		if (this.mc.isIntegratedServerRunning()) {
 			worldName = this.mc.getIntegratedServer().getWorldName();
-			if (worldName == null || worldName.equals("")) {
+			if (worldName == null || worldName.isEmpty()) {
 				worldName = "Singleplayer World";
 			}
 		} else {
@@ -301,7 +308,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				worldName = serverData.serverName;
 			}
 
-			if (worldName == null || worldName.equals("")) {
+			if (worldName == null || worldName.isEmpty()) {
 				worldName = "Multiplayer Server";
 			}
 		}
@@ -309,11 +316,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		StringBuilder worldNameBuilder = new StringBuilder("§r").append(worldName);
 		String subworldName = this.master.getWaypointManager().getCurrentSubworldDescriptor(true);
 		this.subworldName = subworldName;
-		if ((subworldName == null || subworldName.equals("")) && this.master.getWaypointManager().isMultiworld()) {
+		if ((subworldName == null || subworldName.isEmpty()) && this.master.getWaypointManager().isMultiworld()) {
 			subworldName = "???";
 		}
 
-		if (subworldName != null && !subworldName.equals("")) {
+		if (subworldName != null && !subworldName.isEmpty()) {
 			worldNameBuilder.append(" - ").append(subworldName);
 		}
 
@@ -327,14 +334,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			worldName = worldName.substring(0, worldName.length() - 1);
 			worldNameBuilder = new StringBuilder(worldName);
 			worldNameBuilder.append("...");
-			if (subworldName != null && !subworldName.equals("")) {
+			if (subworldName != null && !subworldName.isEmpty()) {
 				worldNameBuilder.append(" - ").append(subworldName);
 			}
 
 			this.worldNameDisplay = worldNameBuilder.toString();
 		}
 
-		if (subworldName != null && !subworldName.equals("")) {
+		if (subworldName != null && !subworldName.isEmpty()) {
 			while (this.worldNameDisplayLength > this.maxWorldNameDisplayLength && subworldName.length() > 5) {
 				worldNameBuilder = new StringBuilder(worldName);
 				worldNameBuilder.append("...");
@@ -394,7 +401,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		if (mouseRoll != 0) {
 			if (mouseRoll > 0) {
 				this.zoomGoal *= 1.26F;
-			} else if (mouseRoll < 0) {
+			} else {
 				this.zoomGoal /= 1.26F;
 			}
 
@@ -427,8 +434,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			this.coordinates.mouseClicked(mouseX, mouseY, mouseButton);
 			this.editingCoordinates = this.coordinates.isFocused();
 			if (this.editingCoordinates && !this.lastEditingCoordinates) {
-				int x = 0;
-				int z = 0;
+				int x;
+				int z;
 				if (this.oldNorth) {
 					x = (int) Math.floor(this.mapCenterZ);
 					z = -((int) Math.floor(this.mapCenterX));
@@ -490,7 +497,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			this.coordinates.setTextColor(isGood ? 16777215 : 16711680);
 			if (typedChar == '\r' && this.coordinates.isFocused() && isGood) {
 				String[] xz = this.coordinates.getText().split(",");
-				this.centerAt(Integer.valueOf(xz[0].trim()), Integer.valueOf(xz[1].trim()));
+				this.centerAt(Integer.parseInt(xz[0].trim()), Integer.parseInt(xz[1].trim()));
 				this.editingCoordinates = false;
 				this.lastEditingCoordinates = false;
 				this.switchToKeyboardInput();
@@ -504,9 +511,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			Integer.valueOf(xz[0].trim());
 			Integer.valueOf(xz[1].trim());
 			return true;
-		} catch (NumberFormatException e) {
-			return false;
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
 			return false;
 		}
 	}
@@ -639,10 +644,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		this.centerX = this.getWidth() / 2;
 		this.centerY = (this.bottom - this.top) / 2;
-		int left = 0;
-		int right = 0;
-		int top = 0;
-		int bottom = 0;
+		int left;
+		int right;
+		int top;
+		int bottom;
 		if (this.oldNorth) {
 			left = (int) Math.floor((this.mapCenterZ - this.centerY * this.guiToMap) / 256.0F);
 			right = (int) Math.floor((this.mapCenterZ + this.centerY * this.guiToMap) / 256.0F);
@@ -680,8 +685,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			);
 		}
 
-		for (int t = 0; t < this.regions.length; t++) {
-			CachedRegion region = this.regions[t];
+		for (CachedRegion region : this.regions) {
 			int glid = region.getGLID();
 			if (glid != 0) {
 				GLUtils.disp(glid);
@@ -773,7 +777,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		}
 
 		GLShim.glTranslatef(-(this.centerX - this.mapCenterX * this.mapToGui), -(this.top + this.centerY - this.mapCenterZ * this.mapToGui), 0.0F);
-		if (this.mapOptions.biomeOverlay != 0) {
+		if (this.mapOptions.biomeOverlay != MapSettingsManager.OFF) {
 			float biomeScaleX = this.mapPixelsX / 760.0F;
 			float biomeScaleY = this.mapPixelsY / 360.0F;
 			boolean still = !this.leftMouseButtonDown;
@@ -781,7 +785,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			still = still && this.deltaX == 0.0F && this.deltaY == 0.0F;
 			still = still && ThreadManager.executorService.getActiveCount() == 0;
 			if (still && !this.lastStill) {
-				int column = 0;
+				int column;
 				if (this.oldNorth) {
 					column = (int) Math.floor(Math.floor(this.mapCenterZ - this.centerY * this.guiToMap) / 256.0) - (left - 1);
 				} else {
@@ -837,8 +841,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				ArrayList<AbstractMapData.BiomeLabel> labels = this.biomeMapData.getBiomeLabels();
 				GLShim.glDisable(2929);
 
-				for (int t = 0; t < labels.size(); t++) {
-					AbstractMapData.BiomeLabel label = labels.get(t);
+				for (AbstractMapData.BiomeLabel label : labels) {
 					if (label.segmentSize > minimumSize) {
 						int nameWidth = this.chkLen(label.name);
 						float x = label.x * biomeScaleX / this.scScale;
@@ -884,7 +887,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		this.drawString(this.getFontRenderer(), this.worldNameDisplay, this.getWidth() - this.sideMargin - this.worldNameDisplayLength, 16, 16777215);
 		if (this.buttonMultiworld != null) {
-			if ((this.subworldName == null || this.subworldName.equals("")) && this.master.getWaypointManager().isMultiworld()) {
+			if ((this.subworldName == null || this.subworldName.isEmpty()) && this.master.getWaypointManager().isMultiworld()) {
 				String attention = "";
 				if ((int) (System.currentTimeMillis() / 1000L % 2L) == 0) {
 					attention = "§c";
@@ -954,7 +957,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					GLShim.glPopMatrix();
 				}
 
-				if (this.mapOptions.biomeOverlay == 0 && this.options.showWaypointNames || target || hover) {
+				if (this.mapOptions.biomeOverlay == MapSettingsManager.OFF && this.options.showWaypointNames || target || hover) {
 					float fontScale = 2.0F / this.scScale;
 					int m = this.chkLen(name) / 2;
 					GLShim.glPushMatrix();
@@ -1093,29 +1096,29 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		canTeleport = canTeleport && (this.persistentMap.isGroundAt(x, z) || this.backGroundImageInfo != null && this.backGroundImageInfo.isGroundAt(x, z));
 		Waypoint hovered = this.getHovered(cursorCoordX, cursorCoordZ);
 		if (hovered != null && this.waypointManager.getWaypoints().contains(hovered)) {
-			Popup.PopupEntry entry = new Popup.PopupEntry(I18nUtils.getString("selectServer.edit"), 4, true, true);
+			Popup.PopupEntry entry = new Popup.PopupEntry(I18nUtils.getString("selectServer.edit"), EDIT, true, true);
 			entries.add(entry);
-			entry = new Popup.PopupEntry(I18nUtils.getString("selectServer.delete"), 5, true, true);
+			entry = new Popup.PopupEntry(I18nUtils.getString("selectServer.delete"), DELETE, true, true);
 			entries.add(entry);
 			entry = new Popup.PopupEntry(
 				I18nUtils.getString(hovered != this.waypointManager.getHighlightedWaypoint() ? "minimap.waypoints.highlight" : "minimap.waypoints.removehighlight"),
-				6,
+				HIGHLIGHTWP,
 				true,
 				true
 			);
 			entries.add(entry);
-			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.teleportto"), 8, true, canTeleport);
+			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.teleportto"), TPTOWP, true, canTeleport);
 			entries.add(entry);
-			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.share"), 7, true, true);
+			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.share"), SHAREWP, true, true);
 			entries.add(entry);
 		} else {
-			Popup.PopupEntry entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.newwaypoint"), 0, true, true);
+			Popup.PopupEntry entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.newwaypoint"), NEW, true, true);
 			entries.add(entry);
-			entry = new Popup.PopupEntry(I18nUtils.getString(hovered == null ? "minimap.waypoints.highlight" : "minimap.waypoints.removehighlight"), 1, true, true);
+			entry = new Popup.PopupEntry(I18nUtils.getString(hovered == null ? "minimap.waypoints.highlight" : "minimap.waypoints.removehighlight"), HIGHLIGHTPOINT, true, true);
 			entries.add(entry);
-			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.teleportto"), 3, true, canTeleport);
+			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.teleportto"), TPTOPOINT, true, canTeleport);
 			entries.add(entry);
-			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.share"), 2, true, true);
+			entry = new Popup.PopupEntry(I18nUtils.getString("minimap.waypoints.share"), SHAREPOINT, true, true);
 			entries.add(entry);
 		}
 
@@ -1183,7 +1186,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		this.addClicked = false;
 		this.deleteClicked = false;
 		switch (action) {
-			case 0:
+			case NEW:
 				if (hovered != null) {
 					x = hovered.getX();
 					z = hovered.getZ();
@@ -1193,7 +1196,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				float r;
 				float g;
 				float b;
-				if (this.waypointManager.getWaypoints().size() == 0) {
+				if (this.waypointManager.getWaypoints().isEmpty()) {
 					r = 0.0F;
 					g = 1.0F;
 					b = 0.0F;
@@ -1220,7 +1223,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				);
 				this.mc.displayGuiScreen(new GuiAddWaypoint(this, this.master, this.newWaypoint, false));
 				break;
-			case 1:
+			case HIGHLIGHTPOINT:
 				if (hovered != null) {
 					this.waypointManager.setHighlightedWaypoint(null, true);
 				} else {
@@ -1243,11 +1246,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					this.waypointManager.setHighlightedWaypoint(fakePoint, true);
 				}
 				break;
-			case 2:
+			case SHAREPOINT:
 				y = y > 0 ? y : 64;
 				CommandUtils.sendCoordinate(x, y, z);
 				break;
-			case 3:
+			case TPTOPOINT:
 				if (y == 0) {
 					y = this.mc.player.dimension != -1 ? 255 : 64;
 				}
@@ -1257,14 +1260,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					this.mc.player.sendChatMessage("/tppos " + x + " " + y + " " + z);
 				}
 				break;
-			case 4:
+			case EDIT:
 				if (hovered != null) {
 					this.editClicked = true;
 					this.selectedWaypoint = hovered;
 					this.mc.displayGuiScreen(new GuiAddWaypoint(this, this.master, hovered, true));
 				}
 				break;
-			case 5:
+			case DELETE:
 				if (hovered != null) {
 					this.deleteClicked = true;
 					this.selectedWaypoint = hovered;
@@ -1276,17 +1279,17 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					this.getMinecraft().displayGuiScreen(confirmDialog);
 				}
 				break;
-			case 6:
+			case HIGHLIGHTWP:
 				if (hovered != null) {
 					this.waypointManager.setHighlightedWaypoint(hovered, true);
 				}
 				break;
-			case 7:
+			case SHAREWP:
 				if (hovered != null) {
 					CommandUtils.sendWaypoint(hovered);
 				}
 				break;
-			case 8:
+			case TPTOWP:
 				if (hovered != null) {
 					this.selectedWaypoint = hovered;
 					boolean mp = !this.mc.isIntegratedServerRunning();
@@ -1339,7 +1342,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	}
 
 	public boolean canTeleport() {
-		boolean allowed = false;
+		boolean allowed;
 		boolean singlePlayer = this.mc.isIntegratedServerRunning();
 		if (singlePlayer) {
 			try {

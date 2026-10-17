@@ -90,25 +90,25 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 	}
 
 	@Override
-	public String getKeyText(EnumOptionsMinimap par1EnumOptions) {
-		String s = I18nUtils.getString(par1EnumOptions.getName()) + ": ";
-		if (par1EnumOptions.isFloat()) {
-			float f = this.getOptionFloatValue(par1EnumOptions);
-			if (par1EnumOptions == EnumOptionsMinimap.MINZOOM) {
+	public String getKeyText(EnumOptionsMinimap option) {
+		String s = I18nUtils.getString(option.getName()) + ": ";
+		if (option.isFloat()) {
+			float f = this.getOptionFloatValue(option);
+			if (option == EnumOptionsMinimap.MINZOOM) {
 				return s + (float) Math.pow(2.0, f) + "x";
 			}
 
-			if (par1EnumOptions == EnumOptionsMinimap.MAXZOOM) {
+			if (option == EnumOptionsMinimap.MAXZOOM) {
 				return s + (float) Math.pow(2.0, f) + "x";
 			}
 
-			if (par1EnumOptions == EnumOptionsMinimap.CACHESIZE) {
+			if (option == EnumOptionsMinimap.CACHESIZE) {
 				return s + (int) f;
 			}
 		}
 
-		if (par1EnumOptions.isBoolean()) {
-			boolean flag = this.getOptionBooleanValue(par1EnumOptions);
+		if (option.isBoolean()) {
+			boolean flag = this.getOptionBooleanValue(option);
 			return flag ? s + I18nUtils.getString("options.on") : s + I18nUtils.getString("options.off");
 		} else {
 			return s;
@@ -137,23 +137,23 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 	}
 
 	@Override
-	public void setOptionFloatValue(EnumOptionsMinimap par1EnumOptions, float par2) {
-		if (par1EnumOptions == EnumOptionsMinimap.MINZOOM) {
-			this.minZoomPower = (int) (par2 * 8.0F) - 3;
+	public void setOptionFloatValue(EnumOptionsMinimap option, float value) {
+		if (option == EnumOptionsMinimap.MINZOOM) {
+			this.minZoomPower = (int) (value * 8.0F) - 3;
 			this.minZoom = (float) Math.pow(2.0, this.minZoomPower);
 			if (this.maxZoom < this.minZoom) {
 				this.maxZoom = this.minZoom;
 				this.maxZoomPower = this.minZoomPower;
 			}
-		} else if (par1EnumOptions == EnumOptionsMinimap.MAXZOOM) {
-			this.maxZoomPower = (int) (par2 * 8.0F) - 3;
+		} else if (option == EnumOptionsMinimap.MAXZOOM) {
+			this.maxZoomPower = (int) (value * 8.0F) - 3;
 			this.maxZoom = (float) Math.pow(2.0, this.maxZoomPower);
 			if (this.minZoom > this.maxZoom) {
 				this.minZoom = this.maxZoom;
 				this.minZoomPower = this.maxZoomPower;
 			}
-		} else if (par1EnumOptions == EnumOptionsMinimap.CACHESIZE) {
-			this.cacheSize = (int) (par2 * 5000.0F);
+		} else if (option == EnumOptionsMinimap.CACHESIZE) {
+			this.cacheSize = (int) (value * 5000.0F);
 			this.cacheSize = Math.max(this.cacheSize, 30);
 
 			for (int minCacheSize = (int) ((1600.0F / this.minZoom / 256.0F + 4.0F) * (1100.0F / this.minZoom / 256.0F + 3.0F) * 1.35F);
@@ -174,8 +174,8 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 		this.bindCacheSize();
 	}
 
-	public void setOptionValue(EnumOptionsMinimap par1EnumOptions, int i) {
-		switch (par1EnumOptions) {
+	public void setOptionValue(EnumOptionsMinimap enumOptionsMinimap, int unused) {
+		switch (enumOptionsMinimap) {
 			case SHOWWAYPOINTS:
 				this.showWaypoints = !this.showWaypoints;
 				break;
@@ -183,7 +183,7 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 				this.showWaypointNames = !this.showWaypointNames;
 				break;
 			default:
-				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName());
+				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + enumOptionsMinimap.getName());
 		}
 	}
 

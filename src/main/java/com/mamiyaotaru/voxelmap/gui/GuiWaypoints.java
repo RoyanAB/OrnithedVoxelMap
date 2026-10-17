@@ -121,25 +121,25 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
 		boolean ascending = this.options.sort > 0;
 		this.waypointList.sortBy(sortKey, ascending);
 		String arrow = ascending ? "↑" : "↓";
-		if (sortKey == 2) {
+		if (sortKey == MapSettingsManager.SORT_NAME) {
 			this.buttonSortName.displayString = arrow + " " + I18nUtils.getString("minimap.waypoints.sortbyname") + " " + arrow;
 		} else {
 			this.buttonSortName.displayString = I18nUtils.getString("minimap.waypoints.sortbyname");
 		}
 
-		if (sortKey == 3) {
+		if (sortKey == MapSettingsManager.SORT_DISTANCE) {
 			this.buttonSortDistance.displayString = arrow + " " + I18nUtils.getString("minimap.waypoints.sortbydistance") + " " + arrow;
 		} else {
 			this.buttonSortDistance.displayString = I18nUtils.getString("minimap.waypoints.sortbydistance");
 		}
 
-		if (sortKey == 1) {
+		if (sortKey == MapSettingsManager.SORT_DATE) {
 			this.buttonSortCreated.displayString = arrow + " " + I18nUtils.getString("minimap.waypoints.sortbycreated") + " " + arrow;
 		} else {
 			this.buttonSortCreated.displayString = I18nUtils.getString("minimap.waypoints.sortbycreated");
 		}
 
-		if (sortKey == 4) {
+		if (sortKey == MapSettingsManager.SORT_COLOR) {
 			this.buttonSortColor.displayString = arrow + " " + I18nUtils.getString("minimap.waypoints.sortbycolor") + " " + arrow;
 		} else {
 			this.buttonSortColor.displayString = I18nUtils.getString("minimap.waypoints.sortbycolor");

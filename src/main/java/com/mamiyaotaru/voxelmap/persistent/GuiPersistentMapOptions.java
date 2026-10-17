@@ -11,12 +11,11 @@ import net.minecraft.client.gui.GuiScreen;
 
 public class GuiPersistentMapOptions extends GuiScreenMinimap {
 	private final GuiScreen parent;
-	private static EnumOptionsMinimap[] relevantOptions;
 	private final PersistentMapSettingsManager options;
+
 	protected String screenTitle = "Worldmap Options";
 	protected String cacheSettings = "Zoom/Cache Settings";
 	protected String warning = "Edit at your own risk";
-	private static EnumOptionsMinimap[] relevantOptions2;
 
 	public GuiPersistentMapOptions(GuiScreen parent, IVoxelMap master) {
 		this.parent = parent;
@@ -25,14 +24,13 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
 	@Override
 	public void initGui() {
-		relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.SHOWWAYPOINTS, EnumOptionsMinimap.SHOWWAYPOINTNAMES};
+		EnumOptionsMinimap[] relevantOptions = new EnumOptionsMinimap[]{EnumOptionsMinimap.SHOWWAYPOINTS, EnumOptionsMinimap.SHOWWAYPOINTNAMES};
 		this.screenTitle = I18nUtils.getString("options.worldmap.title");
 		this.cacheSettings = I18nUtils.getString("options.worldmap.cachesettings");
 		this.warning = I18nUtils.getString("options.worldmap.warning");
 		int buttonIndex = 0;
 
-		for (int t = 0; t < relevantOptions.length; t++) {
-			EnumOptionsMinimap option = relevantOptions[t];
+		for (EnumOptionsMinimap option : relevantOptions) {
 			GuiOptionButtonMinimap button = new GuiOptionButtonMinimap(
 				option.returnEnumOrdinal(),
 				this.getWidth() / 2 - 155 + buttonIndex % 2 * 160,
@@ -44,20 +42,17 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 			buttonIndex++;
 		}
 
-		relevantOptions2 = new EnumOptionsMinimap[]{EnumOptionsMinimap.MINZOOM, EnumOptionsMinimap.MAXZOOM, EnumOptionsMinimap.CACHESIZE};
+		EnumOptionsMinimap[] relevantOptions2 = new EnumOptionsMinimap[]{EnumOptionsMinimap.MINZOOM, EnumOptionsMinimap.MAXZOOM, EnumOptionsMinimap.CACHESIZE};
 		buttonIndex += 2;
 
-		for (int t = 0; t < relevantOptions2.length; t++) {
-			EnumOptionsMinimap option = relevantOptions2[t];
+		for (EnumOptionsMinimap option : relevantOptions2) {
 			if (option.isFloat()) {
 				float sValue = this.options.getOptionFloatValue(option);
-				float fValue = 0.0F;
+				float fValue;
 				switch (option) {
 					case MINZOOM:
-						fValue = (sValue - -3.0F) / (5 - -3);
-						break;
 					case MAXZOOM:
-						fValue = (sValue - -3.0F) / (5 - -3);
+						fValue = (sValue + 3.0F) / (5 + 3);
 						break;
 					case CACHESIZE:
 						fValue = sValue / 5000.0F;
@@ -135,13 +130,11 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 				GuiOptionSliderMinimap slider = (GuiOptionSliderMinimap) buttonObj;
 				EnumOptionsMinimap option = slider.returnEnumOptions();
 				float sValue = this.options.getOptionFloatValue(option);
-				float fValue = 0.0F;
+				float fValue;
 				switch (option) {
 					case MINZOOM:
-						fValue = (sValue - -3.0F) / (5 - -3);
-						break;
 					case MAXZOOM:
-						fValue = (sValue - -3.0F) / (5 - -3);
+						fValue = (sValue + 3.0F) / (5 + 3);
 						break;
 					case CACHESIZE:
 						fValue = sValue / 5000.0F;

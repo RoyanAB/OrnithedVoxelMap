@@ -33,39 +33,40 @@ import java.util.zip.ZipOutputStream;
 
 public class CachedRegion implements IThreadCompleteListener, ISettingsAndLightingChangeListener {
 	public static EmptyCachedRegion emptyRegion = new EmptyCachedRegion();
+
+	private final boolean[] chunkChanged = new boolean[256];
+	private final MutableBlockPos blockPos = new MutableBlockPos(0, 0, 0);
+	private final MutableBlockPos loopBlockPos = new MutableBlockPos(0, 0, 0);
+	private final ReentrantLock threadLock = new ReentrantLock();
+
+	private int x;
+	private int z;
+	private final int width = 256;
 	private long mostRecentView = 0L;
 	private long mostRecentChange = 0L;
+	private CompressibleGLBufferedImage image;
+	private CompressibleMapData data;
+	private Future<?> future = null;
 	private IPersistentMap persistentMap;
-	private String key;
 	private World world;
 	private IChunkLoader chunkLoader;
-	private String worldName;
+	private String key;
 	private String subworldName;
 	private String worldNamePathPart;
 	private String subworldNamePathPart = "";
 	private String dimensionNamePathPart;
-	private String dimensionNamePathPartOld;
+
 	private boolean underground = false;
-	private int x;
-	private int z;
-	private final int width = 256;
 	private boolean empty = true;
 	private boolean liveChunksUpdated = false;
-	boolean remoteWorld;
-	private final boolean[] chunkChanged = new boolean[256];
-	private CompressibleGLBufferedImage image;
-	private CompressibleMapData data;
-	MutableBlockPos blockPos = new MutableBlockPos(0, 0, 0);
-	MutableBlockPos loopBlockPos = new MutableBlockPos(0, 0, 0);
-	Future<?> future = null;
-	private final ReentrantLock threadLock = new ReentrantLock();
-	boolean displayOptionsChanged = false;
-	boolean imageChanged = false;
-	boolean queued = false;
-	boolean refreshingImage = false;
-	boolean dataUpdated = false;
-	boolean updateQueued = false;
-	boolean loaded = false;
+	private boolean remoteWorld;
+	private boolean displayOptionsChanged = false;
+	private boolean imageChanged = false;
+	private boolean queued = false;
+	private boolean refreshingImage = false;
+	private boolean dataUpdated = false;
+	private boolean updateQueued = false;
+	private boolean loaded = false;
 	private boolean queuedToCompress = false;
 
 	public CachedRegion() {
@@ -75,16 +76,14 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 		this.persistentMap = persistentMap;
 		this.key = key;
 		this.world = world;
-		this.worldName = worldName;
 		this.subworldName = subworldName;
 		this.worldNamePathPart = TextUtils.scrubNameFile(worldName);
-		if (subworldName != "") {
+		if (!subworldName.isEmpty()) {
 			this.subworldNamePathPart = TextUtils.scrubNameFile(subworldName) + "/";
 		}
 
 		String dimensionName = world.provider.getDimensionType().getName();
 		int dimensionID = DimensionManager.getDimensionIDfromProvider(world.provider);
-		this.dimensionNamePathPartOld = TextUtils.scrubNameFile(dimensionName);
 		this.dimensionNamePathPart = TextUtils.scrubNameFile(dimensionName + " (dimension " + dimensionID + ")");
 		boolean knownUnderground = false;
 		knownUnderground = knownUnderground || dimensionName.equalsIgnoreCase("erebus");
@@ -110,7 +109,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 		try {
 			this.chunkChanged[chunkZ * 16 + chunkX] = true;
 			this.updateQueued = true;
-		} catch (ArrayIndexOutOfBoundsException var8) {
+		} catch (ArrayIndexOutOfBoundsException ignored) {
 		}
 	}
 
@@ -120,10 +119,10 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 
 			try {
 				this.subworldName = newName;
-				if (this.subworldName != "") {
+				if (!this.subworldName.isEmpty()) {
 					this.subworldNamePathPart = TextUtils.scrubNameFile(this.subworldName) + "/";
 				}
-			} catch (Exception var7) {
+			} catch (Exception ignored) {
 			} finally {
 				this.threadLock.unlock();
 			}
@@ -220,7 +219,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 									this.dataUpdated = true;
 									this.liveChunksUpdated = true;
 								}
-							} catch (Exception var6) {
+							} catch (Exception ignored) {
 							}
 						}
 					}
@@ -238,7 +237,6 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 			File cachedRegionFile = new File(cachedRegionFileDir, "/" + this.key + ".zip");
 			if (cachedRegionFile.exists()) {
 				ZipFile zFile = new ZipFile(cachedRegionFile);
-				BiMap<IBlockState, Integer> stateToInt = null;
 				int total = 0;
 				byte[] decompressedByteData = new byte[this.data.getWidth() * this.data.getHeight() * 17 * 4];
 				ZipEntry ze = zFile.getEntry("data");
@@ -274,8 +272,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 
 						try {
 							version = Integer.parseInt(versionString);
-						} catch (NumberFormatException e) {
-							version = 1;
+						} catch (NumberFormatException ignored) {
 						}
 
 						is.close();
@@ -283,7 +280,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 				}
 
 				zFile.close();
-				if (total == this.data.getWidth() * this.data.getHeight() * 18 && blockStateMap != null) {
+				if (total == this.data.getWidth() * this.data.getHeight() * 18) {
 					byteData = new byte[this.data.getWidth() * this.data.getHeight() * 18];
 					System.arraycopy(decompressedByteData, 0, byteData, 0, byteData.length);
 					this.data.setData(byteData, blockStateMap, version);
@@ -293,7 +290,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 					System.out.println("failed to load data from " + cachedRegionFile.getPath());
 				}
 
-				if (blockStateMap == null || version < 2) {
+				if (version < 2) {
 					this.liveChunksUpdated = true;
 				}
 			}
@@ -315,7 +312,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	}
 
 	private void saveData() {
-		if (this.liveChunksUpdated && !this.worldNamePathPart.equals("")) {
+		if (this.liveChunksUpdated && !this.worldNamePathPart.isEmpty()) {
 			ThreadManager.executorService
 				.execute(
 					() -> {
@@ -346,7 +343,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 								zos.closeEntry();
 								if (stateToInt != null) {
 									Iterator<Entry<IBlockState, Integer>> iterator = stateToInt.entrySet().iterator();
-									StringBuffer stringBuffer = new StringBuffer();
+									StringBuilder stringBuffer = new StringBuilder();
 
 									while (iterator.hasNext()) {
 										Entry<IBlockState, Integer> entry = iterator.next();
@@ -363,7 +360,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 								}
 
 								String nextLine = "version:2\r\n";
-								byte[] keyByteArray = String.valueOf(String.valueOf(nextLine)).getBytes();
+								byte[] keyByteArray = nextLine.getBytes();
 								ze = new ZipEntry("control");
 								ze.setSize(keyByteArray.length);
 								zos.putNextEntry(ze);
@@ -422,7 +419,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	}
 
 	private void fillImage() {
-		int color24 = 0;
+		int color24;
 
 		for (int t = 0; t < 256; t++) {
 			for (int s = 0; s < 256; s++) {
@@ -442,21 +439,18 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 			imageFileDir.mkdirs();
 			final File imageFile = new File(imageFileDir, this.key + ".png");
 			if (this.liveChunksUpdated || !imageFile.exists()) {
-				ThreadManager.executorService.execute(new Runnable() {
-					@Override
-					public void run() {
-						CachedRegion.this.threadLock.lock();
+				ThreadManager.executorService.execute(() -> {
+					CachedRegion.this.threadLock.lock();
 
-						try {
-							BufferedImage realBufferedImage = new BufferedImage(CachedRegion.this.width, CachedRegion.this.width, 6);
-							byte[] dstArray = ((DataBufferByte) realBufferedImage.getRaster().getDataBuffer()).getData();
-							System.arraycopy(CachedRegion.this.image.getData(), 0, dstArray, 0, CachedRegion.this.image.getData().length);
-							ImageIO.write(realBufferedImage, "png", imageFile);
-						} catch (IOException var9) {
-							var9.printStackTrace();
-						} finally {
-							CachedRegion.this.threadLock.unlock();
-						}
+					try {
+						BufferedImage realBufferedImage = new BufferedImage(CachedRegion.this.width, CachedRegion.this.width, 6);
+						byte[] dstArray = ((DataBufferByte) realBufferedImage.getRaster().getDataBuffer()).getData();
+						System.arraycopy(CachedRegion.this.image.getData(), 0, dstArray, 0, CachedRegion.this.image.getData().length);
+						ImageIO.write(realBufferedImage, "png", imageFile);
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					} finally {
+						CachedRegion.this.threadLock.unlock();
 					}
 				});
 			}
@@ -534,20 +528,17 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	public void compress() {
 		if (this.data != null && !this.isCompressed() && !this.queuedToCompress) {
 			this.queuedToCompress = true;
-			ThreadManager.executorService.execute(new Runnable() {
-				@Override
-				public void run() {
-					if (CachedRegion.this.threadLock.tryLock()) {
-						try {
-							CachedRegion.this.compressData();
-						} catch (Exception var5) {
-						} finally {
-							CachedRegion.this.threadLock.unlock();
-						}
+			ThreadManager.executorService.execute(() -> {
+				if (CachedRegion.this.threadLock.tryLock()) {
+					try {
+						CachedRegion.this.compressData();
+					} catch (Exception ignored) {
+					} finally {
+						CachedRegion.this.threadLock.unlock();
 					}
-
-					CachedRegion.this.queuedToCompress = false;
 				}
+
+				CachedRegion.this.queuedToCompress = false;
 			});
 		}
 	}
@@ -603,7 +594,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 				CachedRegion.this.empty = false;
 				CachedRegion.this.liveChunksUpdated = true;
 				CachedRegion.this.dataUpdated = true;
-			} catch (Exception var6) {
+			} catch (Exception ignored) {
 			} finally {
 				CachedRegion.this.threadLock.unlock();
 			}
@@ -611,7 +602,7 @@ public class CachedRegion implements IThreadCompleteListener, ISettingsAndLighti
 	}
 
 	private class RefreshRunnable extends AbstractNotifyingRunnable {
-		private boolean forceCompress = false;
+		private final boolean forceCompress;
 
 		public RefreshRunnable(boolean forceCompress) {
 			this.forceCompress = forceCompress;

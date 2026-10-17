@@ -1,7 +1,5 @@
 package com.mamiyaotaru.voxelmap;
 
-import com.google.common.collect.UnmodifiableIterator;
-import com.mamiyaotaru.voxelmap.forgemod.Share;
 import com.mamiyaotaru.voxelmap.interfaces.AbstractMapData;
 import com.mamiyaotaru.voxelmap.interfaces.IColorManager;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
@@ -23,7 +21,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.*;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
@@ -33,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.ColorizerGrass;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -59,59 +55,37 @@ import java.util.zip.ZipFile;
 
 public class ColorManager implements IColorManager {
 	private final IVoxelMap master;
-	Minecraft game = null;
-	private boolean resourcePacksChanged = false;
-	private BufferedImage terrainBuff = null;
-	private BufferedImage colorPicker;
-	private int sizeOfBiomeArray = 0;
-	private final int BIOME_ARRAY_HEIGHT = 32;
-	private final int WORLD_HEIGHT = 256;
-	private final int BIOME_ARRAY_HEIGHT_MULTIPLIER = 8;
+	private final Minecraft game;
+
 	private int[] blockColors = new int[16384];
 	private int[] blockColorsWithDefaultTint = new int[16384];
-	private final int COLOR_NOT_LOADED = -16842497;
-	private final int COLOR_FAILED_LOAD = 452984832;
 	private final HashSet<Integer> biomeTintsAvailable = new HashSet<>();
-	private boolean optifineInstalled = false;
 	private final HashMap<Integer, int[][]> blockTintTables = new HashMap<>();
 	private final HashSet<Integer> biomeTextureAvailable = new HashSet<>();
 	private final HashMap<String, Integer> blockBiomeSpecificColors = new HashMap<>();
+	private BufferedImage terrainBuff;
+	private BufferedImage colorPicker;
+	private int sizeOfBiomeArray = 0;
 	private float failedToLoadX = 0.0F;
 	private float failedToLoadY = 0.0F;
 	private String renderPassThreeBlendMode;
-	private final Object tpLoadLock = new Object();
+
 	private boolean loaded = false;
+	private boolean resourcePacksChanged = false;
+	private boolean optifineInstalled;
+
 	private final MutableBlockPos dummyBlockPos = new MutableBlockPos(BlockPos.ORIGIN.getX(), BlockPos.ORIGIN.getY(), BlockPos.ORIGIN.getZ());
-	private final ColorManager.ColorResolver pineColorResolver = new ColorManager.ColorResolver() {
-		@Override
-		public int getColorAtPos(Biome biome, BlockPos blockPos) {
-			return ColorizerFoliage.getFoliageColorPine();
-		}
-	};
-	private final ColorManager.ColorResolver birchColorResolver = new ColorManager.ColorResolver() {
-		@Override
-		public int getColorAtPos(Biome biome, BlockPos blockPos) {
-			return ColorizerFoliage.getFoliageColorBirch();
-		}
-	};
-	private final ColorManager.ColorResolver grassColorResolver = new ColorManager.ColorResolver() {
-		@Override
-		public int getColorAtPos(Biome biome, BlockPos blockPos) {
-			return biome.getGrassColorAtPos(blockPos);
-		}
-	};
-	private final ColorManager.ColorResolver leavesColorResolver = new ColorManager.ColorResolver() {
-		@Override
-		public int getColorAtPos(Biome biome, BlockPos blockPos) {
-			return biome.getFoliageColorAtPos(blockPos);
-		}
-	};
-	private final ColorManager.ColorResolver waterColorResolver = new ColorManager.ColorResolver() {
-		@Override
-		public int getColorAtPos(Biome biome, BlockPos blockPos) {
-			return biome.getWaterColor();
-		}
-	};
+	private final ColorManager.ColorResolver pineColorResolver = (biome, blockPos) -> ColorizerFoliage.getFoliageColorPine();
+	private final ColorManager.ColorResolver birchColorResolver = (biome, blockPos) -> ColorizerFoliage.getFoliageColorBirch();
+	private final ColorManager.ColorResolver waterColorResolver = (biome, blockPos) -> biome.getWaterColor();
+	private final ColorManager.ColorResolver grassColorResolver = Biome::getGrassColorAtPos;
+	private final ColorManager.ColorResolver leavesColorResolver = Biome::getFoliageColorAtPos;
+
+	private final int COLOR_NOT_LOADED = -16842497;
+	private final int COLOR_FAILED_LOAD = 452984832;
+	private final int BIOME_ARRAY_HEIGHT = 32;
+	private final int WORLD_HEIGHT = 256;
+	private final int BIOME_ARRAY_HEIGHT_MULTIPLIER = 8;
 
 	public ColorManager(IVoxelMap master) {
 		this.master = master;
@@ -121,8 +95,7 @@ public class ColorManager implements IColorManager {
 
 		try {
 			ofProfiler = GameSettings.class.getDeclaredField("ofProfiler");
-		} catch (SecurityException var9) {
-		} catch (NoSuchFieldException var10) {
+		} catch (SecurityException | NoSuchFieldException ignored) {
 		} finally {
 			if (ofProfiler != null) {
 				this.optifineInstalled = true;
@@ -178,8 +151,8 @@ public class ColorManager implements IColorManager {
 		this.loaded = false;
 
 		try {
-			Arrays.fill(this.blockColors, -16842497);
-			Arrays.fill(this.blockColorsWithDefaultTint, -16842497);
+			Arrays.fill(this.blockColors, COLOR_NOT_LOADED);
+			Arrays.fill(this.blockColorsWithDefaultTint, COLOR_NOT_LOADED);
 			this.loadSpecialColors();
 			this.biomeTintsAvailable.clear();
 			this.biomeTextureAvailable.clear();
@@ -354,18 +327,13 @@ public class ColorManager implements IColorManager {
 	}
 
 	private void loadSpecialColors() {
-		Iterator<IBlockState> blockStateIterator = BlockRepository.pistonTechBlock.getBlockState().getValidStates().iterator();
 
-		while (blockStateIterator.hasNext()) {
-			IBlockState blockState = blockStateIterator.next();
+		for (IBlockState blockState : BlockRepository.pistonTechBlock.getBlockState().getValidStates()) {
 			int blockStateID = BlockRepository.getStateId(blockState);
 			this.blockColors[blockStateID] = 0;
 		}
 
-		Iterator<IBlockState> barrierStatesIterator = BlockRepository.barrier.getBlockState().getValidStates().iterator();
-
-		while (barrierStatesIterator.hasNext()) {
-			IBlockState blockState = barrierStatesIterator.next();
+		for (IBlockState blockState : BlockRepository.barrier.getBlockState().getValidStates()) {
 			int blockStateID = BlockRepository.getStateId(blockState);
 			this.blockColors[blockStateID] = 0;
 		}
@@ -379,21 +347,18 @@ public class ColorManager implements IColorManager {
 			material1.set(BlockRepository.chorusPlant, Material.WOOD);
 			Field material2 = ReflectionUtils.getFieldByType(BlockRepository.chorusFlower, Block.class, Material.class);
 			material2.set(BlockRepository.chorusFlower, Material.WOOD);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void loadWaterColor() {
-		int waterRGB = -1;
 		IBlockState blockState = BlockRepository.water.getDefaultState();
 		int blockStateID = BlockRepository.getStateId(blockState);
-		waterRGB = this.getBlockColor(blockStateID);
+		int waterRGB = this.getBlockColor(blockStateID);
 		int waterMult = -1;
 		if (this.optifineInstalled) {
-			InputStream is = null;
+			InputStream is;
 
 			try {
 				is = this.game.getResourceManager().getResource(new ResourceLocation("mcpatcher/colormap/water.png")).getInputStream();
@@ -416,7 +381,7 @@ public class ColorManager implements IColorManager {
 					temperature = 1.0 - temperature;
 					rainfall = 1.0 - rainfall;
 					waterMult = waterColorBuff.getRGB((int) ((waterColorBuff.getWidth() - 1) * temperature), (int) ((waterColorBuff.getHeight() - 1) * rainfall)) & 16777215;
-				} catch (Exception var14) {
+				} catch (Exception ignored) {
 				}
 			}
 		}
@@ -440,14 +405,14 @@ public class ColorManager implements IColorManager {
 	@Override
 	public final int getBlockColorWithDefaultTint(MutableBlockPos blockPos, int blockStateID) {
 		if (this.loaded) {
-			int col = 452984832;
+			int col = COLOR_FAILED_LOAD;
 
 			try {
 				col = this.blockColorsWithDefaultTint[blockStateID];
-			} catch (ArrayIndexOutOfBoundsException var5) {
+			} catch (ArrayIndexOutOfBoundsException ignored) {
 			}
 
-			return col != -16842497 && col != 452984832 ? col : this.getBlockColor(blockPos, blockStateID);
+			return col != COLOR_NOT_LOADED && col != COLOR_FAILED_LOAD ? col : this.getBlockColor(blockPos, blockStateID);
 		} else {
 			return 0;
 		}
@@ -473,8 +438,8 @@ public class ColorManager implements IColorManager {
 		return this.getBlockColor(this.dummyBlockPos, blockStateID);
 	}
 
-	private final int getBlockColor(MutableBlockPos blockPos, int blockStateID) {
-		int col = 452984832;
+	private int getBlockColor(MutableBlockPos blockPos, int blockStateID) {
+		int col = COLOR_FAILED_LOAD;
 
 		try {
 			col = this.blockColors[blockStateID];
@@ -482,7 +447,7 @@ public class ColorManager implements IColorManager {
 			this.resizeColorArrays(blockStateID);
 		}
 
-		if (col == -16842497 || col == 452984832) {
+		if (col == COLOR_NOT_LOADED || col == COLOR_FAILED_LOAD) {
 			IBlockState blockState = BlockRepository.getStateById(blockStateID);
 			col = this.blockColors[blockStateID] = this.getColor(blockPos, blockState);
 		}
@@ -496,8 +461,8 @@ public class ColorManager implements IColorManager {
 			int[] newBlockColorsWithDefaultTint = new int[this.blockColors.length * 2];
 			System.arraycopy(this.blockColors, 0, newBlockColors, 0, this.blockColors.length);
 			System.arraycopy(this.blockColorsWithDefaultTint, 0, newBlockColorsWithDefaultTint, 0, this.blockColorsWithDefaultTint.length);
-			Arrays.fill(newBlockColors, this.blockColors.length, newBlockColors.length, -16842497);
-			Arrays.fill(newBlockColorsWithDefaultTint, this.blockColorsWithDefaultTint.length, newBlockColorsWithDefaultTint.length, -16842497);
+			Arrays.fill(newBlockColors, this.blockColors.length, newBlockColors.length, COLOR_NOT_LOADED);
+			Arrays.fill(newBlockColorsWithDefaultTint, this.blockColorsWithDefaultTint.length, newBlockColorsWithDefaultTint.length, COLOR_NOT_LOADED);
 			this.blockColors = newBlockColors;
 			this.blockColorsWithDefaultTint = newBlockColorsWithDefaultTint;
 		}
@@ -506,7 +471,7 @@ public class ColorManager implements IColorManager {
 	private int getColor(MutableBlockPos blockPos, IBlockState blockState) {
 		try {
 			int color = this.getColorForBlockPosBlockStateAndFacing(blockPos, blockState, EnumFacing.UP);
-			if (color == 452984832) {
+			if (color == COLOR_FAILED_LOAD) {
 				BlockRendererDispatcher blockRendererDispatcher = this.game.getBlockRendererDispatcher();
 				color = this.getColorForTerrainSprite(blockState, blockRendererDispatcher);
 			}
@@ -533,19 +498,19 @@ public class ColorManager implements IColorManager {
 			}
 
 			if ((color >> 24 & 0xFF) < 27) {
-				color |= 452984832;
+				color |= COLOR_FAILED_LOAD;
 			}
 
 			return color;
 		} catch (Exception e) {
 			System.err.println("failed getting color: " + blockState.getBlock().getLocalizedName());
 			e.printStackTrace();
-			return 452984832;
+			return COLOR_FAILED_LOAD;
 		}
 	}
 
 	private int getColorForBlockPosBlockStateAndFacing(BlockPos blockPos, IBlockState blockState, EnumFacing facing) {
-		int color = 452984832;
+		int color = COLOR_FAILED_LOAD;
 
 		try {
 			EnumBlockRenderType blockRenderType = blockState.getRenderType();
@@ -553,7 +518,7 @@ public class ColorManager implements IColorManager {
 			if (blockRenderType == EnumBlockRenderType.MODEL) {
 				try {
 					blockState = blockState.getActualState(this.game.world, blockPos);
-				} catch (Exception var11) {
+				} catch (Exception ignored) {
 				}
 
 				IBakedModel iBakedModel = blockRendererDispatcher.getModelForState(blockState);
@@ -571,15 +536,13 @@ public class ColorManager implements IColorManager {
 			} else if (blockRenderType == EnumBlockRenderType.LIQUID) {
 				color = this.getColorForTerrainSprite(blockState, blockRendererDispatcher);
 			}
-		} catch (Exception e) {
-			color = 452984832;
+		} catch (Exception ignored) {
 		}
 
 		return color;
 	}
 
 	private int getColorForTerrainSprite(IBlockState blockState, BlockRendererDispatcher blockRendererDispatcher) {
-		int color = 452984832;
 		BlockModelShapes blockModelShapes = blockRendererDispatcher.getBlockModelShapes();
 		TextureAtlasSprite icon = blockModelShapes.getTexture(blockState);
 		if (icon == blockModelShapes.getModelManager().getMissingModel().getParticleTexture()) {
@@ -609,7 +572,7 @@ public class ColorManager implements IColorManager {
 	}
 
 	private int getColorForIcon(TextureAtlasSprite icon) {
-		int color = 452984832;
+		int color = COLOR_FAILED_LOAD;
 		if (icon != null) {
 			float left = icon.getMinU();
 			float right = icon.getMaxU();
@@ -622,7 +585,7 @@ public class ColorManager implements IColorManager {
 	}
 
 	private int getColorForCoordinatesAndImage(float[] uv, BufferedImage imageBuff) {
-		int color = 452984832;
+		int color = COLOR_FAILED_LOAD;
 		if (uv[0] != this.failedToLoadX || uv[2] != this.failedToLoadY) {
 			int left = (int) (uv[0] * imageBuff.getWidth());
 			int right = (int) Math.ceil(uv[1] * imageBuff.getWidth());
@@ -640,7 +603,6 @@ public class ColorManager implements IColorManager {
 			} catch (RasterFormatException e) {
 				System.out.println("error getting color");
 				System.out.println(left + " " + right + " " + top + " " + bottom);
-				color = 452984832;
 			}
 		}
 
@@ -654,10 +616,9 @@ public class ColorManager implements IColorManager {
 			BlockDoublePlant.EnumPlantType type = blockState.getValue(BlockDoublePlant.VARIANT);
 			switch (type) {
 				case FERN:
-					this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, ColorizerGrass.getGrassColor(0.7, 0.8) | 0xFF000000);
-					break;
 				case GRASS:
 					this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, ColorizerGrass.getGrassColor(0.7, 0.8) | 0xFF000000);
+					break;
 			}
 		} else if (block == BlockRepository.reeds) {
 			this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, ColorizerGrass.getGrassColor(0.7, 0.8) | 0xFF000000);
@@ -672,7 +633,7 @@ public class ColorManager implements IColorManager {
 		Block block = blockState.getBlock();
 		String blockName = "" + Block.REGISTRY.getNameForObject(block);
 		if (!BlockRepository.biomeBlocks.contains(block) && !blockName.startsWith("minecraft:")) {
-			int tint = -1;
+			int tint;
 			MutableBlockPos tempBlockPos = new MutableBlockPos(0, 0, 0);
 			if (blockPos == this.dummyBlockPos) {
 				tint = this.tintFromFakePlacedBlock(blockState, tempBlockPos, (byte) 4);
@@ -691,7 +652,7 @@ public class ColorManager implements IColorManager {
 				this.blockColorsWithDefaultTint[blockStateID] = this.colorMultiplier(color, tint);
 				this.createTintTable(blockState, tempBlockPos);
 			} else {
-				this.blockColorsWithDefaultTint[BlockRepository.getStateId(blockState)] = 452984832;
+				this.blockColorsWithDefaultTint[BlockRepository.getStateId(blockState)] = COLOR_FAILED_LOAD;
 			}
 		}
 	}
@@ -706,7 +667,7 @@ public class ColorManager implements IColorManager {
 			return -1;
 		}
 
-		Share.updateCloudsLock.lock();
+		VoxelConstants.updateCloudsLock.lock();
 		int tint = -1;
 
 		try {
@@ -723,9 +684,9 @@ public class ColorManager implements IColorManager {
 			tint = this.game.getBlockColors().colorMultiplier(blockState, world, loopBlockPos, 1) | 0xFF000000;
 			chunk.setBiomeArray(actualBiomes);
 			chunk.setBlockState(loopBlockPos, actualBlockState);
-		} catch (Exception var15) {
+		} catch (Exception ignored) {
 		} finally {
-			Share.updateCloudsLock.unlock();
+			VoxelConstants.updateCloudsLock.unlock();
 		}
 
 		return tint;
@@ -736,7 +697,7 @@ public class ColorManager implements IColorManager {
 		if (world != null) {
 			Block block = blockState.getBlock();
 			if (block != null) {
-				Share.updateCloudsLock.lock();
+				VoxelConstants.updateCloudsLock.lock();
 
 				try {
 					int[][] tints = new int[this.sizeOfBiomeArray][32];
@@ -768,9 +729,9 @@ public class ColorManager implements IColorManager {
 					chunk.setBlockState(loopBlockPos, actualBlockState);
 					int blockStateID = BlockRepository.getStateId(blockState);
 					this.blockTintTables.put(blockStateID, tints);
-				} catch (Exception var17) {
+				} catch (Exception ignored) {
 				} finally {
-					Share.updateCloudsLock.unlock();
+					VoxelConstants.updateCloudsLock.unlock();
 				}
 			}
 		}
@@ -816,7 +777,7 @@ public class ColorManager implements IColorManager {
 								}
 							}
 
-							int biomeTint = tints[biomeID][loopBlockPos.field_177960_b / 8];
+							int biomeTint = tints[biomeID][loopBlockPos.getY() / 8];
 							r += (biomeTint & 0xFF0000) >> 16;
 							g += (biomeTint & 0xFF00) >> 8;
 							b += biomeTint & 0xFF;
@@ -825,8 +786,7 @@ public class ColorManager implements IColorManager {
 
 					tint = 0xFF000000 | (r / 9 & 0xFF) << 16 | (g / 9 & 0xFF) << 8 | b / 9 & 0xFF;
 				}
-			} catch (Exception e) {
-				tint = -2;
+			} catch (Exception ignored) {
 			}
 		}
 
@@ -930,7 +890,7 @@ public class ColorManager implements IColorManager {
 	private int getCustomBlockBiomeTintFromUnloadedChunk(
 		AbstractMapData mapData, World world, IBlockState blockState, MutableBlockPos blockPos, MutableBlockPos loopBlockPos, int startX, int startZ
 	) {
-		int tint = -1;
+		int tint;
 
 		try {
 			int dataX = blockPos.getX() - startX;
@@ -952,7 +912,7 @@ public class ColorManager implements IColorManager {
 		int alpha = color >> 24 & 0xFF;
 		int red = color >> 16 & 0xFF;
 		int green = color >> 8 & 0xFF;
-		int blue = color >> 0 & 0xFF;
+		int blue = color & 0xFF;
 		if (block != BlockRepository.sign && block != BlockRepository.wallSign) {
 			if (Arrays.asList(BlockRepository.doorsArray).contains(block)) {
 				alpha = 47;
@@ -971,11 +931,11 @@ public class ColorManager implements IColorManager {
 		int alpha1 = color1 >> 24 & 0xFF;
 		int red1 = color1 >> 16 & 0xFF;
 		int green1 = color1 >> 8 & 0xFF;
-		int blue1 = color1 >> 0 & 0xFF;
+		int blue1 = color1 & 0xFF;
 		int alpha2 = color2 >> 24 & 0xFF;
 		int red2 = color2 >> 16 & 0xFF;
 		int green2 = color2 >> 8 & 0xFF;
-		int blue2 = color2 >> 0 & 0xFF;
+		int blue2 = color2 & 0xFF;
 		int alpha = alpha1 * alpha2 / 255;
 		int red = red1 * red2 / 255;
 		int green = green1 * green2 / 255;
@@ -988,11 +948,11 @@ public class ColorManager implements IColorManager {
 		float topAlpha = (color1 >> 24 & 0xFF) / 255.0F;
 		float red1 = (color1 >> 16 & 0xFF) * topAlpha;
 		float green1 = (color1 >> 8 & 0xFF) * topAlpha;
-		float blue1 = (color1 >> 0 & 0xFF) * topAlpha;
+		float blue1 = (color1 & 0xFF) * topAlpha;
 		float bottomAlpha = (color2 >> 24 & 0xFF) / 255.0F;
 		float red2 = (color2 >> 16 & 0xFF) * bottomAlpha * (1.0F - topAlpha);
 		float green2 = (color2 >> 8 & 0xFF) * bottomAlpha * (1.0F - topAlpha);
-		float blue2 = (color2 >> 0 & 0xFF) * bottomAlpha * (1.0F - topAlpha);
+		float blue2 = (color2 & 0xFF) * bottomAlpha * (1.0F - topAlpha);
 		float alpha = topAlpha + bottomAlpha * (1.0F - topAlpha);
 		float red = (red1 + red2) / alpha;
 		float green = (green1 + green2) / alpha;
@@ -1021,15 +981,14 @@ public class ColorManager implements IColorManager {
 		for (ResourceLocation s : this.findResources(namespace, "/mcpatcher/ctm", ".properties", true, false, true)) {
 			try {
 				this.loadCTM(s);
-			} catch (NumberFormatException var7) {
-			} catch (IllegalArgumentException var8) {
+			} catch (IllegalArgumentException ignored) {
 			}
 		}
 
 		for (int t = 0; t < this.blockColors.length; t++) {
-			if (this.blockColors[t] != 452984832 && this.blockColors[t] != -16842497) {
+			if (this.blockColors[t] != COLOR_FAILED_LOAD && this.blockColors[t] != COLOR_NOT_LOADED) {
 				if ((this.blockColors[t] >> 24 & 0xFF) < 27) {
-					this.blockColors[t] = this.blockColors[t] | 452984832;
+					this.blockColors[t] = this.blockColors[t] | COLOR_FAILED_LOAD;
 				}
 
 				this.checkForBiomeTinting(this.dummyBlockPos, BlockRepository.getStateById(t), this.blockColors[t]);
@@ -1063,8 +1022,7 @@ public class ColorManager implements IColorManager {
 			String biomes = properties.getProperty("biomes", "").trim().toLowerCase();
 			String renderPass = properties.getProperty("renderPass", "").trim().toLowerCase();
 			metadata = metadata.replaceAll("\\s+", ",");
-			Set<IBlockState> blockStates = new HashSet<>();
-			blockStates.addAll(this.parseBlocksList(matchBlocks, metadata));
+			Set<IBlockState> blockStates = new HashSet<>(this.parseBlocksList(matchBlocks, metadata));
 			String directory = filePath.substring(0, filePath.lastIndexOf("/") + 1);
 			String[] tilesParsed = this.parseStringList(tiles);
 			String tilePath = directory + "0";
@@ -1083,22 +1041,22 @@ public class ColorManager implements IColorManager {
 			}
 
 			String[] biomesArray = biomes.split(" ");
-			if (blockStates.size() == 0) {
-				Block block = null;
+			if (blockStates.isEmpty()) {
+				Block block;
 				Pattern pattern = Pattern.compile(".*/block([\\d]+)[a-zA-Z_]*.properties");
 				Matcher matcher = pattern.matcher(filePath);
 				if (matcher.find()) {
 					block = this.getBlockWithNameOrID(matcher.group(1));
 					if (block != null) {
 						Set<IBlockState> matching = this.parseBlockMetadata(block, metadata);
-						if (matching.size() == 0) {
+						if (matching.isEmpty()) {
 							matching.addAll(block.getBlockState().getValidStates());
 						}
 
 						blockStates.addAll(matching);
 					}
 				} else {
-					if (matchTiles.equals("")) {
+					if (matchTiles.isEmpty()) {
 						matchTiles = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf(".properties"));
 					}
 
@@ -1111,11 +1069,8 @@ public class ColorManager implements IColorManager {
 						ArrayList<IBlockState> tmpList = new ArrayList<>();
 
 						for (Block testBlock : Block.REGISTRY) {
-							UnmodifiableIterator blockState = testBlock.getBlockState().getValidStates().iterator();
 
-							while (blockState.hasNext()) {
-								IBlockState blockStatex = (IBlockState) blockState.next();
-
+							for (IBlockState blockStatex : testBlock.getBlockState().getValidStates()) {
 								try {
 									IBakedModel bakedModel = blockModelShapes.getModelForState(blockStatex);
 									List<BakedQuad> quads = new ArrayList<>();
@@ -1139,7 +1094,7 @@ public class ColorManager implements IColorManager {
 											}
 										}
 									}
-								} catch (Exception var40) {
+								} catch (Exception ignored) {
 								}
 							}
 						}
@@ -1149,10 +1104,10 @@ public class ColorManager implements IColorManager {
 				}
 			}
 
-			if (blockStates.size() != 0) {
+			if (!blockStates.isEmpty()) {
 				if (!method.equals("horizontal")
 					&& !method.startsWith("overlay")
-					&& (method.equals("sandstone") || method.equals("top") || faces.contains("top") || faces.contains("all") || faces.length() == 0)) {
+					&& (method.equals("sandstone") || method.equals("top") || faces.contains("top") || faces.contains("all") || faces.isEmpty())) {
 					try {
 						ResourceLocation pngResource = new ResourceLocation(propertiesFile.getNamespace(), tilePath);
 						InputStream is = this.game.getResourceManager().getResource(pngResource).getInputStream();
@@ -1178,7 +1133,7 @@ public class ColorManager implements IColorManager {
 								topRGB = this.processRenderPassThree(topRGB);
 								int blockStateID = BlockRepository.getStateId(blockState);
 								int baseRGB = this.blockColors[blockStateID];
-								if (baseRGB != 452984832 && baseRGB != -16842497) {
+								if (baseRGB != COLOR_FAILED_LOAD && baseRGB != COLOR_NOT_LOADED) {
 									topRGB = this.colorMultiplier(baseRGB, topRGB);
 								}
 							}
@@ -1188,11 +1143,11 @@ public class ColorManager implements IColorManager {
 							}
 
 							int blockStateID = BlockRepository.getStateId(blockState);
-							if (!biomes.equals("")) {
+							if (!biomes.isEmpty()) {
 								this.biomeTextureAvailable.add(blockStateID);
 
-								for (int r = 0; r < biomesArray.length; r++) {
-									int biomeInt = this.parseBiomeName(biomesArray[r]);
+								for (String string : biomesArray) {
+									int biomeInt = this.parseBiomeName(string);
 									if (biomeInt != -1) {
 										this.blockBiomeSpecificColors.put(blockStateID + " " + biomeInt, topRGB);
 									}
@@ -1231,7 +1186,7 @@ public class ColorManager implements IColorManager {
 		if (this.renderPassThreeBlendMode.equals("color") || this.renderPassThreeBlendMode.equals("overlay")) {
 			int red = rgb >> 16 & 0xFF;
 			int green = rgb >> 8 & 0xFF;
-			int blue = rgb >> 0 & 0xFF;
+			int blue = rgb & 0xFF;
 			float colorAverage = (red + blue + green) / 3.0F;
 			float lighteningFactor = (colorAverage - 127.5F) * 2.0F;
 			red += (int) (red * (lighteningFactor / 255.0F));
@@ -1262,7 +1217,7 @@ public class ColorManager implements IColorManager {
 						tmpList.add(i);
 					}
 				}
-			} catch (NumberFormatException var13) {
+			} catch (NumberFormatException ignored) {
 			}
 		}
 
@@ -1304,10 +1259,10 @@ public class ColorManager implements IColorManager {
 					for (int i = min; i <= max; i++) {
 						tmpList.add("" + i);
 					}
-				} else if (token != null && token != "") {
+				} else if (!token.isEmpty()) {
 					tmpList.add(token);
 				}
-			} catch (NumberFormatException var11) {
+			} catch (NumberFormatException ignored) {
 			}
 		}
 
@@ -1324,12 +1279,11 @@ public class ColorManager implements IColorManager {
 		Set<IBlockState> blockStates = new HashSet<>();
 
 		for (String blockString : blocks.split("\\s+")) {
-			String metadata = metadataLine;
+			StringBuilder metadata = new StringBuilder(metadataLine);
 			blockString = blockString.trim();
 			String[] blockComponents = blockString.split(":");
 			int tokensUsed = 0;
-			Block block = null;
-			block = this.getBlockWithNameOrID(blockComponents[0]);
+			Block block = this.getBlockWithNameOrID(blockComponents[0]);
 			if (block != null) {
 				tokensUsed = 1;
 			} else if (blockComponents.length > 1) {
@@ -1347,19 +1301,19 @@ public class ColorManager implements IColorManager {
 
 					for (int i = min; i <= max; i++) {
 						block = this.getBlockWithNameOrID("" + i);
-						blockStates.addAll(this.parseBlockMetadata(block, metadata));
+						blockStates.addAll(this.parseBlockMetadata(block, metadata.toString()));
 					}
 				}
 			} else {
 				if (blockComponents.length > tokensUsed) {
-					metadata = blockComponents[tokensUsed];
+					metadata = new StringBuilder(blockComponents[tokensUsed]);
 
 					for (int t = tokensUsed + 1; t < blockComponents.length; t++) {
-						metadata = metadata + ":" + blockComponents[t];
+						metadata.append(":").append(blockComponents[t]);
 					}
 				}
 
-				blockStates.addAll(this.parseBlockMetadata(block, metadata));
+				blockStates.addAll(this.parseBlockMetadata(block, metadata.toString()));
 			}
 		}
 
@@ -1368,7 +1322,7 @@ public class ColorManager implements IColorManager {
 
 	private <T extends Comparable<T>, V extends T> Set<IBlockState> parseBlockMetadata(Block block, String metadataList) {
 		Set<IBlockState> blockStates = new HashSet<>();
-		if (metadataList.equals("")) {
+		if (metadataList.isEmpty()) {
 			blockStates.addAll(block.getBlockState().getValidStates());
 		} else {
 			Set<String> valuePairs = new HashSet<>();
@@ -1380,8 +1334,8 @@ public class ColorManager implements IColorManager {
 				} else {
 					int[] metadatas = this.parseIntegerList(metadata, 0, 15);
 
-					for (int t = 0; t < metadatas.length; t++) {
-						IBlockState blockState = this.parseIntegerMetadata(block, metadatas[t]);
+					for (int i : metadatas) {
+						IBlockState blockState = this.parseIntegerMetadata(block, i);
 						if (blockState != null) {
 							blockStates.add(blockState);
 						}
@@ -1389,11 +1343,9 @@ public class ColorManager implements IColorManager {
 				}
 			}
 
-			if (valuePairs.size() > 0) {
-				UnmodifiableIterator blockStatesIterator = block.getBlockState().getValidStates().iterator();
+			if (!valuePairs.isEmpty()) {
 
-				while (blockStatesIterator.hasNext()) {
-					IBlockState blockState = (IBlockState) blockStatesIterator.next();
+				for (IBlockState blockState : block.getBlockState().getValidStates()) {
 					boolean matches = true;
 
 					for (String pair : valuePairs) {
@@ -1510,14 +1462,12 @@ public class ColorManager implements IColorManager {
 					}
 
 					ZipFile zipFile = (ZipFile) zipFileObj;
-					if (zipFile != null) {
-						this.findResourcesZip(zipFile, namespace, "assets/" + namespace, directory, suffix, recursive, directories, resources);
-					}
+					this.findResourcesZip(zipFile, namespace, "assets/" + namespace, directory, suffix, recursive, directories, resources);
 				} else if (resourcePack instanceof AbstractResourcePack) {
 					Object baseObj = ReflectionUtils.getPrivateFieldValueByType(resourcePack, AbstractResourcePack.class, File.class);
 					if (baseObj != null) {
 						File base = (File) baseObj;
-						if (base != null && base.isDirectory()) {
+						if (base.isDirectory()) {
 							base = new File(base, "assets/" + namespace);
 							if (base.isDirectory()) {
 								findResourcesDirectory(base, namespace, directory, suffix, recursive, directories, resources);
@@ -1529,20 +1479,14 @@ public class ColorManager implements IColorManager {
 		}
 
 		if (sortByFilename) {
-			Collections.sort(resources, new Comparator<ResourceLocation>() {
-				public int compare(ResourceLocation o1, ResourceLocation o2) {
-					String f1 = o1.getPath().replaceAll(".*/", "").replaceFirst("\\.properties", "");
-					String f2 = o2.getPath().replaceAll(".*/", "").replaceFirst("\\.properties", "");
-					int result = f1.compareTo(f2);
-					return result != 0 ? result : o1.getPath().compareTo(o2.getPath());
-				}
+			resources.sort((o1, o2) -> {
+				String f1 = o1.getPath().replaceAll(".*/", "").replaceFirst("\\.properties", "");
+				String f2 = o2.getPath().replaceAll(".*/", "").replaceFirst("\\.properties", "");
+				int result = f1.compareTo(f2);
+				return result != 0 ? result : o1.getPath().compareTo(o2.getPath());
 			});
 		} else {
-			Collections.sort(resources, new Comparator<ResourceLocation>() {
-				public int compare(ResourceLocation o1, ResourceLocation o2) {
-					return o1.getPath().compareTo(o2.getPath());
-				}
-			});
+			resources.sort(Comparator.comparing(ResourceLocation::getPath));
 		}
 
 		return resources;
@@ -1564,13 +1508,13 @@ public class ColorManager implements IColorManager {
 			if (entry.isDirectory() == directories) {
 				String name = entry.getName().replaceFirst("^/", "");
 				if (name.startsWith(base) && name.endsWith(suffix)) {
-					if (directory.equals("")) {
+					if (directory.isEmpty()) {
 						if (recursive || !name.contains("/")) {
 							resources.add(new ResourceLocation(namespace, name));
 						}
 					} else {
 						String subpath = name.substring(base.length());
-						if ((subpath.equals("") || subpath.startsWith("/")) && (recursive || subpath.equals("") || !subpath.substring(1).contains("/"))) {
+						if ((subpath.isEmpty() || subpath.startsWith("/")) && (recursive || subpath.isEmpty() || !subpath.substring(1).contains("/"))) {
 							resources.add(new ResourceLocation(namespace, name.substring(root.length() + 1)));
 						}
 					}
@@ -1585,7 +1529,7 @@ public class ColorManager implements IColorManager {
 		File subdirectory = new File(base, directory);
 		String[] list = subdirectory.list();
 		if (list != null) {
-			String pathComponent = directory.equals("") ? "" : directory + "/";
+			String pathComponent = directory.isEmpty() ? "" : directory + "/";
 
 			for (String s : list) {
 				File entry = new File(subdirectory, s);
@@ -1614,7 +1558,7 @@ public class ColorManager implements IColorManager {
 				properties.load(input);
 				input.close();
 			}
-		} catch (IOException var20) {
+		} catch (IOException ignored) {
 		}
 
 		IBlockState blockState = BlockRepository.lilypad.getDefaultState();
@@ -1626,10 +1570,7 @@ public class ColorManager implements IColorManager {
 			lilypadMultiplier = Integer.parseInt(lilypadMultiplierString, 16);
 		}
 
-		UnmodifiableIterator defaultFormat = BlockRepository.lilypad.getBlockState().getValidStates().iterator();
-
-		while (defaultFormat.hasNext()) {
-			IBlockState padBlockState = (IBlockState) defaultFormat.next();
+		for (IBlockState padBlockState : BlockRepository.lilypad.getBlockState().getValidStates()) {
 			blockStateID = BlockRepository.getStateId(padBlockState);
 			this.blockColors[blockStateID] = this.colorMultiplier(lilyRGB, lilypadMultiplier | 0xFF000000);
 			this.blockColorsWithDefaultTint[blockStateID] = this.blockColors[blockStateID];
@@ -1688,7 +1629,7 @@ public class ColorManager implements IColorManager {
 			String format = colorProperties.getProperty("format");
 			boolean grid;
 			if (format != null) {
-				grid = format != null && format.equalsIgnoreCase("grid");
+				grid = format.equalsIgnoreCase("grid");
 			} else {
 				grid = globalGrid;
 			}
@@ -1696,7 +1637,7 @@ public class ColorManager implements IColorManager {
 			String yOffsetString = colorProperties.getProperty("yOffset");
 			int yOffset = 0;
 			if (yOffsetString != null) {
-				yOffset = Integer.valueOf(yOffsetString);
+				yOffset = Integer.parseInt(yOffsetString);
 			}
 
 			this.processColorProperty(resourcePNG, names, grid, yOffset);
@@ -1735,9 +1676,9 @@ public class ColorManager implements IColorManager {
 
 			String yOffsetString = colorProperties.getProperty("yOffset");
 			if (yOffsetString != null) {
-				yOffset = Integer.valueOf(yOffsetString);
+				yOffset = Integer.parseInt(yOffsetString);
 			}
-		} catch (IOException var10) {
+		} catch (IOException ignored) {
 		}
 
 		this.processColorProperty(resource, list, grid, yOffset);
@@ -1751,7 +1692,7 @@ public class ColorManager implements IColorManager {
 		}
 
 		boolean swamp = resource.getPath().contains("/swamp");
-		Image tintColors = null;
+		Image tintColors;
 
 		try {
 			InputStream is = this.game.getResourceManager().getResource(resource).getInputStream();
@@ -1770,7 +1711,7 @@ public class ColorManager implements IColorManager {
 		for (int t = 0; t < numBiomesToCheck; t++) {
 			Biome biome = Biome.getBiome(t);
 			if (biome != null) {
-				int tintMult = 0;
+				int tintMult;
 				int heightMultiplier = tintColorsBuff.getHeight() / 32;
 
 				for (int s = 0; s < 32; s++) {
@@ -1792,8 +1733,7 @@ public class ColorManager implements IColorManager {
 			}
 		}
 
-		Set<IBlockState> blockStates = new HashSet<>();
-		blockStates.addAll(this.parseBlocksList(list, ""));
+		Set<IBlockState> blockStates = new HashSet<>(this.parseBlocksList(list, ""));
 
 		for (IBlockState blockState : blockStates) {
 			int blockStateID = BlockRepository.getStateId(blockState);

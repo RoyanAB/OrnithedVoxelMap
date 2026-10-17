@@ -20,17 +20,19 @@ import java.util.zip.ZipInputStream;
 
 public class ComparisonCachedRegion {
 	private final IPersistentMap persistentMap;
-	private final String key;
+	private final CompressibleMapData data;
+	private final MutableBlockPos blockPos = new MutableBlockPos(0, 0, 0);
+
 	private final World world;
+	private final String key;
 	private final String subworldName;
 	private final String worldNamePathPart;
-	private String subworldNamePathPart;
 	private final String dimensionNamePathPart;
 	private final boolean underground;
 	private final int x;
 	private final int z;
-	private final CompressibleMapData data;
-	MutableBlockPos blockPos = new MutableBlockPos(0, 0, 0);
+
+	private String subworldNamePathPart;
 	private int loadedChunks = 0;
 	private boolean loaded = false;
 	private boolean empty = true;

@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap;
 
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
+import com.mamiyaotaru.voxelmap.ornithe.mixins.RenderAccessor;
 import com.mamiyaotaru.voxelmap.textures.FontRendererWithAtlas;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.StitcherException;
@@ -37,7 +38,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.src.VoxelMapProtectedFieldsHelper;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -53,15 +53,15 @@ import java.util.*;
 
 public class Radar implements IRadar {
 	private Minecraft game;
-	private IVoxelMap master = null;
-	private LayoutVariables layoutVariables = null;
-	public MapSettingsManager minimapOptions = null;
-	public RadarSettingsManager options = null;
+	private final IVoxelMap master;
+	private LayoutVariables layoutVariables;
+	public MapSettingsManager minimapOptions;
+	public RadarSettingsManager options;
 	private final FontRendererWithAtlas fontRenderer;
 	private final TextureAtlas textureAtlas;
-	private boolean newMobs = false;
-	private final boolean enabled = true;
-	private boolean completedLoading = false;
+	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
+
+
 	private int timer = 500;
 	private float direction = 0.0F;
 	private final ArrayList<Contact> contacts = new ArrayList<>(40);
@@ -70,40 +70,37 @@ public class Radar implements IRadar {
 	private final BufferedImage[][] mobImages = new BufferedImage[EnumMobs.values().length - 3][2];
 	private final boolean[] builtInCustom = new boolean[EnumMobs.values().length];
 	private Sprite[] clothIcons = new Sprite[]{null, null};
+	private final BufferedImage[][] armorImages = new BufferedImage[8][2];
+	private final String[] armorNames = new String[]{"cloth", "clothOverlay", "clothOuter", "clothOverlayOuter", "chain", "iron", "gold", "diamond"};
+	private boolean completedLoading = false;
+
+	private Class<?> randomMobsClass;
+	private Class<?> randomMobsPropertiesClass;
+	private Method getRandomobPropertiesMethod;
+	private Method getMobTextureMethod;
+	private java.util.Map<String, ?> mapProperties;
+	private Object randomEntity;
+	private Class<?> randomEntityClass;
+	private Method setEntityMethod;
+	private Class<?> randomEntitiesPropertiesClass;
+	private Method getEntityTextureMethod;
+	private boolean hasCustomNPCs;
+	private Class<?> entityCustomNpcClass;
+	private Field modelDataField;
+	private Method getEntityMethod;
+	private Class<?> modelScaleRendererClass;
+	private boolean lastOutlines;
+
+	private boolean newMobs = false;
+	private boolean randomobsOptifineNew = false;
+	private boolean randomobsOptifine;
+	private final boolean enabled = true;
+
 	public static final int CLOTH = 0;
 	public static final int CHAIN = 4;
 	public static final int IRON = 5;
 	public static final int GOLD = 6;
 	public static final int DIAMOND = 7;
-	public static final int UNKNOWN = EnumMobs.UNKNOWN.ordinal();
-	public static final int CUSTOM = EnumMobs.CUSTOM.ordinal();
-	private final BufferedImage[][] armorImages = new BufferedImage[8][2];
-	private final String[] armorNames = new String[]{"cloth", "clothOverlay", "clothOuter", "clothOverlayOuter", "chain", "iron", "gold", "diamond"};
-	private boolean randomobsOptifine = false;
-	private Class<?> randomMobsClass = null;
-	private Class<?> randomMobsPropertiesClass = null;
-	private Method getRandomobPropertiesMethod = null;
-	private Method getMobTextureMethod = null;
-	private boolean randomobsOptifineNew = false;
-	private Class<?> randomEntitiesClass = null;
-	private Field mapPropertiesField = null;
-	private java.util.Map<String, ?> mapProperties = null;
-	private Field randomEntityField = null;
-	private Object randomEntity = null;
-	private Class<?> iRandomEntityClass = null;
-	private Class<?> randomEntityClass = null;
-	private Method setEntityMethod = null;
-	private Class<?> randomEntitiesPropertiesClass = null;
-	private Method getEntityTextureMethod = null;
-	private boolean hasCustomNPCs = false;
-	private Class<?> entityCustomNpcClass = null;
-	private Class<?> modelDataClass = null;
-	private Class<?> entityNPCInterfaceClass = null;
-	private Field modelDataField = null;
-	private Method getEntityMethod = null;
-	private Class<?> modelScaleRendererClass = null;
-	private boolean lastOutlines = true;
-	UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 
 	public Radar(IVoxelMap master) {
 		this.master = master;
@@ -125,9 +122,7 @@ public class Radar implements IRadar {
 			Class<?>[] argClasses2 = new Class[]{ResourceLocation.class, EntityLiving.class};
 			this.getMobTextureMethod = this.randomMobsPropertiesClass.getDeclaredMethod("getTextureLocation", argClasses2);
 			this.randomobsOptifine = true;
-		} catch (ClassNotFoundException e) {
-			this.randomobsOptifine = false;
-		} catch (NoSuchMethodException e) {
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
 			this.randomobsOptifine = false;
 		}
 
@@ -141,58 +136,42 @@ public class Radar implements IRadar {
 				Class<?>[] argClasses2 = new Class[]{ResourceLocation.class, EntityLiving.class};
 				this.getMobTextureMethod = this.randomMobsPropertiesClass.getDeclaredMethod("getTextureLocation", argClasses2);
 				this.randomobsOptifine = true;
-			} catch (ClassNotFoundException e) {
-				this.randomobsOptifine = false;
-			} catch (NoSuchMethodException e) {
+			} catch (ClassNotFoundException | NoSuchMethodException e) {
 				this.randomobsOptifine = false;
 			}
 		}
 
 		if (!this.randomobsOptifine) {
 			try {
-				this.randomEntitiesClass = Class.forName("RandomEntities");
-				this.mapPropertiesField = this.randomEntitiesClass.getDeclaredField("mapProperties");
-				this.mapPropertiesField.setAccessible(true);
-				this.mapProperties = (java.util.Map<String, ?>) this.mapPropertiesField.get(null);
-				this.randomEntityField = this.randomEntitiesClass.getDeclaredField("randomEntity");
-				this.randomEntityField.setAccessible(true);
-				this.randomEntity = this.randomEntityField.get(null);
-				this.iRandomEntityClass = Class.forName("IRandomEntity");
+				Class<?> randomEntitiesClass = Class.forName("RandomEntities");
+				Field mapPropertiesField = randomEntitiesClass.getDeclaredField("mapProperties");
+				mapPropertiesField.setAccessible(true);
+				this.mapProperties = (java.util.Map<String, ?>) mapPropertiesField.get(null);
+				Field randomEntityField = randomEntitiesClass.getDeclaredField("randomEntity");
+				randomEntityField.setAccessible(true);
+				this.randomEntity = randomEntityField.get(null);
+				Class<?> iRandomEntityClass = Class.forName("IRandomEntity");
 				this.randomEntityClass = Class.forName("RandomEntity");
 				Class<?>[] argClasses1 = new Class[]{Entity.class};
 				this.setEntityMethod = this.randomEntityClass.getDeclaredMethod("setEntity", argClasses1);
 				this.randomEntitiesPropertiesClass = Class.forName("RandomEntityProperties");
-				Class<?>[] argClasses2 = new Class[]{ResourceLocation.class, this.iRandomEntityClass};
+				Class<?>[] argClasses2 = new Class[]{ResourceLocation.class, iRandomEntityClass};
 				this.getEntityTextureMethod = this.randomEntitiesPropertiesClass.getDeclaredMethod("getTextureLocation", argClasses2);
 				this.randomobsOptifineNew = true;
-			} catch (ClassNotFoundException e) {
-				this.randomobsOptifineNew = false;
-			} catch (NoSuchMethodException e) {
-				this.randomobsOptifineNew = false;
-			} catch (NoSuchFieldException e) {
-				this.randomobsOptifineNew = false;
-			} catch (SecurityException e) {
-				this.randomobsOptifineNew = false;
-			} catch (IllegalArgumentException e) {
-				this.randomobsOptifineNew = false;
-			} catch (IllegalAccessException e) {
+			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | SecurityException | NoSuchFieldException | NoSuchMethodException e) {
 				this.randomobsOptifineNew = false;
 			}
 		}
 
 		try {
 			this.entityCustomNpcClass = Class.forName("noppes.npcs.entity.EntityCustomNpc");
-			this.modelDataClass = Class.forName("noppes.npcs.ModelData");
+			Class<?> modelDataClass = Class.forName("noppes.npcs.ModelData");
 			this.modelDataField = this.entityCustomNpcClass.getField("modelData");
-			this.entityNPCInterfaceClass = Class.forName("noppes.npcs.entity.EntityNPCInterface");
-			this.getEntityMethod = this.modelDataClass.getMethod("getEntity", this.entityNPCInterfaceClass);
+			Class<?> entityNPCInterfaceClass = Class.forName("noppes.npcs.entity.EntityNPCInterface");
+			this.getEntityMethod = modelDataClass.getMethod("getEntity", entityNPCInterfaceClass);
 			this.modelScaleRendererClass = Class.forName("noppes.npcs.client.model.ModelScaleRenderer");
 			this.hasCustomNPCs = true;
-		} catch (ClassNotFoundException e) {
-			this.hasCustomNPCs = false;
-		} catch (NoSuchFieldException e) {
-			this.hasCustomNPCs = false;
-		} catch (NoSuchMethodException e) {
+		} catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
 			this.hasCustomNPCs = false;
 		}
 	}
@@ -222,16 +201,13 @@ public class Radar implements IRadar {
 			for (int t = 0; t < this.mobImages.length; t++) {
 				try {
 					int intendedSize = 8;
-					String fullPath = "";
+					String fullPath;
 					InputStream is = null;
-					if (is == null) {
-						fullPath = "textures/icons/" + EnumMobs.values()[t].classPath + ".png";
+					fullPath = "textures/icons/" + EnumMobs.values()[t].classPath + ".png";
 
-						try {
-							is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-						} catch (IOException e) {
-							is = null;
-						}
+					try {
+						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
+					} catch (IOException ignored) {
 					}
 
 					if (is == null) {
@@ -239,8 +215,7 @@ public class Radar implements IRadar {
 
 						try {
 							is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-						} catch (IOException e) {
-							is = null;
+						} catch (IOException ignored) {
 						}
 					}
 
@@ -250,8 +225,7 @@ public class Radar implements IRadar {
 
 						try {
 							is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-						} catch (IOException e) {
-							is = null;
+						} catch (IOException ignored) {
 						}
 					}
 
@@ -261,8 +235,7 @@ public class Radar implements IRadar {
 
 						try {
 							is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-						} catch (IOException e) {
-							is = null;
+						} catch (IOException ignored) {
 						}
 					}
 
@@ -275,11 +248,11 @@ public class Radar implements IRadar {
 						this.mobImages[t][1] = ImageUtils.fillOutline(ImageUtils.pad(ImageUtils.scaleImage(mobSkin, 2.0F / scale)), this.options.outlines);
 						this.builtInCustom[t] = true;
 					}
-				} catch (Exception var17) {
+				} catch (Exception ignored) {
 				}
 
 				if (this.mobImages[t][0] == null || this.mobImages[t][1] == null) {
-					BufferedImage image = null;
+					BufferedImage image;
 					image = this.createImageFromTypeAndResourceLocations(
 						EnumMobs.values()[t], EnumMobs.values()[t].resourceLocation, EnumMobs.values()[t].secondaryResourceLocation
 					);
@@ -304,7 +277,7 @@ public class Radar implements IRadar {
 			this.armorImages[1][0] = ImageUtils.loadImage(new ResourceLocation("textures/models/armor/leather_layer_1.png"), 40, 8, 8, 8);
 			this.armorImages[2][0] = ImageUtils.loadImage(new ResourceLocation("textures/models/armor/leather_layer_1_overlay.png"), 8, 8, 8, 8);
 			this.armorImages[3][0] = ImageUtils.loadImage(new ResourceLocation("textures/models/armor/leather_layer_1_overlay.png"), 40, 8, 8, 8);
-			this.armorImages[4][0] = ImageUtils.addImages(
+			this.armorImages[CHAIN][0] = ImageUtils.addImages(
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/chainmail_layer_1.png"), 8, 8, 8, 8),
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/chainmail_layer_1.png"), 40, 8, 8, 8),
 				0.0F,
@@ -312,7 +285,7 @@ public class Radar implements IRadar {
 				8,
 				8
 			);
-			this.armorImages[5][0] = ImageUtils.addImages(
+			this.armorImages[IRON][0] = ImageUtils.addImages(
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/iron_layer_1.png"), 8, 8, 8, 8),
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/iron_layer_1.png"), 40, 8, 8, 8),
 				0.0F,
@@ -320,7 +293,7 @@ public class Radar implements IRadar {
 				8,
 				8
 			);
-			this.armorImages[6][0] = ImageUtils.addImages(
+			this.armorImages[GOLD][0] = ImageUtils.addImages(
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/gold_layer_1.png"), 8, 8, 8, 8),
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/gold_layer_1.png"), 40, 8, 8, 8),
 				0.0F,
@@ -328,7 +301,7 @@ public class Radar implements IRadar {
 				8,
 				8
 			);
-			this.armorImages[7][0] = ImageUtils.addImages(
+			this.armorImages[DIAMOND][0] = ImageUtils.addImages(
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/diamond_layer_1.png"), 8, 8, 8, 8),
 				ImageUtils.loadImage(new ResourceLocation("textures/models/armor/diamond_layer_1.png"), 40, 8, 8, 8),
 				0.0F,
@@ -400,7 +373,7 @@ public class Radar implements IRadar {
 	}
 
 	private BufferedImage createImageFromTypeAndResourceLocations(EnumMobs type, ResourceLocation resourceLocation, ResourceLocation resourceLocationSecondary) {
-		BufferedImage mobImage = null;
+		BufferedImage mobImage;
 		BufferedImage mobImageSecondary = null;
 
 		try {
@@ -416,7 +389,7 @@ public class Radar implements IRadar {
 	}
 
 	private BufferedImage createImageFromTypeAndImages(EnumMobs type, BufferedImage mobImage, BufferedImage mobImageSecondary) {
-		BufferedImage image = null;
+		BufferedImage image;
 		switch (type) {
 			case BLANK:
 				image = ImageUtils.blankImage(mobImage, 2, 2);
@@ -1159,9 +1132,9 @@ public class Radar implements IRadar {
 		this.contacts.clear();
 		List<Entity> entities = this.game.world.getLoadedEntityList();
 
-		for (int j = 0; j < entities.size(); j++) {
+		for (Entity value : entities) {
 			try {
-				Entity entity = entities.get(j);
+				Entity entity = value;
 				if (this.isEntityShown(entity)) {
 					int wayX = GameVariableAccessShim.xCoord() - (int) entity.posX;
 					int wayZ = GameVariableAccessShim.zCoord() - (int) entity.posZ;
@@ -1178,7 +1151,7 @@ public class Radar implements IRadar {
 										entity = wrappedEntity;
 									}
 								}
-							} catch (Exception var15) {
+							} catch (Exception ignored) {
 							}
 						}
 
@@ -1280,11 +1253,7 @@ public class Radar implements IRadar {
 		}
 
 		this.newMobs = false;
-		Collections.sort(this.contacts, new Comparator<Contact>() {
-			public int compare(Contact contact1, Contact contact2) {
-				return contact1.y - contact2.y;
-			}
-		});
+		this.contacts.sort((contact1, contact2) -> contact1.y - contact2.y);
 	}
 
 	private void tryCustomIcon(Contact contact) {
@@ -1300,8 +1269,7 @@ public class Radar implements IRadar {
 
 				try {
 					is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-				} catch (IOException e) {
-					is = null;
+				} catch (IOException ignored) {
 				}
 
 				if (is == null) {
@@ -1309,8 +1277,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1319,8 +1286,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1329,8 +1295,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1340,8 +1305,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1350,8 +1314,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1361,8 +1324,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1371,8 +1333,7 @@ public class Radar implements IRadar {
 
 					try {
 						is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
-					} catch (IOException e) {
-						is = null;
+					} catch (IOException ignored) {
 					}
 				}
 
@@ -1406,7 +1367,7 @@ public class Radar implements IRadar {
 
 	private void tryAutoIcon(Contact contact) {
 		Render<? extends Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-		ResourceLocation resourceLocation = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity);
+		ResourceLocation resourceLocation = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity);
 		String entityName = contact.entity.getClass().getName();
 		String resourceLocationString = resourceLocation != null ? resourceLocation.toString() : "";
 		String nameMinusSize = entityName + resourceLocationString;
@@ -1459,7 +1420,7 @@ public class Radar implements IRadar {
 				ModelRenderer[] headBits = null;
 				Properties properties = new Properties();
 				String fullPath = "textures/icons/" + contact.entity.getClass().getName() + ".properties";
-				InputStream is = null;
+				InputStream is;
 
 				try {
 					is = this.game.getResourceManager().getResource(new ResourceLocation(fullPath)).getInputStream();
@@ -1483,8 +1444,7 @@ public class Radar implements IRadar {
 					String subModelNames = properties.getProperty("models", "").toLowerCase();
 					String[] submodelNamesArray = subModelNames.split(",");
 					List<String> subModelNamesList = Arrays.asList(submodelNamesArray);
-					HashSet<String> subModelNamesSet = new HashSet<>();
-					subModelNamesSet.addAll(subModelNamesList);
+					HashSet<String> subModelNamesSet = new HashSet<>(subModelNamesList);
 					ArrayList<ModelRenderer> headPartsArrayList = new ArrayList<>();
 					ArrayList<ModelRenderer> purge = new ArrayList<>();
 
@@ -1512,8 +1472,8 @@ public class Radar implements IRadar {
 					}
 
 					headPartsArrayList.removeAll(purge);
-					if (headPartsArrayList.size() > 0) {
-						headBits = headPartsArrayList.toArray(new ModelRenderer[headPartsArrayList.size()]);
+					if (!headPartsArrayList.isEmpty()) {
+						headBits = headPartsArrayList.toArray(new ModelRenderer[0]);
 					}
 				}
 
@@ -1610,7 +1570,7 @@ public class Radar implements IRadar {
 								| name.contains("horn")
 								| name.contains("antler")) {
 								ModelRenderer[] submodelArrayValue = (ModelRenderer[]) submodelArray.get(model);
-								if (submodelArrayValue != null && submodelArrayValue.length >= 0) {
+								if (submodelArrayValue != null) {
 									headPartsArrayList.add(submodelArrayValue[0]);
 								}
 							}
@@ -1657,10 +1617,10 @@ public class Radar implements IRadar {
 							}
 						}
 
-						if (headPartsArrayList.size() == 0) {
-							if (submodels.size() > 0) {
+						if (headPartsArrayList.isEmpty()) {
+							if (!submodels.isEmpty()) {
 								headPartsArrayList.add((ModelRenderer) submodels.get(0).get(model));
-							} else if (submodelArrays.size() > 0) {
+							} else if (!submodelArrays.isEmpty()) {
 								ModelRenderer[] submodelArrayValue = (ModelRenderer[]) submodelArrays.get(0).get(model);
 								if (submodelArrayValue.length > 0) {
 									headPartsArrayList.add(submodelArrayValue[0]);
@@ -1675,18 +1635,17 @@ public class Radar implements IRadar {
 						}
 
 						headPartsArrayList.removeAll(purge);
-						headBits = headPartsArrayList.toArray(new ModelRenderer[headPartsArrayList.size()]);
+						headBits = headPartsArrayList.toArray(new ModelRenderer[0]);
 					}
 				}
 
-				for (int t = 0; t < headBits.length; t++) {
-					ModelRenderer bit = headBits[t];
+				for (ModelRenderer bit : headBits) {
 					if (this.hasCustomNPCs && this.modelScaleRendererClass.isInstance(bit)) {
 						bit.isHidden = false;
 					}
 				}
 
-				if (contact.entity != null && model != null && headBits.length > 0 && resourceLocation != null) {
+				if (contact.entity != null && headBits.length > 0 && resourceLocation != null) {
 					String scaleString = properties.getProperty("scale", "1");
 					float scale = Float.parseFloat(scaleString);
 					EnumFacing facing = EnumFacing.NORTH;
@@ -1702,8 +1661,7 @@ public class Radar implements IRadar {
 						headImage = ImageUtils.createBufferedImageFromGLID(GLUtils.fboTextureID);
 					}
 				}
-			} catch (Exception e) {
-				headImage = null;
+			} catch (Exception ignored) {
 			}
 		}
 
@@ -1766,13 +1724,13 @@ public class Radar implements IRadar {
 			float maxY = 0.0F;
 			float minY = 0.0F;
 
-			for (int t = 0; t < headBits.length; t++) {
-				if (headBits[t].rotationPointY < minY) {
-					minY = headBits[t].rotationPointY;
+			for (ModelRenderer headBit : headBits) {
+				if (headBit.rotationPointY < minY) {
+					minY = headBit.rotationPointY;
 				}
 
-				if (headBits[t].rotationPointY > maxY) {
-					maxY = headBits[t].rotationPointY;
+				if (headBit.rotationPointY > maxY) {
+					maxY = headBit.rotationPointY;
 				}
 			}
 
@@ -1786,11 +1744,11 @@ public class Radar implements IRadar {
 				offsetByY = 4.0F;
 			}
 
-			for (int t = 0; t < headBits.length; t++) {
-				float y = headBits[t].rotationPointY;
-				headBits[t].rotationPointY += offsetByY;
-				headBits[t].render(0.0625F);
-				headBits[t].rotationPointY = y;
+			for (ModelRenderer headBit : headBits) {
+				float y = headBit.rotationPointY;
+				headBit.rotationPointY += offsetByY;
+				headBit.render(0.0625F);
+				headBit.rotationPointY = y;
 			}
 		} catch (Exception e) {
 			failed = true;
@@ -1828,9 +1786,9 @@ public class Radar implements IRadar {
 			return contact.icons;
 		}
 
-		ResourceLocation resourceLocation = null;
+		ResourceLocation resourceLocation;
 		Render<? extends Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-		resourceLocation = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity);
+		resourceLocation = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity);
 		String originalResourceLocationString = resourceLocation != null ? resourceLocation.toString() : "";
 		resourceLocation = this.getResourceLocationForEntity(resourceLocation, contact.entity);
 		ResourceLocation resourceLocationSecondary = null;
@@ -1838,8 +1796,6 @@ public class Radar implements IRadar {
 			if (contact.type == EnumMobs.MOOSHROOM) {
 				if (!((EntityMooshroom) contact.entity).isChild()) {
 					resourceLocationSecondary = EnumMobs.MOOSHROOM.secondaryResourceLocation;
-				} else {
-					resourceLocationSecondary = null;
 				}
 			}
 
@@ -1909,7 +1865,7 @@ public class Radar implements IRadar {
 						.invoke(this.randomEntitiesPropertiesClass.cast(randomEntitiesProperties), resourceLocation, this.randomEntityClass.cast(this.randomEntity));
 				}
 			}
-		} catch (Exception var4) {
+		} catch (Exception ignored) {
 		}
 
 		return resourceLocation;
@@ -1943,8 +1899,8 @@ public class Radar implements IRadar {
 		contact.setUUID(uuid);
 		String playerName = this.scrubCodes(gameProfile.getName());
 		Sprite icon0 = this.textureAtlas.getAtlasSprite(playerName + " 0");
-		Sprite icon1 = null;
-		Integer checkCount = 0;
+		Sprite icon1;
+		Integer checkCount;
 		if (icon0 == this.textureAtlas.getMissingImage()) {
 			checkCount = this.mpContactsSkinGetTries.get(playerName);
 			if (checkCount == null) {
@@ -1952,7 +1908,7 @@ public class Radar implements IRadar {
 			}
 
 			if (checkCount < 5) {
-				ThreadDownloadImageData imageData = null;
+				ThreadDownloadImageData imageData;
 
 				try {
 					if (player.getLocationSkin() == DefaultPlayerSkin.getDefaultSkin(player.getUniqueID())) {
@@ -2014,7 +1970,7 @@ public class Radar implements IRadar {
 			if (helmet instanceof ItemArmor) {
 				ItemArmor helmetArmor = (ItemArmor) helmet;
 				int armorType = this.getArmorType(helmetArmor);
-				if (armorType == UNKNOWN) {
+				if (armorType == EnumMobs.UNKNOWN.ordinal()) {
 					icon0 = this.textureAtlas.getAtlasSprite("armor " + helmet.getTranslationKey() + " 0");
 					icon1 = this.textureAtlas.getAtlasSprite("armor " + helmet.getTranslationKey() + " 1");
 					if (icon0 == this.textureAtlas.getMissingImage()) {
@@ -2030,7 +1986,7 @@ public class Radar implements IRadar {
 					icon1 = this.textureAtlas.getAtlasSprite("armor " + this.armorNames[armorType] + " 1");
 				}
 
-				if (armorType == 0) {
+				if (armorType == CLOTH) {
 					contact.setArmorColor(helmetArmor.getColor(stack));
 				}
 			} else {
@@ -2076,7 +2032,7 @@ public class Radar implements IRadar {
 									gameProfile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
 								} else if (nbttagcompound.hasKey("SkullOwner", 8)) {
 									String s = nbttagcompound.getString("SkullOwner");
-									if (s != null && !s.equals("")) {
+									if (s != null && !s.isEmpty()) {
 										gameProfile = TileEntitySkull.updateGameProfile(new GameProfile(null, s));
 										nbttagcompound.setTag("SkullOwner", NBTUtil.writeGameProfile(new NBTTagCompound(), gameProfile));
 									}
@@ -2147,7 +2103,7 @@ public class Radar implements IRadar {
 		try {
 			Class<?> c = Class.forName("net.minecraftforge.client.ForgeHooksClient");
 			m = c.getMethod("getArmorTexture", Entity.class, ItemStack.class, String.class, EntityEquipmentSlot.class, String.class);
-		} catch (Exception var19) {
+		} catch (Exception ignored) {
 		}
 
 		Method getResourceLocation = m;
@@ -2167,7 +2123,7 @@ public class Radar implements IRadar {
 				resourcePath = (String) getResourceLocation.invoke(null, contact.entity, stack, resourcePath, EntityEquipmentSlot.HEAD, null);
 				resourceLocation = new ResourceLocation(resourcePath);
 			}
-		} catch (Exception var18) {
+		} catch (Exception ignored) {
 		}
 
 		m = null;
@@ -2175,7 +2131,7 @@ public class Radar implements IRadar {
 		try {
 			Class<?> c = Class.forName("net.minecraftforge.client.ForgeHooksClient");
 			m = c.getMethod("getArmorModel", EntityLivingBase.class, ItemStack.class, EntityEquipmentSlot.class, ModelBiped.class);
-		} catch (Exception var17) {
+		} catch (Exception ignored) {
 		}
 
 		Method getModel = m;
@@ -2185,7 +2141,7 @@ public class Radar implements IRadar {
 			if (getModel != null) {
 				modelBiped = (ModelBiped) getModel.invoke(null, contact.entity, stack, EntityEquipmentSlot.HEAD, null);
 			}
-		} catch (Exception var16) {
+		} catch (Exception ignored) {
 		}
 
 		if (modelBiped != null && resourceLocation != null && GLUtils.fboEnabled) {
@@ -2278,7 +2234,7 @@ public class Radar implements IRadar {
 			return EnumMobs.MAGMA;
 		} else if (entityClass.equals(EntityOcelot.class)) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("ocelot.png") ? EnumMobs.OCELOT : EnumMobs.CAT;
 		} else if (entityClass.equals(EntityParrot.class)) {
 			return EnumMobs.PARROT;
@@ -2300,7 +2256,7 @@ public class Radar implements IRadar {
 			return EnumMobs.SILVERFISH;
 		} else if (entityClass.equals(EntitySkeleton.class) || entityClass.equals(EntityWitherSkeleton.class) || entityClass.equals(EntityStray.class)) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("wither_skeleton.png") ? EnumMobs.SKELETONWITHER : EnumMobs.SKELETON;
 		} else if (entityClass.equals(EntitySlime.class)) {
 			return EnumMobs.SLIME;
@@ -2322,7 +2278,7 @@ public class Radar implements IRadar {
 			return EnumMobs.WITHER;
 		} else if (entityClass.equals(EntityWolf.class)) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("wolf_tame.png") ? EnumMobs.WOLFTAME : (path.endsWith("wolf_angry.png") ? EnumMobs.WOLFANGRY : EnumMobs.WOLF);
 		} else if (entityClass.equals(EntityZombie.class) || entityClass.equals(EntityHusk.class)) {
 			return EnumMobs.ZOMBIE;
@@ -2370,7 +2326,7 @@ public class Radar implements IRadar {
 			return EnumMobs.MAGMA;
 		} else if (entity instanceof EntityOcelot) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("ocelot.png") ? EnumMobs.OCELOT : EnumMobs.CAT;
 		} else if (entity instanceof EntityParrot) {
 			return EnumMobs.PARROT;
@@ -2412,7 +2368,7 @@ public class Radar implements IRadar {
 			return EnumMobs.WITHER;
 		} else if (entity instanceof EntityWolf) {
 			Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(entity);
-			String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, entity).getPath();
+			String path = ((RenderAccessor) render).invokerGetEntityTexture(entity).getPath();
 			return path.endsWith("wolf_tame.png") ? EnumMobs.WOLFTAME : (path.endsWith("wolf_angry.png") ? EnumMobs.WOLFANGRY : EnumMobs.WOLF);
 		} else if (entity instanceof EntityZombieVillager) {
 			return EnumMobs.ZOMBIEVILLAGER;
@@ -2435,15 +2391,15 @@ public class Radar implements IRadar {
 
 	private int getArmorType(ItemArmor helmet) {
 		if (helmet.getTranslationKey().equals("item.helmetCloth")) {
-			return 0;
+			return CLOTH;
 		} else if (helmet.getTranslationKey().equals("item.helmetChain")) {
-			return 4;
+			return CHAIN;
 		} else if (helmet.getTranslationKey().equals("item.helmetIron")) {
-			return 5;
+			return IRON;
 		} else if (helmet.getTranslationKey().equals("item.helmetGold")) {
-			return 6;
+			return GOLD;
 		} else {
-			return helmet.getTranslationKey().equals("item.helmetDiamond") ? 7 : UNKNOWN;
+			return helmet.getTranslationKey().equals("item.helmetDiamond") ? DIAMOND : EnumMobs.UNKNOWN.ordinal();
 		}
 	}
 
@@ -2476,7 +2432,7 @@ public class Radar implements IRadar {
 				contact.angle = contact.angle + this.direction;
 			}
 
-			boolean inRange = false;
+			boolean inRange;
 			if (!this.minimapOptions.squareMap) {
 				inRange = contact.distance < 31.0;
 			} else {
@@ -2499,15 +2455,11 @@ public class Radar implements IRadar {
 					} else {
 						wayX = Math.sin(Math.toRadians(contact.angle - northRotate)) * contact.distance;
 						wayZ = Math.cos(Math.toRadians(contact.angle - northRotate)) * contact.distance;
-						if (this.options.filtering) {
-							GLShim.glTranslated(-wayX, -wayZ, 0.0);
-						} else {
-							GLShim.glTranslated(
-								(double) Math.round(-wayX * this.layoutVariables.scScale) / this.layoutVariables.scScale,
-								(double) Math.round(-wayZ * this.layoutVariables.scScale) / this.layoutVariables.scScale,
-								0.0
-							);
-						}
+						GLShim.glTranslated(
+							(double) Math.round(-wayX * this.layoutVariables.scScale) / this.layoutVariables.scScale,
+							(double) Math.round(-wayZ * this.layoutVariables.scScale) / this.layoutVariables.scScale,
+							0.0
+						);
 					}
 
 					float yOffset = 0.0F;
@@ -2531,15 +2483,15 @@ public class Radar implements IRadar {
 						|| contact.type == EnumMobs.VEXCHARGING) {
 						if (contact.type == EnumMobs.GHAST || contact.type == EnumMobs.GHASTATTACKING) {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-							String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity).getPath();
+							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("ghast_fire.png") ? EnumMobs.GHASTATTACKING : EnumMobs.GHAST;
 						} else if (contact.type == EnumMobs.WITHER || contact.type == EnumMobs.WITHERINVULNERABLE) {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-							String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity).getPath();
+							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("wither_invulnerable.png") ? EnumMobs.WITHERINVULNERABLE : EnumMobs.WITHER;
 						} else if (contact.type == EnumMobs.VEX || contact.type == EnumMobs.VEXCHARGING) {
 							Render<Entity> render = this.game.getRenderManager().getEntityRenderObject(contact.entity);
-							String path = VoxelMapProtectedFieldsHelper.getRendersResourceLocation(render, contact.entity).getPath();
+							String path = ((RenderAccessor) render).invokerGetEntityTexture(contact.entity).getPath();
 							contact.type = path.endsWith("vex_charging.png") ? EnumMobs.VEXCHARGING : EnumMobs.VEX;
 						}
 
@@ -2581,7 +2533,7 @@ public class Radar implements IRadar {
 						if (contact.armorColor != -1) {
 							red = (contact.armorColor >> 16 & 0xFF) / 255.0F;
 							green = (contact.armorColor >> 8 & 0xFF) / 255.0F;
-							blue = (contact.armorColor >> 0 & 0xFF) / 255.0F;
+							blue = (contact.armorColor & 0xFF) / 255.0F;
 							if (contact.type == EnumMobs.SHEEP) {
 								armorScale = 0.525F;
 								EntitySheep sheepEntity = (EntitySheep) contact.entity;
@@ -2706,6 +2658,6 @@ public class Radar implements IRadar {
 	}
 
 	private boolean isNeutral(Entity entity) {
-		return entity instanceof EntityLiving && !(entity instanceof EntityPlayer) && !this.isHostile(entity);
+		return entity instanceof EntityLiving && !this.isHostile(entity);
 	}
 }

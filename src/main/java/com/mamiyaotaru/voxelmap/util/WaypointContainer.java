@@ -112,7 +112,7 @@ public class WaypointContainer {
 		} else return raytraceresult != null;
 	}
 
-	private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ, float par8) {
+	private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ, float unused) {
 		Tessellator tesselator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tesselator.getBuffer();
 		GLShim.glDisable(3553);
@@ -171,7 +171,7 @@ public class WaypointContainer {
 		GLShim.glDepthMask(true);
 	}
 
-	private void renderLabel(Waypoint pt, double distance, boolean isPointedAt, String name, double par3, double par5, double par7, int par9) {
+	private void renderLabel(Waypoint pt, double distance, boolean isPointedAt, String name, double x, double y, double z, int unused) {
 		GLShim.glAlphaFunc(516, 0.1F);
 		boolean target = name.equals(TARGETFLAG);
 		if (target) {
@@ -186,19 +186,19 @@ public class WaypointContainer {
 		double maxDistance = this.options.game.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16.0F * 0.99;
 		double adjustedDistance = distance;
 		if (distance > maxDistance) {
-			par3 = par3 / distance * maxDistance;
-			par5 = par5 / distance * maxDistance;
-			par7 = par7 / distance * maxDistance;
+			x = x / distance * maxDistance;
+			y = y / distance * maxDistance;
+			z = z / distance * maxDistance;
 			adjustedDistance = maxDistance;
 		}
 
-		float var14 = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F;
+		float scale = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F;
 		GLShim.glPushMatrix();
-		GLShim.glTranslatef((float) par3 + 0.5F, (float) par5 + 0.5F, (float) par7 + 0.5F);
+		GLShim.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
 		GLShim.glNormal3f(0.0F, 1.0F, 0.0F);
 		GLShim.glRotatef(-this.mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
 		GLShim.glRotatef(this.mc.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
-		GLShim.glScalef(-var14, -var14, var14);
+		GLShim.glScalef(-scale, -scale, scale);
 		GLShim.glDisable(2896);
 		GLShim.glDisable(2912);
 		GLShim.glEnable(3042);
@@ -288,8 +288,8 @@ public class WaypointContainer {
 			int textColor = (int) (255.0F * fade) << 24 | 13421772;
 			fontRenderer.drawString(name, -fontRenderer.getStringWidth(name) / 2, elevateBy, textColor);
 			GLShim.glEnable(2929);
-			int var34 = (int) (255.0F * fade) << 24 | 16777215;
-			fontRenderer.drawString(name, -fontRenderer.getStringWidth(name) / 2, elevateBy, var34);
+			int textColor2 = (int) (255.0F * fade) << 24 | 16777215;
+			fontRenderer.drawString(name, -fontRenderer.getStringWidth(name) / 2, elevateBy, textColor2);
 		}
 
 		GLShim.glEnable(2929);

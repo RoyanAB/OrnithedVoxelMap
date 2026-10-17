@@ -16,24 +16,26 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class RadarSimple implements IRadar {
-	private Minecraft game;
-	private LayoutVariables layoutVariables = null;
-	public MapSettingsManager minimapOptions = null;
-	public RadarSettingsManager options = null;
 	private final TextureAtlas textureAtlas;
-	private final boolean enabled = true;
+	private final ArrayList<Contact> contacts = new ArrayList<>(40);
+	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
+
+	private Minecraft game;
+	private LayoutVariables layoutVariables;
+	public MapSettingsManager minimapOptions;
+	public RadarSettingsManager options;
+
 	private boolean completedLoading = false;
 	private int timer = 500;
 	private float direction = 0.0F;
-	private final ArrayList<Contact> contacts = new ArrayList<>(40);
-	UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
+
+	private final boolean enabled = true;
 
 	public RadarSimple(IVoxelMap master) {
 		this.minimapOptions = master.getMapOptions();
@@ -112,9 +114,8 @@ public class RadarSimple implements IRadar {
 		this.contacts.clear();
 		List<Entity> entities = this.game.world.getLoadedEntityList();
 
-		for (int j = 0; j < entities.size(); j++) {
+		for (Entity entity : entities) {
 			try {
-				Entity entity = entities.get(j);
 				if (entity != null
 					&& !entity.isInvisibleToPlayer(this.game.player)
 					&& (
@@ -160,11 +161,7 @@ public class RadarSimple implements IRadar {
 			}
 		}
 
-		Collections.sort(this.contacts, new Comparator<Contact>() {
-			public int compare(Contact contact1, Contact contact2) {
-				return contact1.y - contact2.y;
-			}
-		});
+		this.contacts.sort(Comparator.comparingInt(contact -> contact.y));
 	}
 
 	private EnumMobs getUnknownMobNeutrality(Entity entity) {
@@ -189,10 +186,10 @@ public class RadarSimple implements IRadar {
 		}
 
 		if (entity instanceof EntityPolarBear) {
-			for (Object object : ((EntityPolarBear) entity)
+			for (EntityPolarBear object : ((EntityPolarBear) entity)
 				.world
 				.getEntitiesWithinAABB(EntityPolarBear.class, entity.getEntityBoundingBox().expand(8.0, 4.0, 8.0))) {
-				if (((EntityPolarBear) object).isChild()) {
+				if (object.isChild()) {
 					return true;
 				}
 			}
@@ -210,7 +207,7 @@ public class RadarSimple implements IRadar {
 	}
 
 	private boolean isNeutral(Entity entity) {
-		return entity instanceof EntityLiving && !(entity instanceof EntityPlayer) && !this.isHostile(entity);
+		return entity instanceof EntityLiving && !this.isHostile(entity);
 	}
 
 	public void renderMapMobs(int x, int y) {
@@ -243,7 +240,7 @@ public class RadarSimple implements IRadar {
 				contact.angle -= 90.0F;
 			}
 
-			boolean inRange = false;
+			boolean inRange;
 			if (this.minimapOptions.squareMap) {
 				double radLocate = Math.toRadians(contact.angle);
 				double dispX = contact.distance * Math.cos(radLocate);

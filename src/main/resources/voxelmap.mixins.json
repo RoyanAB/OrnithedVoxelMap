@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.mamiyaotaru.voxelmap.ornithe.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "EntityPlayerSPMixin",
+    "EntityRendererMixin",
+    "MinecraftMixin",
+    "NetHandlerPlayClientMixin",
+    "RenderAccessor",
+    "RenderGlobalMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

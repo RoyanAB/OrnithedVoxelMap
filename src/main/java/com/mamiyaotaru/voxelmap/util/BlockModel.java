@@ -17,8 +17,8 @@ public class BlockModel {
 	float failedToLoadY;
 
 	public BlockModel(List<BakedQuad> quads) {
-		for (BakedQuad var9 : quads) {
-			BlockModel.BlockFace face = new BlockFace(var9.getVertexData());
+		for (BakedQuad bakedQuad : quads) {
+			BlockModel.BlockFace face = new BlockFace(bakedQuad.getVertexData());
 			if (face.isClockwise && !face.isVertical) {
 				this.faces.add(face);
 			}
@@ -28,13 +28,13 @@ public class BlockModel {
 		this.longestSide = new BlockModel.BlockVertex[2];
 		float greatestLength = 0.0F;
 
-		for (BlockModel.BlockFace var12 : this.faces) {
-			float uDiff = var12.longestSide[0].u - var12.longestSide[1].u;
-			float vDiff = var12.longestSide[0].v - var12.longestSide[1].v;
+		for (BlockModel.BlockFace blockFace : this.faces) {
+			float uDiff = blockFace.longestSide[0].u - blockFace.longestSide[1].u;
+			float vDiff = blockFace.longestSide[0].v - blockFace.longestSide[1].v;
 			float segmentLength = (float) Math.sqrt(uDiff * uDiff + vDiff * vDiff);
 			if (segmentLength > greatestLength) {
 				greatestLength = segmentLength;
-				this.longestSide = var12.longestSide;
+				this.longestSide = blockFace.longestSide;
 			}
 		}
 	}
@@ -66,15 +66,15 @@ public class BlockModel {
 		g2.fillRect(0, 0, modelImage.getWidth(), modelImage.getHeight());
 		g2.dispose();
 
-		for (BlockModel.BlockFace var32 : this.faces) {
-			float minU = var32.getMinU();
-			float maxU = var32.getMaxU();
-			float minV = var32.getMinV();
-			float maxV = var32.getMaxV();
-			float minX = var32.getMinX();
-			float maxX = var32.getMaxX();
-			float minZ = var32.getMinZ();
-			float maxZ = var32.getMaxZ();
+		for (BlockModel.BlockFace blockFace : this.faces) {
+			float minU = blockFace.getMinU();
+			float maxU = blockFace.getMaxU();
+			float minV = blockFace.getMinV();
+			float maxV = blockFace.getMaxV();
+			float minX = blockFace.getMinX();
+			float maxX = blockFace.getMaxX();
+			float minZ = blockFace.getMinZ();
+			float maxZ = blockFace.getMaxZ();
 			if (this.similarEnough(minU, minV, this.failedToLoadX, this.failedToLoadY)) {
 				return null;
 			}

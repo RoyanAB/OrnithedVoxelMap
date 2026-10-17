@@ -48,8 +48,8 @@ public class ImageUtils {
 			try {
 				ImageIO.write(bufferedImage, "png", file);
 				logger.debug("Exported png to: {}", new Object[]{file.getAbsolutePath()});
-			} catch (IOException var14) {
-				logger.debug("Unable to write: ", var14);
+			} catch (IOException exception) {
+				logger.debug("Unable to write: ", exception);
 			}
 		}
 	}
@@ -113,8 +113,7 @@ public class ImageUtils {
 			for (int x = 0; x < imageWidth; x++) {
 				for (int y = 0; y < imageHeight; y++) {
 					int index = y * imageWidth * 4 + x * 4;
-					byte var8 = 0;
-					int color24 = var8 | (bytes[index + 2] & 255);
+					int color24 = (bytes[index + 2] & 255);
 					color24 |= (bytes[index + 1] & 255) << 8;
 					color24 |= (bytes[index] & 255) << 16;
 					color24 |= (bytes[index + 3] & 255) << 24;
@@ -169,8 +168,7 @@ public class ImageUtils {
 					for (int x = 0; x < fboWidth && startX + x < imageWidth; x++) {
 						for (int y = 0; y < fboHeight && startY + y < imageHeight; y++) {
 							int index = y * fboWidth * 4 + x * 4;
-							byte var8 = 0;
-							int color24 = var8 | (bytes[index + 2] & 255);
+							int color24 = (bytes[index + 2] & 255);
 							color24 |= (bytes[index + 1] & 255) << 8;
 							color24 |= (bytes[index] & 255) << 16;
 							color24 |= (bytes[index + 3] & 255) << 24;
