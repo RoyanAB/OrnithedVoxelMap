@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
@@ -89,50 +90,50 @@ public class Popup {
 	public void drawPopup(int mouseX, int mouseY) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
-		GLShim.glDisable(2929);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		float textureScale = 32.0F;
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(this.x, this.y + this.h, 0.0).tex(this.x / textureScale, this.y / textureScale).color(64, 64, 64, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).tex((this.x + this.w) / textureScale, this.y / textureScale).color(64, 64, 64, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y, 0.0).tex((this.x + this.w) / textureScale, (this.y + this.h) / textureScale).color(64, 64, 64, 255).endVertex();
 		vertexBuffer.pos(this.x, this.y, 0.0).tex(this.x / textureScale, (this.y + this.h) / textureScale).color(64, 64, 64, 255).endVertex();
 		tessellator.draw();
-		GLShim.glEnable(3042);
-		GLShim.glBlendFunc(770, 771);
-		GLShim.glDisable(3008);
-		GLShim.glShadeModel(7425);
-		GLShim.glDisable(3553);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
+		GLShim.glDisable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glShadeModel(GLShim.GL11_GL_SMOOTH);
+		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 		byte fadeWidth = 4;
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x, this.y + fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		tessellator.draw();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h - fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x, this.y + this.h - fadeWidth, 0.0).color(0, 0, 0, 0).endVertex();
 		tessellator.draw();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + fadeWidth, this.y + this.h, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + fadeWidth, this.y, 0.0).color(0, 0, 0, 0).endVertex();
 		tessellator.draw();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		vertexBuffer.pos(this.x + this.w - fadeWidth, this.y, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w - fadeWidth, this.y + this.h, 0.0).color(0, 0, 0, 0).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y + this.h, 0.0).color(0, 0, 0, 255).endVertex();
 		vertexBuffer.pos(this.x + this.w, this.y, 0.0).color(0, 0, 0, 255).endVertex();
 		tessellator.draw();
-		GLShim.glEnable(3553);
-		GLShim.glShadeModel(7424);
-		GLShim.glEnable(3008);
-		GLShim.glDisable(3042);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glShadeModel(GLShim.GL11_GL_FLAT);
+		GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_BLEND);
 
 		for (int t = 0; t < this.entries.length; t++) {
 			int color = !this.entries[t].enabled

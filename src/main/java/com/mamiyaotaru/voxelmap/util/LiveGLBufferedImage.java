@@ -43,19 +43,19 @@ public class LiveGLBufferedImage extends GLBufferedImage {
 			}
 		}
 
-		GLShim.glBindTexture(3553, this.index);
-		GLShim.glTexParameteri(3553, 10241, 9728);
-		GLShim.glTexParameteri(3553, 10240, 9728);
-		GLShim.glTexParameteri(3553, 10242, 33071);
-		GLShim.glTexParameteri(3553, 10243, 33071);
+		GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.index);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL12_GL_CLAMP_TO_EDGE);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL12_GL_CLAMP_TO_EDGE);
 		if (GLUtils.openGL14Enabled) {
-			GLShim.glTexParameteri(3553, 33169, 1);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL14_GL_GENERATE_MIPMAP, 1);
 		}
 
-		GLShim.glPixelStorei(3314, 0);
-		GLShim.glPixelStorei(3316, 0);
-		GLShim.glPixelStorei(3315, 0);
-		GLShim.glTexImage2D(3553, 0, 6408, this.getWidth(), this.getHeight(), 0, 6408, 32821, this.buffer);
+		GLShim.glPixelStorei(GLShim.GL11_GL_FLAT, 0);
+		GLShim.glPixelStorei(GLShim.GL11_GL_UNPACK_SKIP_PIXELS, 0);
+		GLShim.glPixelStorei(GLShim.GL11_GL_UNPACK_SKIP_ROWS, 0);
+		GLShim.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, this.getWidth(), this.getHeight(), 0, GLShim.GL11_GL_RGBA, GLShim.GL12_GL_UNSIGNED_INT_8_8_8_8, this.buffer);
 	}
 
 	@Override

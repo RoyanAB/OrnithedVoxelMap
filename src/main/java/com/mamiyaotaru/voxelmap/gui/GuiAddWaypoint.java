@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
 	private final IWaypointManager waypointManager;
@@ -334,7 +335,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		this.drawTexturedModalRect(this.getWidth() / 2 - 25, buttonListY + 24 + 5, 0, 0, 16, 10);
 		TextureAtlas chooser = this.waypointManager.getTextureAtlasChooser();
 		GLUtils.disp(chooser.getGlTextureId());
-		GLShim.glTexParameteri(3553, 10241, 9729);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 		Sprite icon = chooser.getAtlasSprite("voxelmap:images/waypoints/waypoint" + this.waypoint.imageSuffix + ".png");
 		this.drawTexturedModalRect(this.getWidth() / 2 - 25, buttonListY + 48 + 2, icon, 16.0F, 16.0F);
 		if (this.choosingColor || this.choosingIcon) {
@@ -344,7 +345,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 		if (this.choosingColor) {
 			GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			GLUtils.img(new ResourceLocation("voxelmap", "images/colorpicker.png"));
-			GLShim.glTexParameteri(3553, 10241, 9728);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
 			this.drawTexturedModalRect(this.getWidth() / 2 - 128, this.getHeight() / 2 - 128, 0, 0, 256, 256);
 		}
 
@@ -367,7 +368,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 			int displayWidth = (int) displayWidthFloat;
 			int displayHeight = (int) displayHeightFloat;
 			GLUtils.disp(-1);
-			GLShim.glTexParameteri(3553, 10241, 9728);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
 			GLShim.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);
 			this.drawTexturedModalRect(
 				this.getWidth() / 2 - displayWidth / 2 - 1, this.getHeight() / 2 - displayHeight / 2 - 1, 0, 0, displayWidth + 2, displayHeight + 2
@@ -375,9 +376,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 			GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			this.drawTexturedModalRect(this.getWidth() / 2 - displayWidth / 2, this.getHeight() / 2 - displayHeight / 2, 0, 0, displayWidth, displayHeight);
 			GLShim.glColor4f(this.waypoint.red, this.waypoint.green, this.waypoint.blue, 1.0F);
-			GLShim.glEnable(3042);
+			GLShim.glEnable(GLShim.GL11_GL_BLEND);
 			GLUtils.disp(chooser.getGlTextureId());
-			GLShim.glTexParameteri(3553, 10241, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 			drawScaledCustomSizeModalRect(
 				this.getWidth() / 2 - displayWidth / 2,
 				this.getHeight() / 2 - displayHeight / 2,
@@ -402,8 +403,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 				}
 			}
 
-			GLShim.glDisable(3042);
-			GLShim.glTexParameteri(3553, 10241, 9728);
+			GLShim.glDisable(GLShim.GL11_GL_BLEND);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
 		}
 
 		this.drawTooltip(this.tooltip, mouseX, mouseY);
@@ -438,7 +439,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 	public void drawTexturedModalRect(float xCoord, float yCoord, Sprite icon, float widthIn, float heightIn) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexbuffer = tessellator.getBuffer();
-		vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+		vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		vertexbuffer.pos(xCoord + 0.0F, yCoord + heightIn, this.zLevel).tex(icon.getMinU(), icon.getMaxV()).endVertex();
 		vertexbuffer.pos(xCoord + widthIn, yCoord + heightIn, this.zLevel).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
 		vertexbuffer.pos(xCoord + widthIn, yCoord + 0.0F, this.zLevel).tex(icon.getMaxU(), icon.getMinV()).endVertex();

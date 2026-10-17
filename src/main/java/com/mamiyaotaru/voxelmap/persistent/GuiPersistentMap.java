@@ -29,6 +29,7 @@ import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -691,20 +692,20 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				GLUtils.disp(glid);
 				if (this.mapOptions.filtering) {
 					if (GLUtils.openGL14Enabled) {
-						GLShim.glTexParameteri(3553, 10241, 9987);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 					} else {
-						GLShim.glTexParameteri(3553, 10241, 9729);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 					}
 
-					GLShim.glTexParameteri(3553, 10240, 9729);
+					GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				} else {
 					if (GLUtils.openGL14Enabled) {
-						GLShim.glTexParameteri(3553, 10241, 9987);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 					} else {
-						GLShim.glTexParameteri(3553, 10241, 9728);
+						GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
 					}
 
-					GLShim.glTexParameteri(3553, 10240, 9728);
+					GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
 				}
 
 				this.drawTexturedModalRect(
@@ -733,7 +734,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
 		}
 
-		GLShim.glEnable(3042);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
 		if (this.options.showWaypoints) {
 			for (Waypoint pt : this.waypointManager.getWaypoints()) {
 				this.drawWaypoint(pt, cursorCoordX, cursorCoordZ, null, null, null, null);
@@ -754,8 +755,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GLUtils.disp(playerGLID);
-		GLShim.glTexParameteri(3553, 10241, 9729);
-		GLShim.glTexParameteri(3553, 10240, 9729);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 		float playerX = (float) GameVariableAccessShim.xCoordDouble();
 		float playerZ = (float) GameVariableAccessShim.zCoordDouble();
 		if (this.oldNorth) {
@@ -839,7 +840,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				int minimumSize = (int) (20.0F * this.scScale / biomeScaleX);
 				minimumSize *= minimumSize;
 				ArrayList<AbstractMapData.BiomeLabel> labels = this.biomeMapData.getBiomeLabels();
-				GLShim.glDisable(2929);
+				GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 
 				for (AbstractMapData.BiomeLabel label : labels) {
 					if (label.segmentSize > minimumSize) {
@@ -850,7 +851,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 					}
 				}
 
-				GLShim.glEnable(2929);
+				GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 			}
 		}
 
@@ -862,7 +863,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 			GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
 			GlStateManager.enableAlpha();
 			this.drawTexturedModalRect(scWidth / 2 - 7, scHeight / 2 - 7, 0, 0, 16, 16);
-			GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+			GlStateManager.tryBlendFuncSeparate(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 		} else {
 			this.switchToMouseInput();
 		}
@@ -941,8 +942,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 				}
 
 				GLShim.glColor4f(r, g, b, !pt.enabled && !target && !hover ? 0.3F : 1.0F);
-				GLShim.glTexParameteri(3553, 10241, 9729);
-				GLShim.glTexParameteri(3553, 10240, 9729);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				if (this.oldNorth) {
 					GLShim.glPushMatrix();
 					GLShim.glTranslatef(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
@@ -1011,7 +1012,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
 		this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		vertexBuffer.pos(0.0, endY, 0.0).tex(0.0, endY / 32.0F).color(64, 64, 64, endAlpha).endVertex();
 		vertexBuffer.pos(this.getWidth(), endY, 0.0).tex(this.width / 32.0F, endY / 32.0F).color(64, 64, 64, endAlpha).endVertex();
 		vertexBuffer.pos(this.getWidth(), startY, 0.0).tex(this.width / 32.0F, startY / 32.0F).color(64, 64, 64, startAlpha).endVertex();
@@ -1051,7 +1052,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	public void drawTexturedModalRect(float x, float y, float width, float height) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		vertexBuffer.pos(x + 0.0F, y + height, this.zLevel).tex(0.0, 1.0).endVertex();
 		vertexBuffer.pos(x + width, y + height, this.zLevel).tex(1.0, 1.0).endVertex();
 		vertexBuffer.pos(x + width, y + 0.0F, this.zLevel).tex(1.0, 0.0).endVertex();
@@ -1068,7 +1069,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 	public void drawTexturedModalRect(float xCoord, float yCoord, Sprite icon, float widthIn, float heightIn) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
-		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+		vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		vertexBuffer.pos(xCoord + 0.0F, yCoord + heightIn, this.zLevel).tex(icon.getMinU(), icon.getMaxV()).endVertex();
 		vertexBuffer.pos(xCoord + widthIn, yCoord + heightIn, this.zLevel).tex(icon.getMaxU(), icon.getMaxV()).endVertex();
 		vertexBuffer.pos(xCoord + widthIn, yCoord + 0.0F, this.zLevel).tex(icon.getMaxU(), icon.getMinV()).endVertex();

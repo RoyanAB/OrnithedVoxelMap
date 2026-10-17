@@ -7,174 +7,127 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+
 public class GLShim {
-	public static final int GL_ALPHA_TEST = 3008;
-	public static final int GL_BLEND = 3042;
-	public static final int GL_CLAMP = 10496;
-	public static final int GL_CLAMP_TO_EDGE = 33071;
-	public static final int GL_COLOR_BUFFER_BIT = 16384;
-	public static final int GL_COLOR_CLEAR_VALUE = 3106;
-	public static final int GL_CULL_FACE = 2884;
-	public static final int GL_DEPTH_BUFFER_BIT = 256;
-	public static final int GL_DST_ALPHA = 772;
-	public static final int GL_DST_COLOR = 774;
-	public static final int GL_FOG = 2912;
-	public static final int GL_DEPTH_TEST = 2929;
-	public static final int GL_FLAT = 7424;
-	public static final int GL_FOG_DENSITY = 2914;
-	public static final int GL_FOG_END = 2916;
-	public static final int GL_FOG_MODE = 2917;
-	public static final int GL_FOG_START = 2915;
-	public static final int GL_GENERATE_MIPMAP = 33169;
-	public static final int GL_GREATER = 516;
-	public static final int GL_LIGHTING = 2896;
-	public static final int GL_LINEAR = 9729;
-	public static final int GL_LINES = 1;
-	public static final int GL_LINEAR_MIPMAP_LINEAR = 9987;
-	public static final int GL_LINEAR_MIPMAP_NEAREST = 9985;
-	public static final int GL_MODELVIEW = 5888;
-	public static final int GL_NEAREST = 9728;
-	public static final int GL_NEAREST_MIPMAP_LINEAR = 9986;
-	public static final int GL_NEAREST_MIPMAP_NEAREST = 9984;
-	public static final int GL_NORMALIZE = 2977;
-	public static final int GL_ONE = 1;
-	public static final int GL_ONE_MINUS_DST_ALPHA = 773;
-	public static final int GL_ONE_MINUS_DST_COLOR = 775;
-	public static final int GL_ONE_MINUS_SRC_ALPHA = 771;
-	public static final int GL_ONE_MINUS_SRC_COLOR = 769;
-	public static final int GL_PACK_ALIGNMENT = 3333;
-	public static final int GL_POLYGON_OFFSET_FILL = 32823;
-	public static final int GL_PROJECTION = 5889;
-	public static final int GL_QUADS = 7;
-	public static final int GL_RGBA = 6408;
-	public static final int GL_SMOOTH = 7425;
-	public static final int GL_SCISSOR_TEST = 3089;
-	public static final int GL_SRC_ALPHA = 770;
-	public static final int GL_TEXTURE_2D = 3553;
-	public static final int GL_TEXTURE_BINDING_2D = 32873;
-	public static final int GL_TEXTURE_HEIGHT = 4097;
-	public static final int GL_TEXTURE_MAG_FILTER = 10240;
-	public static final int GL_TEXTURE_MIN_FILTER = 10241;
-	public static final int GL_TEXTURE_WIDTH = 4096;
-	public static final int GL_TEXTURE_WRAP_S = 10242;
-	public static final int GL_TEXTURE_WRAP_T = 10243;
-	public static final int GL_TRUE = 1;
-	public static final int GL_TRANSFORM_BIT = 4096;
-	public static final int GL_UNPACK_ALIGNMENT = 3317;
-	public static final int GL_UNPACK_ROW_LENGTH = 3314;
-	public static final int GL_UNPACK_SKIP_PIXELS = 3316;
-	public static final int GL_UNPACK_SKIP_ROWS = 3315;
-	public static final int GL_UNSIGNED_BYTE = 5121;
-	public static final int GL_UNSIGNED_INT_8_8_8_8 = 32821;
-	public static final int GL_VIEWPORT_BIT = 2048;
-	public static final int GL_ZERO = 0;
-	public static final int GL_BGRA = 32993;
-	public static final int GL_RESCALE_NORMAL = 32826;
-	public static final int GL_UNSIGNED_INT_8_8_8_8_REV = 33639;
+	public static final int
+		GL11_GL_ALPHA_TEST = 0xBC0,
+		GL11_GL_DEPTH_BUFFER_BIT = 0x100,
+		GL11_GL_GREATER = 0x204,
+		GL11_GL_SRC_ALPHA = 0x302,
+		GL11_GL_ONE_MINUS_SRC_ALPHA = 0x303,
+		GL11_GL_DST_ALPHA = 0x304,
+		GL11_GL_ONE_MINUS_DST_ALPHA = 0x305,
+		GL11_GL_DST_COLOR = 0x306,
+		GL11_GL_FOG = 0xB60,
+		GL11_GL_CULL_FACE = 0xB44,
+		GL11_GL_LIGHTING = 0xB50,
+		GL11_GL_DEPTH_TEST = 0xB71,
+		GL11_GL_NORMALIZE = 0xBA1,
+		GL11_GL_BLEND = 0xBE2,
+		GL11_GL_SCISSOR_TEST = 0xC11,
+		GL11_GL_COLOR_CLEAR_VALUE = 0xC22,
+		GL11_GL_UNPACK_ROW_LENGTH = 0xCF2,
+		GL11_GL_UNPACK_SKIP_ROWS = 0xCF3,
+		GL11_GL_UNPACK_SKIP_PIXELS = 0xCF4,
+		GL11_GL_UNPACK_ALIGNMENT = 0xCF5,
+		GL11_GL_FLAT = 0x1D00,
+		GL11_GL_SMOOTH = 0x1D01,
+		GL11_GL_PACK_ALIGNMENT = 0xD05,
+		GL11_GL_TEXTURE_2D = 0xDE1,
+		GL11_GL_TRANSFORM_BIT = 0x1000,
+		GL11_GL_TEXTURE_HEIGHT = 0x1001,
+		GL11_GL_BYTE = 0x1400,
+		GL11_GL_UNSIGNED_BYTE = 0x1401,
+		GL11_GL_MODELVIEW = 0x1700,
+		GL11_GL_PROJECTION = 0x1701,
+		GL11_GL_RGBA = 0x1908,
+		GL11_GL_NEAREST = 0x2600,
+		GL11_GL_LINEAR = 0x2601,
+		GL11_GL_LINEAR_MIPMAP_LINEAR = 0x2703,
+		GL11_GL_TEXTURE_MAG_FILTER = 0x2800,
+		GL11_GL_TEXTURE_MIN_FILTER = 0x2801,
+		GL11_GL_TEXTURE_WRAP_S = 0x2802,
+		GL11_GL_TEXTURE_WRAP_T = 0x2803,
+		GL11_GL_CLAMP = 0x2900,
+		GL11_GL_COLOR_BUFFER_BIT = 0x4000,
+		GL11_GL_POLYGON_OFFSET_FILL = 0x8037,
+		GL11_GL_TEXTURE_BINDING_2D = 0x8069;
+
+	public static final int
+		GL12_GL_UNSIGNED_INT_8_8_8_8 = 0x8035,
+		GL12_GL_BGRA = 0x80E1,
+		GL12_GL_CLAMP_TO_EDGE = 0x812F,
+		GL12_GL_UNSIGNED_INT_8_8_8_8_REV = 0x8367;
+
+	public static final int
+		GL14_GL_GENERATE_MIPMAP = 0x8191,
+		GL14_GL_DEPTH_COMPONENT24 = 0x81A6;
 
 	public static void glEnable(int attrib) {
 		switch (attrib) {
-			case 2884:
+			case GL11_GL_CULL_FACE:
 				GlStateManager.enableCull();
 				break;
-			case 2896:
+			case GL11_GL_LIGHTING:
 				GlStateManager.enableLighting();
 				break;
-			case 2912:
+			case GL11_GL_FOG:
 				GlStateManager.enableFog();
 				break;
-			case 2929:
+			case GL11_GL_DEPTH_TEST:
 				GlStateManager.enableDepth();
 				break;
-			case 2977:
+			case GL11_GL_NORMALIZE:
 				GlStateManager.enableNormalize();
 				break;
-			case 3008:
+			case GL11_GL_ALPHA_TEST:
 				GlStateManager.enableAlpha();
 				break;
-			case 3042:
+			case GL11_GL_BLEND:
 				GlStateManager.enableBlend();
 				break;
-			case 3089:
-				GL11.glEnable(3089);
+			case GL11_GL_SCISSOR_TEST:
+				GL11.glEnable(GLShim.GL11_GL_SCISSOR_TEST);
 				break;
-			case 3553:
+			case GL11_GL_TEXTURE_2D:
 				GlStateManager.enableTexture2D();
 				break;
-			case 32823:
+			case GL11_GL_POLYGON_OFFSET_FILL:
 				GlStateManager.enablePolygonOffset();
-				break;
-			case 32826:
-				GlStateManager.enableRescaleNormal();
 		}
 	}
 
 	public static void glDisable(int attrib) {
 		switch (attrib) {
-			case 2884:
+			case GL11_GL_CULL_FACE:
 				GlStateManager.disableCull();
 				break;
-			case 2896:
+			case GL11_GL_LIGHTING:
 				GlStateManager.disableLighting();
 				break;
-			case 2912:
+			case GL11_GL_FOG:
 				GlStateManager.disableFog();
 				break;
-			case 2929:
+			case GL11_GL_DEPTH_TEST:
 				GlStateManager.disableDepth();
 				break;
-			case 2977:
+			case GL11_GL_NORMALIZE:
 				GlStateManager.disableNormalize();
 				break;
-			case 3008:
+			case GL11_GL_ALPHA_TEST:
 				GlStateManager.disableAlpha();
 				break;
-			case 3042:
+			case GL11_GL_BLEND:
 				GlStateManager.disableBlend();
 				break;
-			case 3089:
-				GL11.glDisable(3089);
+			case GL11_GL_SCISSOR_TEST:
+				GL11.glDisable(GL11_GL_SCISSOR_TEST);
 				break;
-			case 3553:
+			case GL11_GL_TEXTURE_2D:
 				GlStateManager.disableTexture2D();
 				break;
-			case 32823:
+			case GL11_GL_POLYGON_OFFSET_FILL:
 				GlStateManager.disablePolygonOffset();
-				break;
-			case 32826:
-				GlStateManager.disableRescaleNormal();
-		}
-	}
-
-	public static void glFogi(int pname, int param) {
-		switch (pname) {
-			case 2917:
-				GlStateManager.FogMode fogMode = GlStateManager.FogMode.EXP;
-				switch (param) {
-					case 2048:
-						fogMode = GlStateManager.FogMode.EXP;
-						break;
-					case 2049:
-						fogMode = GlStateManager.FogMode.EXP2;
-						break;
-					case 9729:
-						fogMode = GlStateManager.FogMode.LINEAR;
-				}
-
-				GlStateManager.setFog(fogMode);
-		}
-	}
-
-	public static void glFogf(int pname, float param) {
-		switch (pname) {
-			case 2914:
-				GlStateManager.setFogDensity(param);
-				break;
-			case 2915:
-				GlStateManager.setFogStart(param);
-				break;
-			case 2916:
-				GlStateManager.setFogEnd(param);
 		}
 	}
 
@@ -220,25 +173,6 @@ public class GLShim {
 
 	public static void glColorMaterial(int face, int mode) {
 		GlStateManager.colorMaterial(face, mode);
-	}
-
-	public static void glCullFace(int mode) {
-		GlStateManager.CullFace cullFace = GlStateManager.CullFace.FRONT_AND_BACK;
-		switch (mode) {
-			case 1028:
-				cullFace = GlStateManager.CullFace.FRONT;
-				break;
-			case 1029:
-				cullFace = GlStateManager.CullFace.BACK;
-			case 1030:
-			case 1031:
-			default:
-				break;
-			case 1032:
-				cullFace = GlStateManager.CullFace.FRONT_AND_BACK;
-		}
-
-		GlStateManager.cullFace(cullFace);
 	}
 
 	public static void glDepthFunc(int func) {
@@ -342,13 +276,10 @@ public class GLShim {
 	}
 
 	public static void glBindTexture(int target, int texture) {
-		switch (target) {
-			case 3553:
-				GlStateManager.bindTexture(texture);
-				break;
-			default:
-				GL11.glBindTexture(target, texture);
-		}
+		if (target == GL11_GL_TEXTURE_2D)
+			GlStateManager.bindTexture(texture);
+		else
+			GL11.glBindTexture(target, texture);
 	}
 
 	public static void glEnd() {

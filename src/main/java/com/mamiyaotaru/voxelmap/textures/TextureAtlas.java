@@ -1,15 +1,9 @@
 package com.mamiyaotaru.voxelmap.textures;
 
 import com.google.common.collect.Maps;
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.util.GLShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -19,316 +13,312 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class TextureAtlas extends AbstractTexture {
-   private static final Logger logger = LogManager.getLogger();
-   private final Map<String, Sprite> mapRegisteredSprites;
-   private final Map<String, Sprite> mapUploadedSprites;
-   private final String basePath;
-   private final IIconCreator iconCreator;
-   private final int mipmapLevels = 0;
-   private final Sprite missingImage;
-   private final Sprite failedImage;
-   private Stitcher stitcher;
+	private final Map<String, Sprite> mapRegisteredSprites;
+	private final Map<String, Sprite> mapUploadedSprites;
 
-   public TextureAtlas(String basePath) {
-      this(basePath, (IIconCreator)null);
-   }
+	private final String basePath;
+	private final IIconCreator iconCreator;
 
-   public TextureAtlas(String basePath, IIconCreator iconCreator) {
-      this.mapRegisteredSprites = Maps.newHashMap();
-      this.mapUploadedSprites = Maps.newHashMap();
-      this.missingImage = new Sprite("missingno");
-      this.failedImage = new Sprite("notfound");
-      this.basePath = basePath;
-      this.iconCreator = iconCreator;
-   }
+	private final Sprite missingImage;
+	private final Sprite failedImage;
 
-   private void initMissingImage() {
-      int[] missingTextureData = new int[1];
-      Arrays.fill(missingTextureData, 0);
-      this.missingImage.setIconWidth(1);
-      this.missingImage.setIconHeight(1);
-      this.missingImage.setTextureData(missingTextureData);
-      this.failedImage.copyFrom(this.missingImage);
-      this.failedImage.setTextureData(missingTextureData);
-   }
+	private Stitcher stitcher;
 
-   @Override
-   public void loadTexture(IResourceManager resourceManager) throws IOException {
-      if (this.iconCreator != null) {
-         this.loadTextureAtlas(this.iconCreator);
-      }
-   }
+	public TextureAtlas(String basePath) {
+		this(basePath, null);
+	}
 
-   public void reset() {
-      this.mapRegisteredSprites.clear();
-      this.mapUploadedSprites.clear();
-      this.initMissingImage();
-      int glMaxTextureSize = Minecraft.getGLMaximumTextureSize();
-      this.stitcher = new Stitcher(glMaxTextureSize, glMaxTextureSize, 0);
-   }
+	public TextureAtlas(String basePath, IIconCreator iconCreator) {
+		this.mapRegisteredSprites = Maps.newHashMap();
+		this.mapUploadedSprites = Maps.newHashMap();
+		this.missingImage = new Sprite("missingno");
+		this.failedImage = new Sprite("notfound");
+		this.basePath = basePath;
+		this.iconCreator = iconCreator;
+	}
 
-   public void loadTextureAtlas(IIconCreator iconCreator) {
-      this.reset();
-      iconCreator.addIcons(this);
-      this.stitch();
-   }
+	private void initMissingImage() {
+		int[] missingTextureData = new int[1];
+		Arrays.fill(missingTextureData, 0);
+		this.missingImage.setIconWidth(1);
+		this.missingImage.setIconHeight(1);
+		this.missingImage.setTextureData(missingTextureData);
+		this.failedImage.copyFrom(this.missingImage);
+		this.failedImage.setTextureData(missingTextureData);
+	}
 
-   public void stitch() {
-      for (Entry<String, Sprite> entry : this.mapRegisteredSprites.entrySet()) {
-         Sprite icon = entry.getValue();
-         this.stitcher.addSprite(icon);
-      }
+	public void loadTexture(IResourceManager resourceManager) {
+		if (this.iconCreator != null) {
+			this.loadTextureAtlas(this.iconCreator);
+		}
+	}
 
-      try {
-         this.stitcher.doStitch();
-      } catch (StitcherException e) {
-         throw e;
-      }
+	public void reset() {
+		this.mapRegisteredSprites.clear();
+		this.mapUploadedSprites.clear();
+		this.initMissingImage();
+		int glMaxTextureSize = Minecraft.getGLMaximumTextureSize();
+		this.stitcher = new Stitcher(glMaxTextureSize, glMaxTextureSize, 0);
+	}
 
-      logger.info("Created: {}x{} {}-atlas", new Object[]{this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight(), this.basePath});
-      TextureUtil.allocateTextureImpl(this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
-      int[] zeros = new int[this.stitcher.getCurrentImageWidth() * this.stitcher.getCurrentImageHeight()];
-      Arrays.fill(zeros, 0);
-      TextureUtil.uploadTexture(this.getGlTextureId(), zeros, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
-      HashMap<String, Sprite> tempMapRegisteredSprites = Maps.newHashMap(this.mapRegisteredSprites);
+	public void loadTextureAtlas(IIconCreator iconCreator) {
+		this.reset();
+		iconCreator.addIcons(this);
+		this.stitch();
+	}
 
-      for (Sprite icon : this.stitcher.getStitchSlots()) {
-         String iconName = icon.getIconName();
-         tempMapRegisteredSprites.remove(iconName);
-         this.mapUploadedSprites.put(iconName, icon);
+	public void stitch() {
+		for (Entry<String, Sprite> entry : this.mapRegisteredSprites.entrySet()) {
+			Sprite icon = entry.getValue();
+			this.stitcher.addSprite(icon);
+		}
 
-         try {
-            TextureUtil.uploadTextureMipmap(
-               new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
-            );
-         } catch (Throwable var19) {
-            CrashReport var36 = CrashReport.makeCrashReport(var19, "Stitching texture atlas");
-            CrashReportCategory var38 = var36.makeCategory("Texture being stitched together");
-            var38.addCrashSection("Atlas path", this.basePath);
-            var38.addCrashSection("Sprite", icon);
-            throw new ReportedException(var36);
-         }
-      }
+		this.stitcher.doStitch();
 
-      for (Sprite icon : tempMapRegisteredSprites.values()) {
-         icon.copyFrom(this.missingImage);
-      }
+		VoxelConstants.getLogger().info("Created: {}x{} {}-atlas", new Object[]{this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight(), this.basePath});
+		TextureUtil.allocateTextureImpl(this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
+		int[] zeros = new int[this.stitcher.getCurrentImageWidth() * this.stitcher.getCurrentImageHeight()];
+		Arrays.fill(zeros, 0);
+		TextureUtil.uploadTexture(this.getGlTextureId(), zeros, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
+		HashMap<String, Sprite> tempMapRegisteredSprites = Maps.newHashMap(this.mapRegisteredSprites);
 
-      this.mapRegisteredSprites.clear();
-      this.missingImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
-      this.failedImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
-      ImageUtils.saveImage(
-         this.basePath.replaceAll("/", "_"), this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight()
-      );
-   }
+		for (Sprite icon : this.stitcher.getStitchSlots()) {
+			String iconName = icon.getIconName();
+			tempMapRegisteredSprites.remove(iconName);
+			this.mapUploadedSprites.put(iconName, icon);
 
-   public void stitchNew() {
-      for (Entry<String, Sprite> entry : this.mapRegisteredSprites.entrySet()) {
-         Sprite icon = entry.getValue();
-         this.stitcher.addSprite(icon);
-      }
+			try {
+				TextureUtil.uploadTextureMipmap(
+					new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
+				);
+			} catch (Throwable throwable) {
+				CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Stitching texture atlas");
+				CrashReportCategory crashReportCategory = crashReport.makeCategory("Texture being stitched together");
+				crashReportCategory.addCrashSection("Atlas path", this.basePath);
+				crashReportCategory.addCrashSection("Sprite", icon);
+				throw new ReportedException(crashReport);
+			}
+		}
 
-      int oldWidth = this.stitcher.getCurrentImageWidth();
-      int oldHeight = this.stitcher.getCurrentImageHeight();
+		for (Sprite icon : tempMapRegisteredSprites.values()) {
+			icon.copyFrom(this.missingImage);
+		}
 
-      try {
-         this.stitcher.doStitchNew();
-      } catch (StitcherException var20) {
-         throw var20;
-      }
+		this.mapRegisteredSprites.clear();
+		this.missingImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
+		this.failedImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
+		ImageUtils.saveImage(
+			this.basePath.replaceAll("/", "_"), this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight()
+		);
+	}
 
-      if (oldWidth == this.stitcher.getCurrentImageWidth() && oldHeight == this.stitcher.getCurrentImageHeight()) {
-         GLShim.glBindTexture(3553, this.glTextureId);
-      } else {
-         logger.info("Resized to: {}x{} {}-atlas", new Object[]{this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight(), this.basePath});
-         TextureUtil.allocateTextureImpl(this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
-         int[] zeros = new int[this.stitcher.getCurrentImageWidth() * this.stitcher.getCurrentImageHeight()];
-         Arrays.fill(zeros, 0);
-         TextureUtil.uploadTexture(this.getGlTextureId(), zeros, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
-      }
+	public void stitchNew() {
+		for (Entry<String, Sprite> entry : this.mapRegisteredSprites.entrySet()) {
+			Sprite icon = entry.getValue();
+			this.stitcher.addSprite(icon);
+		}
 
-      HashMap<String, Sprite> tempMapRegisteredSprites = Maps.newHashMap(this.mapRegisteredSprites);
+		int oldWidth = this.stitcher.getCurrentImageWidth();
+		int oldHeight = this.stitcher.getCurrentImageHeight();
 
-      for (Sprite icon : this.stitcher.getStitchSlots()) {
-         String iconName = icon.getIconName();
-         tempMapRegisteredSprites.remove(iconName);
-         this.mapUploadedSprites.put(iconName, icon);
+		this.stitcher.doStitchNew();
 
-         try {
-            TextureUtil.uploadTextureMipmap(
-               new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
-            );
-         } catch (Throwable var19) {
-            CrashReport var36 = CrashReport.makeCrashReport(var19, "Stitching texture atlas");
-            CrashReportCategory var38 = var36.makeCategory("Texture being stitched together");
-            var38.addCrashSection("Atlas path", this.basePath);
-            var38.addCrashSection("Sprite", icon);
-            throw new ReportedException(var36);
-         }
-      }
+		if (oldWidth == this.stitcher.getCurrentImageWidth() && oldHeight == this.stitcher.getCurrentImageHeight()) {
+			GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.glTextureId);
+		} else {
+			VoxelConstants.getLogger().info("Resized to: {}x{} {}-atlas", new Object[]{this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight(), this.basePath});
+			TextureUtil.allocateTextureImpl(this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
+			int[] zeros = new int[this.stitcher.getCurrentImageWidth() * this.stitcher.getCurrentImageHeight()];
+			Arrays.fill(zeros, 0);
+			TextureUtil.uploadTexture(this.getGlTextureId(), zeros, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight());
+		}
 
-      for (Sprite icon : tempMapRegisteredSprites.values()) {
-         icon.copyFrom(this.missingImage);
-      }
+		HashMap<String, Sprite> tempMapRegisteredSprites = Maps.newHashMap(this.mapRegisteredSprites);
 
-      this.mapRegisteredSprites.clear();
-      this.missingImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
-      this.failedImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
-      if (oldWidth != this.stitcher.getCurrentImageWidth() || oldHeight != this.stitcher.getCurrentImageHeight()) {
-         ImageUtils.saveImage(
-            this.basePath.replaceAll("/", "_"), this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight()
-         );
-      }
-   }
+		for (Sprite icon : this.stitcher.getStitchSlots()) {
+			String iconName = icon.getIconName();
+			tempMapRegisteredSprites.remove(iconName);
+			this.mapUploadedSprites.put(iconName, icon);
 
-   public Sprite getIconAt(float x, float y) {
-      Iterator<Entry<String, Sprite>> uploadedSpritesEntriesIterator = this.mapUploadedSprites.entrySet().iterator();
+			try {
+				TextureUtil.uploadTextureMipmap(
+					new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
+				);
+			} catch (Throwable throwable) {
+				CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Stitching texture atlas");
+				CrashReportCategory crashReportCategory = crashReport.makeCategory("Texture being stitched together");
+				crashReportCategory.addCrashSection("Atlas path", this.basePath);
+				crashReportCategory.addCrashSection("Sprite", icon);
+				throw new ReportedException(crashReport);
+			}
+		}
 
-      while (uploadedSpritesEntriesIterator.hasNext()) {
-         Sprite icon = uploadedSpritesEntriesIterator.next().getValue();
-         if (x >= icon.originX && x < icon.originX + icon.width && y >= icon.originY && y < icon.originY + icon.height) {
-            return icon;
-         }
-      }
+		for (Sprite icon : tempMapRegisteredSprites.values()) {
+			icon.copyFrom(this.missingImage);
+		}
 
-      return this.missingImage;
-   }
+		this.mapRegisteredSprites.clear();
+		this.missingImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
+		this.failedImage.initSprite(this.getHeight(), this.getWidth(), 0, 0);
+		if (oldWidth != this.stitcher.getCurrentImageWidth() || oldHeight != this.stitcher.getCurrentImageHeight()) {
+			ImageUtils.saveImage(
+				this.basePath.replaceAll("/", "_"), this.getGlTextureId(), 0, this.stitcher.getCurrentImageWidth(), this.stitcher.getCurrentImageHeight()
+			);
+		}
+	}
 
-   public Sprite getAtlasSprite(String name) {
-      Sprite icon = this.mapUploadedSprites.get(name);
-      if (icon == null) {
-         icon = this.missingImage;
-      }
+	public Sprite getIconAt(float x, float y) {
 
-      return icon;
-   }
+		for (Entry<String, Sprite> stringSpriteEntry : this.mapUploadedSprites.entrySet()) {
+			Sprite icon = stringSpriteEntry.getValue();
+			if (x >= icon.originX && x < icon.originX + icon.width && y >= icon.originY && y < icon.originY + icon.height) {
+				return icon;
+			}
+		}
 
-   public Sprite getAtlasSpriteIncludingYetToBeStitched(String name) {
-      Sprite icon = this.mapUploadedSprites.get(name);
-      if (icon == null) {
-         icon = this.mapRegisteredSprites.get(name);
-      }
+		return this.missingImage;
+	}
 
-      if (icon == null) {
-         icon = this.missingImage;
-      }
+	public Sprite getAtlasSprite(String name) {
+		Sprite icon = this.mapUploadedSprites.get(name);
+		if (icon == null) {
+			icon = this.missingImage;
+		}
 
-      return icon;
-   }
+		return icon;
+	}
 
-   public Sprite registerIconForResource(ResourceLocation resourceLocation, IResourceManager resourceManager) {
-      if (resourceLocation == null) {
-         throw new IllegalArgumentException("Location cannot be null!");
-      }
+	public Sprite getAtlasSpriteIncludingYetToBeStitched(String name) {
+		Sprite icon = this.mapUploadedSprites.get(name);
+		if (icon == null) {
+			icon = this.mapRegisteredSprites.get(name);
+		}
 
-      Sprite icon = this.mapRegisteredSprites.get(resourceLocation.toString());
-      if (icon == null) {
-         icon = Sprite.spriteFromResourceLocation(resourceLocation);
+		if (icon == null) {
+			icon = this.missingImage;
+		}
 
-         try {
-            IResource entryResource = resourceManager.getResource(resourceLocation);
-            BufferedImage entryBufferedImage = TextureUtil.readBufferedImage(entryResource.getInputStream());
-            icon.bufferedImageToIntData(entryBufferedImage);
-            entryBufferedImage.flush();
-         } catch (RuntimeException var23) {
-            logger.error("Unable to parse metadata from " + resourceLocation, var23);
-         } catch (IOException var24) {
-            logger.error("Using missing texture, unable to load " + resourceLocation, var24);
-         }
+		return icon;
+	}
 
-         this.mapRegisteredSprites.put(resourceLocation.toString(), icon);
-      }
+	public Sprite registerIconForResource(ResourceLocation resourceLocation, IResourceManager resourceManager) {
+		if (resourceLocation == null) {
+			throw new IllegalArgumentException("Location cannot be null!");
+		}
 
-      return icon;
-   }
+		Sprite icon = this.mapRegisteredSprites.get(resourceLocation.toString());
+		if (icon == null) {
+			icon = Sprite.spriteFromResourceLocation(resourceLocation);
 
-   public Sprite registerIconForBufferedImage(String name, BufferedImage bufferedImage) {
-      if (name != null && !name.equals("")) {
-         Sprite icon = this.mapRegisteredSprites.get(name);
-         if (icon == null) {
-            icon = Sprite.spriteFromString(name);
-            icon.bufferedImageToIntData(bufferedImage);
-            bufferedImage.flush();
-            this.mapRegisteredSprites.put(name, icon);
-         }
+			try {
+				IResource entryResource = resourceManager.getResource(resourceLocation);
+				BufferedImage entryBufferedImage = TextureUtil.readBufferedImage(entryResource.getInputStream());
+				icon.bufferedImageToIntData(entryBufferedImage);
+				entryBufferedImage.flush();
+			} catch (RuntimeException exception) {
+				VoxelConstants.getLogger().error("Unable to parse metadata from {}", resourceLocation, exception);
+			} catch (IOException exception) {
+				VoxelConstants.getLogger().error("Using missing texture, unable to load {}", resourceLocation, exception);
+			}
 
-         return icon;
-      } else {
-         throw new IllegalArgumentException("Name cannot be null!");
-      }
-   }
+			this.mapRegisteredSprites.put(resourceLocation.toString(), icon);
+		}
 
-   public void registerOrOverwriteSprite(String name, BufferedImage bufferedImage) {
-      if (name != null && !name.equals("")) {
-         Sprite icon = this.mapRegisteredSprites.get(name);
-         if (icon != null) {
-            icon.bufferedImageToIntData(bufferedImage);
-         } else {
-            icon = this.getAtlasSprite(name);
-            if (icon != null) {
-               icon.bufferedImageToIntData(bufferedImage);
+		return icon;
+	}
 
-               try {
-                  GLShim.glBindTexture(3553, this.glTextureId);
-                  TextureUtil.uploadTextureMipmap(
-                     new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
-                  );
-               } catch (Throwable var19) {
-                  CrashReport var36 = CrashReport.makeCrashReport(var19, "Stitching texture atlas");
-                  CrashReportCategory var38 = var36.makeCategory("Texture being stitched together");
-                  var38.addCrashSection("Atlas path", this.basePath);
-                  var38.addCrashSection("Sprite", icon);
-                  throw new ReportedException(var36);
-               }
-            }
-         }
+	public Sprite registerIconForBufferedImage(String name, BufferedImage bufferedImage) {
+		if (name != null && !name.isEmpty()) {
+			Sprite icon = this.mapRegisteredSprites.get(name);
+			if (icon == null) {
+				icon = Sprite.spriteFromString(name);
+				icon.bufferedImageToIntData(bufferedImage);
+				bufferedImage.flush();
+				this.mapRegisteredSprites.put(name, icon);
+			}
 
-         bufferedImage.flush();
-      } else {
-         throw new IllegalArgumentException("Name cannot be null!");
-      }
-   }
+			return icon;
+		} else {
+			throw new IllegalArgumentException("Name cannot be null!");
+		}
+	}
 
-   public Sprite getMissingImage() {
-      return this.missingImage;
-   }
+	public void registerOrOverwriteSprite(String name, BufferedImage bufferedImage) {
+		if (name != null && !name.isEmpty()) {
+			Sprite icon = this.mapRegisteredSprites.get(name);
+			if (icon != null) {
+				icon.bufferedImageToIntData(bufferedImage);
+			} else {
+				icon = this.getAtlasSprite(name);
+				if (icon != null) {
+					icon.bufferedImageToIntData(bufferedImage);
 
-   public Sprite getFailedImage() {
-      return this.failedImage;
-   }
+					try {
+						GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.glTextureId);
+						TextureUtil.uploadTextureMipmap(
+							new int[][]{icon.getTextureData()}, icon.getIconWidth(), icon.getIconHeight(), icon.getOriginX(), icon.getOriginY(), false, false
+						);
+					} catch (Throwable throwable) {
+						CrashReport crashReport = CrashReport.makeCrashReport(throwable, "Stitching texture atlas");
+						CrashReportCategory crashReportCategory = crashReport.makeCategory("Texture being stitched together");
+						crashReportCategory.addCrashSection("Atlas path", this.basePath);
+						crashReportCategory.addCrashSection("Sprite", icon);
+						throw new ReportedException(crashReport);
+					}
+				}
+			}
 
-   public void registerFailedIcon(String name) {
-      this.mapUploadedSprites.put(name, this.failedImage);
-   }
+			bufferedImage.flush();
+		} else {
+			throw new IllegalArgumentException("Name cannot be null!");
+		}
+	}
 
-   public void registerMaskedIcon(String name, Sprite originalIcon) {
-      Sprite existingIcon = this.mapUploadedSprites.get(name);
-      if (existingIcon == null) {
-         existingIcon = this.mapRegisteredSprites.get(name);
-      }
+	public Sprite getMissingImage() {
+		return this.missingImage;
+	}
 
-      if (existingIcon == null) {
-         this.mapUploadedSprites.put(name, originalIcon);
-      }
-   }
+	public Sprite getFailedImage() {
+		return this.failedImage;
+	}
 
-   public int getWidth() {
-      return this.stitcher.getCurrentWidth();
-   }
+	public void registerFailedIcon(String name) {
+		this.mapUploadedSprites.put(name, this.failedImage);
+	}
 
-   public int getHeight() {
-      return this.stitcher.getCurrentHeight();
-   }
+	public void registerMaskedIcon(String name, Sprite originalIcon) {
+		Sprite existingIcon = this.mapUploadedSprites.get(name);
+		if (existingIcon == null) {
+			existingIcon = this.mapRegisteredSprites.get(name);
+		}
 
-   public int getImageWidth() {
-      return this.stitcher.getCurrentImageWidth();
-   }
+		if (existingIcon == null) {
+			this.mapUploadedSprites.put(name, originalIcon);
+		}
+	}
 
-   public int getImageHeight() {
-      return this.stitcher.getCurrentImageHeight();
-   }
+	public int getWidth() {
+		return this.stitcher.getCurrentWidth();
+	}
+
+	public int getHeight() {
+		return this.stitcher.getCurrentHeight();
+	}
+
+	public int getImageWidth() {
+		return this.stitcher.getCurrentImageWidth();
+	}
+
+	public int getImageHeight() {
+		return this.stitcher.getCurrentImageHeight();
+	}
 }

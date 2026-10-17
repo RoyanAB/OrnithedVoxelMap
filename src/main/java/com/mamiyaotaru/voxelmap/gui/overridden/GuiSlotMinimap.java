@@ -48,15 +48,15 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 		int scrollBarLeft = this.getScrollBarX();
 		int scrollBarRight = scrollBarLeft + 6;
 		this.bindAmountScrolled();
-		GLShim.glDisable(2896);
-		GLShim.glDisable(2912);
+		GLShim.glDisable(GLShim.GL11_GL_LIGHTING);
+		GLShim.glDisable(GLShim.GL11_GL_FOG);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tessellator.getBuffer();
 		if (this.showSlotBG) {
 			this.mc.getTextureManager().bindTexture(Gui.OPTIONS_BACKGROUND);
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			float f = 32.0F;
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(this.left, this.bottom, 0.0).tex(this.left / f, (this.bottom + (int) this.amountScrolled) / f).color(32, 32, 32, 255).endVertex();
 			vertexBuffer.pos(this.right, this.bottom, 0.0).tex(this.right / f, (this.bottom + (int) this.amountScrolled) / f).color(32, 32, 32, 255).endVertex();
 			vertexBuffer.pos(this.right, this.top, 0.0).tex(this.right / f, (this.top + (int) this.amountScrolled) / f).color(32, 32, 32, 255).endVertex();
@@ -71,26 +71,26 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 		}
 
 		this.drawSelectionBox(leftEdge, topOfListYPos, mouseX, mouseY, partialTicks);
-		GLShim.glDisable(2929);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		byte topBottomFadeHeight = 4;
 		if (this.showTopBottomBG) {
 			this.overlayBackground(0, this.top, 255, 255);
 			this.overlayBackground(this.bottom, this.height, 255, 255);
 		}
 
-		GLShim.glEnable(3042);
-		OpenGlHelper.glBlendFunc(770, 771, 0, 1);
-		GLShim.glDisable(3008);
-		GLShim.glShadeModel(7425);
-		GLShim.glDisable(3553);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		OpenGlHelper.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA, 0, 1);
+		GLShim.glDisable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glShadeModel(GLShim.GL11_GL_SMOOTH);
+		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 		if (this.showTopBottomBG) {
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(this.left, this.top + topBottomFadeHeight, 0.0).tex(0.0, 1.0).color(0, 0, 0, 0).endVertex();
 			vertexBuffer.pos(this.right, this.top + topBottomFadeHeight, 0.0).tex(1.0, 1.0).color(0, 0, 0, 0).endVertex();
 			vertexBuffer.pos(this.right, this.top, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
 			vertexBuffer.pos(this.left, this.top, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
 			tessellator.draw();
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(this.left, this.bottom, 0.0).tex(0.0, 1.0).color(0, 0, 0, 255).endVertex();
 			vertexBuffer.pos(this.right, this.bottom, 0.0).tex(1.0, 1.0).color(0, 0, 0, 255).endVertex();
 			vertexBuffer.pos(this.right, this.bottom - topBottomFadeHeight, 0.0).tex(1.0, 0.0).color(0, 0, 0, 0).endVertex();
@@ -107,19 +107,19 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 				scrollBarThumbTopY = this.top;
 			}
 
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(scrollBarLeft, this.bottom, 0.0).tex(0.0, 1.0).color(0, 0, 0, 255).endVertex();
 			vertexBuffer.pos(scrollBarRight, this.bottom, 0.0).tex(1.0, 1.0).color(0, 0, 0, 255).endVertex();
 			vertexBuffer.pos(scrollBarRight, this.top, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
 			vertexBuffer.pos(scrollBarLeft, this.top, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
 			tessellator.draw();
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY + scrollBarThumbHeight , 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
 			vertexBuffer.pos(scrollBarRight, scrollBarThumbTopY + scrollBarThumbHeight , 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
 			vertexBuffer.pos(scrollBarRight, scrollBarThumbTopY, 0.0).tex(1.0, 0.0).color(128, 128, 128, 255).endVertex();
 			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY, 0.0).tex(0.0, 0.0).color(128, 128, 128, 255).endVertex();
 			tessellator.draw();
-			vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+			vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			vertexBuffer.pos(scrollBarLeft, scrollBarThumbTopY + scrollBarThumbHeight  - 1, 0.0).tex(0.0, 1.0).color(192, 192, 192, 255).endVertex();
 			vertexBuffer.pos(scrollBarRight - 1, scrollBarThumbTopY + scrollBarThumbHeight  - 1, 0.0).tex(1.0, 1.0).color(192, 192, 192, 255).endVertex();
 			vertexBuffer.pos(scrollBarRight - 1, scrollBarThumbTopY, 0.0).tex(1.0, 0.0).color(192, 192, 192, 255).endVertex();
@@ -128,10 +128,10 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 		}
 
 		this.renderDecorations(mouseX, mouseY);
-		GLShim.glEnable(3553);
-		GLShim.glShadeModel(7424);
-		GLShim.glEnable(3008);
-		GLShim.glDisable(3042);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glShadeModel(GLShim.GL11_GL_FLAT);
+		GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glDisable(GLShim.GL11_GL_BLEND);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 					int selectionLeftX  = this.left + (this.width / 2 - this.getListWidth() / 2);
 					int selectionRightX = this.left + this.width / 2 + this.getListWidth() / 2;
 					GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-					GLShim.glDisable(3553);
+					GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 					vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 					vertexBuffer.pos(selectionLeftX , slotYPos + topFudge + 2, 0.0).tex(0.0, 1.0).color(128, 128, 128, 255).endVertex();
 					vertexBuffer.pos(selectionRightX , slotYPos + topFudge + 2, 0.0).tex(1.0, 1.0).color(128, 128, 128, 255).endVertex();
@@ -165,7 +165,7 @@ public abstract class GuiSlotMinimap extends GuiSlot {
 					vertexBuffer.pos(selectionRightX  - 1, slotYPos - 1, 0.0).tex(1.0, 0.0).color(0, 0, 0, 255).endVertex();
 					vertexBuffer.pos(selectionLeftX  + 1, slotYPos - 1, 0.0).tex(0.0, 0.0).color(0, 0, 0, 255).endVertex();
 					tessellator.draw();
-					GLShim.glEnable(3553);
+					GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 				}
 
 				this.drawSlot(slotIndexIterator, leftEdge, slotYPos, topFudge, mouseX, mouseY, partialTicks);

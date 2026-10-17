@@ -227,7 +227,7 @@ public class RadarSimple implements IRadar {
 			contact.brightness = contact.brightness * contact.brightness;
 			contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
 			contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / this.layoutVariables.zoomScaleAdjusted;
-			GLShim.glBlendFunc(770, 771);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 			if (wayY < 0) {
 				GLShim.glColor4f(1.0F, 1.0F, 1.0F, contact.brightness);
 			} else {
@@ -294,13 +294,13 @@ public class RadarSimple implements IRadar {
 
 	private void applyFilteringParameters() {
 		if (this.options.filtering) {
-			GLShim.glTexParameteri(3553, 10241, 9729);
-			GLShim.glTexParameteri(3553, 10240, 9729);
-			GLShim.glTexParameteri(3553, 10242, 10496);
-			GLShim.glTexParameteri(3553, 10243, 10496);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL11_GL_CLAMP);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL11_GL_CLAMP);
 		} else {
-			GLShim.glTexParameteri(3553, 10241, 9728);
-			GLShim.glTexParameteri(3553, 10240, 9728);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
 		}
 	}
 }

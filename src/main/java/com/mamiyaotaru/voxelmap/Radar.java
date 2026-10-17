@@ -3,7 +3,6 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
 import com.mamiyaotaru.voxelmap.ornithe.mixins.RenderAccessor;
-import com.mamiyaotaru.voxelmap.textures.FontRendererWithAtlas;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.StitcherException;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
@@ -57,7 +56,6 @@ public class Radar implements IRadar {
 	private LayoutVariables layoutVariables;
 	public MapSettingsManager minimapOptions;
 	public RadarSettingsManager options;
-	private final FontRendererWithAtlas fontRenderer;
 	private final TextureAtlas textureAtlas;
 	private final UUID devUUID = UUID.fromString("9b37abb9-2487-4712-bb96-21a1e0b2023c");
 
@@ -107,9 +105,6 @@ public class Radar implements IRadar {
 		this.minimapOptions = master.getMapOptions();
 		this.options = master.getRadarOptions();
 		this.game = Minecraft.getMinecraft();
-		this.fontRenderer = new FontRendererWithAtlas(
-			this.game.gameSettings, new ResourceLocation("textures/font/ascii.png"), this.game.getTextureManager(), false
-		);
 		this.textureAtlas = new TextureAtlas("mobs");
 		this.textureAtlas.setBlurMipmapDirect(false, false);
 
@@ -179,7 +174,6 @@ public class Radar implements IRadar {
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager) {
 		this.loadTexturePackIcons();
-		this.fontRenderer.onResourceManagerReload(resourceManager);
 	}
 
 	private void loadTexturePackIcons() {
@@ -362,8 +356,6 @@ public class Radar implements IRadar {
 				fontImage.getHeight() + 2
 			);
 			Sprite fontSprite = this.textureAtlas.registerIconForBufferedImage(fontResourceLocation.toString(), fontImage);
-			this.fontRenderer.setFontSprite(fontSprite);
-			this.fontRenderer.setFontRef(this.textureAtlas.getGlTextureId());
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
@@ -1109,13 +1101,13 @@ public class Radar implements IRadar {
 	}
 
 	private int chkLen(String paramStr) {
-		return this.fontRenderer.getStringWidth(paramStr);
+		return Minecraft.getMinecraft().fontRenderer.getStringWidth(paramStr);
 	}
 
 	private void write(String paramStr, float x, float y, int color) {
-		GLShim.glTexParameteri(3553, 10241, 9728);
-		GLShim.glTexParameteri(3553, 10240, 9728);
-		this.fontRenderer.drawStringWithShadow(paramStr, x, y, color);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
+		Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(paramStr, x, y, color);
 	}
 
 	private boolean isEntityShown(Entity entity) {
@@ -1679,31 +1671,31 @@ public class Radar implements IRadar {
 	) {
 		boolean failed = false;
 		float size = 32.0F * scale;
-		GLShim.glBindTexture(3553, GLUtils.fboTextureID);
-		int width = GLShim.glGetTexLevelParameteri(3553, 0, 4096);
-		int height = GLShim.glGetTexLevelParameteri(3553, 0, 4097);
-		GLShim.glBindTexture(3553, 0);
-		GLShim.glPushAttrib(4096);
+		GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, GLUtils.fboTextureID);
+		int width = GLShim.glGetTexLevelParameteri(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_TRANSFORM_BIT);
+		int height = GLShim.glGetTexLevelParameteri(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_TEXTURE_HEIGHT);
+		GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, 0);
+		GLShim.glPushAttrib(GLShim.GL11_GL_TRANSFORM_BIT);
 		GLShim.glViewport(0, 0, width, height);
-		GLShim.glMatrixMode(5889);
+		GLShim.glMatrixMode(GLShim.GL11_GL_PROJECTION);
 		GLShim.glPushMatrix();
 		GLShim.glLoadIdentity();
 		GLShim.glOrtho(0.0, width, height, 0.0, 1000.0, 3000.0);
-		GLShim.glMatrixMode(5888);
+		GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 		GLShim.glPushMatrix();
 		GLShim.glLoadIdentity();
 		GLShim.glTranslatef(0.0F, 0.0F, -3000.0F + captureDepth);
 		GLUtils.bindFrameBuffer();
 		GLShim.glDepthMask(true);
-		GLShim.glEnable(2929);
-		GLShim.glEnable(3553);
-		GLShim.glEnable(3042);
-		GLShim.glEnable(3008);
-		GLShim.glEnable(2977);
-		GLShim.glDisable(2884);
+		GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
+		GLShim.glEnable(GLShim.GL11_GL_NORMALIZE);
+		GLShim.glDisable(GLShim.GL11_GL_CULL_FACE);
 		GLShim.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-		GLShim.glClear(16640);
-		GLShim.glBlendFunc(770, 771);
+		GLShim.glClear(GLShim.GL11_GL_COLOR_BUFFER_BIT | GLShim.GL11_GL_DEPTH_BUFFER_BIT);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 		GLShim.glPushMatrix();
 		GLShim.glTranslatef(width / 2, height / 2, 0.0F);
 		GLShim.glScalef(size, size, size);
@@ -1755,13 +1747,13 @@ public class Radar implements IRadar {
 		}
 
 		GLShim.glPopMatrix();
-		GLShim.glEnable(2884);
-		GLShim.glDisable(2929);
+		GLShim.glEnable(GLShim.GL11_GL_CULL_FACE);
+		GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 		GLShim.glDepthMask(false);
 		GLUtils.unbindFrameBuffer();
-		GLShim.glMatrixMode(5889);
+		GLShim.glMatrixMode(GLShim.GL11_GL_PROJECTION);
 		GLShim.glPopMatrix();
-		GLShim.glMatrixMode(5888);
+		GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 		GLShim.glPopMatrix();
 		GLShim.glPopAttrib();
 		GLShim.glViewport(0, 0, this.game.displayWidth, this.game.displayHeight);
@@ -2406,8 +2398,8 @@ public class Radar implements IRadar {
 	public void renderMapMobs(int x, int y, int guiScale) {
 		double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
 		GLUtils.disp(this.textureAtlas.getGlTextureId());
-		GLShim.glEnable(3042);
-		GLShim.glBlendFunc(770, 771);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 
 		for (Contact contact : this.contacts) {
 			contact.updateLocation();
@@ -2617,13 +2609,13 @@ public class Radar implements IRadar {
 
 	private void applyFilteringParameters() {
 		if (this.options.filtering) {
-			GLShim.glTexParameteri(3553, 10241, 9729);
-			GLShim.glTexParameteri(3553, 10240, 9729);
-			GLShim.glTexParameteri(3553, 10242, 10496);
-			GLShim.glTexParameteri(3553, 10243, 10496);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL11_GL_CLAMP);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL11_GL_CLAMP);
 		} else {
-			GLShim.glTexParameteri(3553, 10241, 9728);
-			GLShim.glTexParameteri(3553, 10240, 9728);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
 		}
 	}
 

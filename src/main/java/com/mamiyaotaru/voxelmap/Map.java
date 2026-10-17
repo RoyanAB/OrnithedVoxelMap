@@ -613,7 +613,7 @@ public class Map implements Runnable, IMap {
 		if (this.needLightmapRefresh && this.tickCounter != this.tickWithLightChange && !this.game.isGamePaused()) {
 			float[] fogColors = new float[16];
 			FloatBuffer temp = BufferUtils.createFloatBuffer(16);
-			GLShim.glGetFloat(3106, temp);
+			GLShim.glGetFloat(GLShim.GL11_GL_COLOR_CLEAR_VALUE, temp);
 			temp.get(fogColors);
 			this.rFog = fogColors[0];
 			this.gFog = fogColors[1];
@@ -695,11 +695,11 @@ public class Map implements Runnable, IMap {
 		double scaledHeightD = (double) this.game.displayHeight / scScale;
 		this.scWidth = MathHelper.ceil(scaledWidthD);
 		this.scHeight = MathHelper.ceil(scaledHeightD);
-		GLShim.glMatrixMode(5889);
+		GLShim.glMatrixMode(GLShim.GL11_GL_PROJECTION);
 		GLShim.glPushMatrix();
 		GLShim.glLoadIdentity();
 		GLShim.glOrtho(0.0, scaledWidthD, scaledHeightD, 0.0, 1000.0, 3000.0);
-		GLShim.glMatrixMode(5888);
+		GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 		GLShim.glPushMatrix();
 		GLShim.glLoadIdentity();
 		GLShim.glTranslatef(0.0F, 0.0F, -2000.0F);
@@ -732,19 +732,19 @@ public class Map implements Runnable, IMap {
 			mapY += (int) (resFactor * statusIconOffset);
 		}
 
-		GLShim.glEnable(3042);
-		GLShim.glEnable(3553);
-		GLShim.glBlendFunc(770, 0);
+		GLShim.glEnable(GLShim.GL11_GL_BLEND);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, 0);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		if (!this.options.hide) {
-			GLShim.glEnable(2929);
+			GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 			if (this.fullscreenMap) {
 				this.renderMapFull(this.scWidth, this.scHeight);
 			} else {
 				this.renderMap(mapX, mapY, scScale);
 			}
 
-			GLShim.glDisable(2929);
+			GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 			if (this.master.getRadar() != null && !this.fullscreenMap) {
 				this.layoutVariables.updateVars(scScale, mapX, mapY, this.zoomScale, this.zoomScaleAdjusted);
 				this.master.getRadar().OnTickInGame(mc, this.layoutVariables);
@@ -770,14 +770,14 @@ public class Map implements Runnable, IMap {
 		}
 
 		GLShim.glDepthMask(true);
-		GLShim.glEnable(2929);
+		GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GLShim.glMatrixMode(5889);
+		GLShim.glMatrixMode(GLShim.GL11_GL_PROJECTION);
 		GLShim.glPopMatrix();
-		GLShim.glMatrixMode(5888);
+		GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 		GLShim.glPopMatrix();
-		GLShim.glTexParameteri(3553, 10241, 9728);
-		GLShim.glTexParameteri(3553, 10240, 9728);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
 	}
 
 	private void checkForChanges() {
@@ -1681,14 +1681,14 @@ public class Map implements Runnable, IMap {
 		if (GLUtils.hasAlphaBits) {
 			GLShim.glColorMask(false, false, false, true);
 			GLShim.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-			GLShim.glClear(16384);
-			GLShim.glBlendFunc(770, 771);
+			GLShim.glClear(GLShim.GL11_GL_COLOR_BUFFER_BIT);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 			GLShim.glColorMask(true, true, true, true);
 			GLUtils.img(new ResourceLocation("voxelmap", this.options.squareMap ? "images/square.png" : "images/circle.png"));
 			GLUtils.drawPre();
 			GLUtils.setMap(x, y);
 			GLUtils.drawPost();
-			GLShim.glBlendFunc(772, 773);
+			GLShim.glBlendFunc(GLShim.GL11_GL_DST_ALPHA, GLShim.GL11_GL_ONE_MINUS_DST_ALPHA);
 			synchronized (this.coordinateLock) {
 				if (this.imageChanged) {
 					this.imageChanged = false;
@@ -1710,30 +1710,30 @@ public class Map implements Runnable, IMap {
 			GLShim.glTranslatef(-x, -y, 0.0F);
 			GLShim.glTranslatef(-this.percentX, -this.percentY, 0.0F);
 			if (GLUtils.openGL14Enabled) {
-				GLShim.glTexParameteri(3553, 10241, 9987);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 			} else {
-				GLShim.glTexParameteri(3553, 10241, 9729);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 			}
 
-			GLShim.glTexParameteri(3553, 10240, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 		} else if (GLUtils.fboEnabled) {
-			GLShim.glBindTexture(3553, 0);
-			GLShim.glPushAttrib(4096);
+			GLShim.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, 0);
+			GLShim.glPushAttrib(GLShim.GL11_GL_TRANSFORM_BIT);
 			GLShim.glViewport(0, 0, GLUtils.fboSize, GLUtils.fboSize);
-			GLShim.glMatrixMode(5889);
+			GLShim.glMatrixMode(GLShim.GL11_GL_PROJECTION);
 			GLShim.glPushMatrix();
 			GLShim.glLoadIdentity();
 			GLShim.glOrtho(0.0, GLUtils.fboSize, GLUtils.fboSize, 0.0, 1000.0, 3000.0);
-			GLShim.glMatrixMode(5888);
+			GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 			GLShim.glPushMatrix();
 			GLShim.glLoadIdentity();
 			GLShim.glTranslatef(0.0F, 0.0F, -2000.0F);
 			GLUtils.bindFrameBuffer();
 			GLShim.glDepthMask(false);
-			GLShim.glDisable(2929);
+			GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 			GLShim.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-			GLShim.glClear(16384);
-			GLShim.glBlendFunc(770, 0);
+			GLShim.glClear(GLShim.GL11_GL_COLOR_BUFFER_BIT);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, 0);
 			GLUtils.img(new ResourceLocation("voxelmap", this.options.squareMap ? "images/square.png" : "images/circle.png"));
 			GLUtils.drawPre();
 			GLUtils.ldrawthree(GLUtils.fboRad - GLUtils.fboRad / scale, GLUtils.fboRad + GLUtils.fboRad / scale, 1.0, 0.0, 0.0);
@@ -1741,7 +1741,7 @@ public class Map implements Runnable, IMap {
 			GLUtils.ldrawthree(GLUtils.fboRad + GLUtils.fboRad / scale, GLUtils.fboRad - GLUtils.fboRad / scale, 1.0, 1.0, 1.0);
 			GLUtils.ldrawthree(GLUtils.fboRad - GLUtils.fboRad / scale, GLUtils.fboRad - GLUtils.fboRad / scale, 1.0, 0.0, 1.0);
 			GLUtils.drawPost();
-			GLShim.glBlendFuncSeparate(1, 0, 774, 0);
+			GLShim.glBlendFuncSeparate(1, 0, GLShim.GL11_GL_DST_COLOR, 0);
 			synchronized (this.coordinateLock) {
 				if (this.imageChanged) {
 					this.imageChanged = false;
@@ -1758,12 +1758,12 @@ public class Map implements Runnable, IMap {
 			this.percentY *= multi;
 			GLUtils.disp(this.mapImages[this.zoom].getIndex());
 			if (GLUtils.openGL14Enabled) {
-				GLShim.glTexParameteri(3553, 10241, 9987);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 			} else {
-				GLShim.glTexParameteri(3553, 10241, 9729);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 			}
 
-			GLShim.glTexParameteri(3553, 10240, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 			GLShim.glTranslatef(GLUtils.fboRad, GLUtils.fboRad, 0.0F);
 			if (!this.options.rotates) {
 				GLShim.glRotatef(-this.northRotate, 0.0F, 0.0F, 1.0F);
@@ -1780,17 +1780,17 @@ public class Map implements Runnable, IMap {
 			GLUtils.ldrawthree(0.0, 0.0, 1.0, 0.0, 1.0);
 			GLUtils.drawPost();
 			GLShim.glDepthMask(true);
-			GLShim.glEnable(2929);
+			GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 			GLUtils.unbindFrameBuffer();
-			GLShim.glMatrixMode(5889);
+			GLShim.glMatrixMode(GLShim.GL11_GL_PROJECTION);
 			GLShim.glPopMatrix();
-			GLShim.glMatrixMode(5888);
+			GLShim.glMatrixMode(GLShim.GL11_GL_MODELVIEW);
 			GLShim.glPopMatrix();
 			GLShim.glPopAttrib();
 			GLShim.glViewport(0, 0, this.game.displayWidth, this.game.displayHeight);
 			GLShim.glPushMatrix();
-			GLShim.glBlendFunc(770, 0);
-			GLShim.glEnable(3008);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, 0);
+			GLShim.glEnable(GLShim.GL11_GL_ALPHA_TEST);
 			GLUtils.disp(GLUtils.fboTextureID);
 		} else {
 			if (this.imageChanged) {
@@ -1835,15 +1835,15 @@ public class Map implements Runnable, IMap {
 			this.percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
 			this.percentX *= multi;
 			this.percentY *= multi;
-			GLShim.glBlendFunc(770, 0);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, 0);
 			GLUtils.disp(this.options.squareMap ? this.mapImages[this.zoom].getIndex() : this.roundImage.getIndex());
 			if (GLUtils.openGL14Enabled) {
-				GLShim.glTexParameteri(3553, 10241, 9987);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 			} else {
-				GLShim.glTexParameteri(3553, 10241, 9729);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 			}
 
-			GLShim.glTexParameteri(3553, 10240, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 			GLShim.glPushMatrix();
 			GLShim.glTranslatef(x, y, 0.0F);
 			GLShim.glRotatef(!this.options.rotates ? this.northRotate : -this.direction + this.northRotate, 0.0F, 0.0F, 1.0F);
@@ -1859,7 +1859,7 @@ public class Map implements Runnable, IMap {
 		GLUtils.drawPost();
 		GLShim.glDisable(3089);
 		GLShim.glPopMatrix();
-		GLShim.glBlendFunc(770, 771);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 		GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		if (this.options.squareMap) {
 			this.drawSquareMapFrame(x, y);
@@ -1967,8 +1967,8 @@ public class Map implements Runnable, IMap {
 
 				GLShim.glPushMatrix();
 				GLShim.glColor4f(r, g, b, !pt.enabled && !target ? 0.3F : 1.0F);
-				GLShim.glTexParameteri(3553, 10241, 9729);
-				GLShim.glTexParameteri(3553, 10240, 9729);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				GLShim.glTranslatef(x, y, 0.0F);
 				GLShim.glRotatef(-locate + this.northRotate, 0.0F, 0.0F, 1.0F);
 				if (uprightIcon) {
@@ -2010,8 +2010,8 @@ public class Map implements Runnable, IMap {
 
 				GLShim.glPushMatrix();
 				GLShim.glColor4f(r, g, b, !pt.enabled && !target ? 0.3F : 1.0F);
-				GLShim.glTexParameteri(3553, 10241, 9729);
-				GLShim.glTexParameteri(3553, 10240, 9729);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+				GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 				GLShim.glRotatef(-locate + this.northRotate, 0.0F, 0.0F, 1.0F);
 				GLShim.glTranslated(0.0, -hypot, 0.0);
 				GLShim.glRotatef(-(-locate + this.northRotate), 0.0F, 0.0F, 1.0F);
@@ -2029,11 +2029,11 @@ public class Map implements Runnable, IMap {
 	private void drawArrow(int x, int y) {
 		try {
 			GLShim.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GLShim.glBlendFunc(770, 771);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 			GLShim.glPushMatrix();
 			GLUtils.img(new ResourceLocation("voxelmap", "images/mmarrow.png"));
-			GLShim.glTexParameteri(3553, 10241, 9729);
-			GLShim.glTexParameteri(3553, 10240, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 			GLShim.glTranslatef(x, y, 0.0F);
 			GLShim.glRotatef(this.options.rotates && !this.fullscreenMap ? 0.0F : this.direction, 0.0F, 0.0F, 1.0F);
 			GLShim.glTranslatef(-x, -y, 0.0F);
@@ -2059,12 +2059,12 @@ public class Map implements Runnable, IMap {
 
 		GLUtils.disp(this.mapImages[this.zoom].getIndex());
 		if (GLUtils.openGL14Enabled) {
-			GLShim.glTexParameteri(3553, 10241, 9987);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR_MIPMAP_LINEAR);
 		} else {
-			GLShim.glTexParameteri(3553, 10241, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
 		}
 
-		GLShim.glTexParameteri(3553, 10240, 9729);
+		GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 		GLShim.glPushMatrix();
 		GLShim.glTranslatef(scWidth / 2.0F, scHeight / 2.0F, 0.0F);
 		GLShim.glRotatef(this.northRotate, 0.0F, 0.0F, 1.0F);
@@ -2083,7 +2083,7 @@ public class Map implements Runnable, IMap {
 			int minimumSize = (int) Math.pow(2.0, this.zoom);
 			minimumSize *= minimumSize;
 			ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
-			GLShim.glDisable(2929);
+			GLShim.glDisable(GLShim.GL11_GL_DEPTH_TEST);
 
 			for (AbstractMapData.BiomeLabel label : labels) {
 				if (label.segmentSize > minimumSize) {
@@ -2099,17 +2099,17 @@ public class Map implements Runnable, IMap {
 				}
 			}
 
-			GLShim.glEnable(2929);
+			GLShim.glEnable(GLShim.GL11_GL_DEPTH_TEST);
 		}
 	}
 
 	private void drawSquareMapFrame(int x, int y) {
 		try {
 			GLUtils.disp(this.mapImageInt);
-			GLShim.glTexParameteri(3553, 10241, 9729);
-			GLShim.glTexParameteri(3553, 10240, 9729);
-			GLShim.glTexParameteri(3553, 10242, 10496);
-			GLShim.glTexParameteri(3553, 10243, 10496);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL11_GL_CLAMP);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL11_GL_CLAMP);
 			GLUtils.drawPre();
 			GLUtils.setMap(x, y);
 			GLUtils.drawPost();
@@ -2155,8 +2155,8 @@ public class Map implements Runnable, IMap {
 	private void drawRoundMapFrame(int x, int y) {
 		try {
 			GLUtils.img(new ResourceLocation("voxelmap", "images/roundmap.png"));
-			GLShim.glTexParameteri(3553, 10241, 9729);
-			GLShim.glTexParameteri(3553, 10240, 9729);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_LINEAR);
+			GLShim.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_LINEAR);
 			GLUtils.drawPre();
 			GLUtils.setMap(x, y);
 			GLUtils.drawPost();
@@ -2305,7 +2305,7 @@ public class Map implements Runnable, IMap {
 				+ I18nUtils.getString("minimap.ui.welcome8");
 		}
 
-		GLShim.glBlendFunc(770, 771);
+		GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 		int maxSize = 0;
 		int border = 2;
 		String head = this.welcomeString[0];
@@ -2322,7 +2322,7 @@ public class Map implements Runnable, IMap {
 		int centerY = (int) ((scHeight + 5) / 2.0);
 		String hide = this.welcomeString[this.welcomeString.length - 1];
 		int footer = this.chkLen(hide);
-		GLShim.glDisable(3553);
+		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
 		GLShim.glColor4f(0.0F, 0.0F, 0.0F, 0.7F);
 		double leftX = centerX - title / 2.0 - border;
 		double rightX = centerX + title / 2.0 + border;
@@ -2339,7 +2339,7 @@ public class Map implements Runnable, IMap {
 		topY = centerY + (height - 1) / 2.0 * 10.0 - border + 10.0;
 		botY = centerY + (height - 1) / 2.0 * 10.0 + border + 20.0;
 		this.drawBox(leftX, rightX, topY, botY);
-		GLShim.glEnable(3553);
+		GLShim.glEnable(GLShim.GL11_GL_TEXTURE_2D);
 		this.write(head, centerX - title / 2, centerY - (height - 1) * 10 / 2 - 19, 16777215);
 
 		for (int n = 1; n < height; n++) {

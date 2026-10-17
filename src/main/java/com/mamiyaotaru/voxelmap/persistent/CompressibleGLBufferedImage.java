@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap.persistent;
 import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mamiyaotaru.voxelmap.interfaces.IGLBufferedImage;
 import com.mamiyaotaru.voxelmap.util.CompressionUtils;
+import com.mamiyaotaru.voxelmap.util.GLShim;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -89,16 +90,16 @@ public class CompressibleGLBufferedImage implements IGLBufferedImage {
 		}
 
 		((Buffer) buffer).position(0).limit(this.bytes.length);
-		GL11.glBindTexture(3553, this.index);
-		GL11.glTexParameteri(3553, 10241, 9728);
-		GL11.glTexParameteri(3553, 10240, 9728);
-		GL11.glTexParameteri(3553, 10242, 33071);
-		GL11.glTexParameteri(3553, 10243, 33071);
+		GL11.glBindTexture(GLShim.GL11_GL_TEXTURE_2D, this.index);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MIN_FILTER, GLShim.GL11_GL_NEAREST);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_MAG_FILTER, GLShim.GL11_GL_NEAREST);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_S, GLShim.GL12_GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL11_GL_TEXTURE_WRAP_T, GLShim.GL12_GL_CLAMP_TO_EDGE);
 		if (GLUtils.openGL14Enabled) {
-			GL11.glTexParameteri(3553, 33169, 1);
+			GL11.glTexParameteri(GLShim.GL11_GL_TEXTURE_2D, GLShim.GL14_GL_GENERATE_MIPMAP, 1);
 		}
 
-		GL11.glTexImage2D(3553, 0, 6408, this.getWidth(), this.getHeight(), 0, 6408, 32821, buffer);
+		GL11.glTexImage2D(GLShim.GL11_GL_TEXTURE_2D, 0, GLShim.GL11_GL_RGBA, this.getWidth(), this.getHeight(), 0, GLShim.GL11_GL_RGBA, GLShim.GL12_GL_UNSIGNED_INT_8_8_8_8, buffer);
 		this.compress();
 	}
 

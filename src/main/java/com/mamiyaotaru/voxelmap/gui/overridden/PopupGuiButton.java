@@ -26,9 +26,9 @@ public class PopupGuiButton extends GuiButton {
 				&& mouseX < this.x + this.width
 				&& mouseY < this.y + this.height;
 			int i = this.getHoverState(this.hovered);
-			GLShim.glEnable(3042);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GLShim.glBlendFunc(770, 771);
+			GLShim.glEnable(GLShim.GL11_GL_BLEND);
+			OpenGlHelper.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+			GLShim.glBlendFunc(GLShim.GL11_GL_SRC_ALPHA, GLShim.GL11_GL_ONE_MINUS_SRC_ALPHA);
 			this.drawTexturedModalRect(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
 			this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
 			this.mouseDragged(mc, mouseX, mouseY);

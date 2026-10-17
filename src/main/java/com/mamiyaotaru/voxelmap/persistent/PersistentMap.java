@@ -27,7 +27,6 @@ public class PersistentMap implements IPersistentMap, IChangeObserver {
 	protected final List<CachedRegion> cachedRegionsPool = Collections.synchronizedList(new ArrayList<>());
 	protected final ConcurrentHashMap<String, CachedRegion> cachedRegions = new ConcurrentHashMap<>(150, 0.9F, 2);
 
-
 	private WorldMatcher worldMatcher;
 	private int[] lightmapColors;
 	private World world;
