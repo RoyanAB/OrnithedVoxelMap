@@ -34,7 +34,7 @@ public interface IWaypointManager {
 
 	boolean isMultiworld();
 
-	void setSubworldName(String subworldName, boolean vanilla);
+	void setSubworldName(String subworldName, boolean fromServer);
 
 	void setSubworldHash(String subworldHash);
 

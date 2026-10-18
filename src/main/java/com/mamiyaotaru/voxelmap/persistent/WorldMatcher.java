@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap.persistent;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.interfaces.IPersistentMap;
 import com.mamiyaotaru.voxelmap.interfaces.IVoxelMap;
+import com.mamiyaotaru.voxelmap.util.DimensionManager;
 import com.mamiyaotaru.voxelmap.util.I18nUtils;
 import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
@@ -35,7 +36,8 @@ public class WorldMatcher {
 			final String worldName = WorldMatcher.this.master.getWaypointManager().getCurrentWorldName();
 			final String worldNamePathPart = TextUtils.scrubNameFile(this.worldName);
 			final String dimensionName = WorldMatcher.this.world.provider.getDimensionType().getName();
-			final String dimensionNamePathPart = TextUtils.scrubNameFile(this.dimensionName);
+			final int dimensionID = DimensionManager.getDimensionIDfromProvider(WorldMatcher.this.world.provider);
+			final String dimensionNamePathPart = TextUtils.scrubNameFile(dimensionName + " (dimension " + dimensionID + ")");
 			final File cachedRegionFileDir = new File(VoxelConstants.getMinecraft().gameDir, "/voxelmap/cache/" + this.worldNamePathPart + "/");
 
 			@Override
