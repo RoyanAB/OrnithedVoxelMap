@@ -355,7 +355,7 @@ public class Radar implements IRadar {
 				fontImage.getWidth() + 2,
 				fontImage.getHeight() + 2
 			);
-			Sprite fontSprite = this.textureAtlas.registerIconForBufferedImage(fontResourceLocation.toString(), fontImage);
+
 			this.textureAtlas.stitch();
 			this.completedLoading = true;
 		} catch (Exception e) {
