@@ -103,10 +103,10 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 	}
 
 	@Override
-	public void drawScreen(int par1, int par2, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.drawDefaultBackground();
 		this.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-		super.drawScreen(par1, par2, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 }

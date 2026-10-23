@@ -115,24 +115,24 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
 		}
 	}
 
-	public float getOptionFloatValue(EnumOptionsMinimap par1EnumOptions) {
-		if (par1EnumOptions == EnumOptionsMinimap.MINZOOM) {
+	public float getOptionFloatValue(EnumOptionsMinimap optionsMinimap) {
+		if (optionsMinimap == EnumOptionsMinimap.MINZOOM) {
 			return this.minZoomPower;
-		} else if (par1EnumOptions == EnumOptionsMinimap.MAXZOOM) {
+		} else if (optionsMinimap == EnumOptionsMinimap.MAXZOOM) {
 			return this.maxZoomPower;
 		} else {
-			return par1EnumOptions == EnumOptionsMinimap.CACHESIZE ? this.cacheSize : 0.0F;
+			return optionsMinimap == EnumOptionsMinimap.CACHESIZE ? this.cacheSize : 0.0F;
 		}
 	}
 
-	public boolean getOptionBooleanValue(EnumOptionsMinimap par1EnumOptions) {
-		switch (par1EnumOptions) {
+	public boolean getOptionBooleanValue(EnumOptionsMinimap optionsMinimap) {
+		switch (optionsMinimap) {
 			case SHOWWAYPOINTS:
 				return this.showWaypoints;
 			case SHOWWAYPOINTNAMES:
 				return this.showWaypointNames;
 			default:
-				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean)");
+				throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + optionsMinimap.getName() + ". (possibly not a boolean)");
 		}
 	}
 

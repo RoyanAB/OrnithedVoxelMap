@@ -142,19 +142,19 @@ public class GuiMobs extends GuiScreenMinimap {
 	}
 
 	@Override
-	public void drawScreen(int par1, int par2, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawMap();
 		this.tooltip = null;
-		this.mobsList.drawScreen(par1, par2, partialTicks);
+		this.mobsList.drawScreen(mouseX, mouseY, partialTicks);
 		this.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
 		boolean isSomethingSelected = this.selectedMobName != null;
 		this.buttonEnable.enabled = isSomethingSelected && !this.isMobEnabled(this.selectedMobName);
 		this.buttonDisable.enabled = isSomethingSelected && this.isMobEnabled(this.selectedMobName);
-		super.drawScreen(par1, par2, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 		this.drawString(this.getFontRenderer(), I18nUtils.getString("minimap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 51, 10526880);
 		this.filter.drawTextBox();
 		if (this.tooltip != null) {
-			this.drawTooltip(this.tooltip, par1, par2);
+			this.drawTooltip(this.tooltip, mouseX, mouseY);
 		}
 	}
 

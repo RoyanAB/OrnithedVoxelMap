@@ -279,7 +279,7 @@ public class Map implements Runnable, IMap {
 				synchronized (this.zCalc) {
 					try {
 						this.zCalc.wait(0L);
-					} catch (InterruptedException var8) {
+					} catch (InterruptedException ignored) {
 					}
 				}
 			}

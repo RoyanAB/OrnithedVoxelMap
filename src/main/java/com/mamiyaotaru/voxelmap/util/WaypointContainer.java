@@ -114,7 +114,7 @@ public class WaypointContainer {
 		} else return raytraceresult != null;
 	}
 
-	private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ, float unused) {
+	private void renderBeam(Waypoint waypoint, double baseX, double baseY, double baseZ, float unused) {
 		Tessellator tesselator = Tessellator.getInstance();
 		BufferBuilder vertexBuffer = tesselator.getBuffer();
 		GLShim.glDisable(GLShim.GL11_GL_TEXTURE_2D);
@@ -127,9 +127,9 @@ public class WaypointContainer {
 		float brightness = 0.06F;
 		double topWidthFactor = 1.05;
 		double bottomWidthFactor = 1.05;
-		float r = par1EntityWaypoint.red;
-		float b = par1EntityWaypoint.blue;
-		float g = par1EntityWaypoint.green;
+		float r = waypoint.red;
+		float b = waypoint.blue;
+		float g = waypoint.green;
 
 		for (int width = 0; width < 4; width++) {
 			vertexBuffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);

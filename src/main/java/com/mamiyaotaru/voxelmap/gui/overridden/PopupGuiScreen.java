@@ -13,20 +13,20 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
 	public void onGuiClosed() {
 	}
 
-	public void createPopup(int x, int y, int directX, int directY, ArrayList<Popup.PopupEntry> entries) {
-		this.popups.add(new Popup(x, y, directX, directY, entries, this));
+	public void createPopup(int mouseX, int mouseY, int directX, int directY, ArrayList<Popup.PopupEntry> entries) {
+		this.popups.add(new Popup(mouseX, mouseY, directX, directY, entries, this));
 	}
 
 	public void clearPopups() {
 		this.popups.clear();
 	}
 
-	public boolean clickedPopup(int x, int y) {
+	public boolean clickedPopup(int mouseX, int mouseY) {
 		boolean clicked = false;
 		ArrayList<Popup> deadPopups = new ArrayList<>();
 
 		for (Popup popup : this.popups) {
-			boolean clickedPopup = popup.clickedMe(x, y);
+			boolean clickedPopup = popup.clickedMe(mouseX, mouseY);
 			if (!clickedPopup) {
 				deadPopups.add(popup);
 			} else if (popup.shouldClose()) {
@@ -41,11 +41,11 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
 	}
 
 	@Override
-	public boolean overPopup(int x, int y) {
+	public boolean overPopup(int mouseX, int mouseY) {
 		boolean over = false;
 
 		for (Popup popup : this.popups) {
-			boolean overPopup = popup.overMe(x, y);
+			boolean overPopup = popup.overMe(mouseX, mouseY);
 			over = over || overPopup;
 		}
 
@@ -58,11 +58,11 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
 	}
 
 	@Override
-	public void drawScreen(int x, int y, float partialTicks) {
-		super.drawScreen(x, y, partialTicks);
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
 
 		for (Popup popup : this.popups) {
-			popup.drawPopup(x, y);
+			popup.drawPopup(mouseX, mouseY);
 		}
 	}
 

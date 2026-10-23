@@ -1769,7 +1769,7 @@ public class ColorManager implements IColorManager {
 
 		try {
 			return BlockRepository.blockIDs.inverse().get(Integer.parseInt(name));
-		} catch (NumberFormatException var3) {
+		} catch (NumberFormatException exception) {
 			return null;
 		}
 	}

@@ -124,7 +124,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 	}
 
 	@Override
-	public void drawScreen(int par1, int par2, float partialTicks) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		for (Object buttonObj : this.getButtonList()) {
 			if (buttonObj instanceof GuiOptionSliderMinimap) {
 				GuiOptionSliderMinimap slider = (GuiOptionSliderMinimap) buttonObj;
@@ -155,6 +155,6 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 		this.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
 		this.drawCenteredString(this.getFontRenderer(), this.cacheSettings, this.getWidth() / 2, this.getHeight() / 6 + 24, 16777215);
 		this.drawCenteredString(this.getFontRenderer(), this.warning, this.getWidth() / 2, this.getHeight() / 6 + 34, 16777215);
-		super.drawScreen(par1, par2, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 }

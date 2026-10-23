@@ -293,8 +293,8 @@ public class CommandUtils {
 		return y;
 	}
 
-	private static boolean isBlockStandable(World worldObj, int par1, int par2, int par3) {
-		BlockPos blockPos = new BlockPos(par1, par2, par3);
+	private static boolean isBlockStandable(World worldObj, int x, int y, int z) {
+		BlockPos blockPos = new BlockPos(x, y, z);
 		IBlockState blockState = worldObj.getBlockState(blockPos);
 		Block block = blockState.getBlock();
 		if (blockState.getMaterial() == Material.AIR) {
@@ -304,8 +304,8 @@ public class CommandUtils {
 		}
 	}
 
-	private static boolean isBlockOpen(World worldObj, int par1, int par2, int par3) {
-		BlockPos blockPos = new BlockPos(par1, par2, par3);
+	private static boolean isBlockOpen(World worldObj, int x, int y, int z) {
+		BlockPos blockPos = new BlockPos(x, y, z);
 		IBlockState blockState = worldObj.getBlockState(blockPos);
 		Block block = blockState.getBlock();
 		if (blockState.getMaterial() == Material.AIR) {

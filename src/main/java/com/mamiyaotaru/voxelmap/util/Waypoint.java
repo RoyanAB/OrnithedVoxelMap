@@ -79,11 +79,11 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
 		return Double.compare(myDistance, comparedDistance);
 	}
 
-	public double getDistanceSqToEntity(Entity par1Entity) {
-		double var2 = this.getX() + 0.5 - par1Entity.posX;
-		double var4 = this.getY() + 0.5 - par1Entity.posY;
-		double var6 = this.getZ() + 0.5 - par1Entity.posZ;
-		return var2 * var2 + var4 * var4 + var6 * var6;
+	public double getDistanceSqToEntity(Entity entity) {
+		double dx = this.getX() + 0.5 - entity.posX;
+		double dy = this.getY() + 0.5 - entity.posY;
+		double dz = this.getZ() + 0.5 - entity.posZ;
+		return dx * dx + dy * dy + dz * dz;
 	}
 
 	@Override
